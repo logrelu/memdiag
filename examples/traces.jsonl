@@ -1,0 +1,36 @@
+{"user_id": "maya", "session_id": "m1", "ts": "2026-01-05T09:00:00", "role": "user", "content": "Hi, I live in Seattle and I make $85,000 a year. I have a car loan."}
+{"user_id": "maya", "session_id": "m1", "ts": "2026-01-05T09:00:05", "role": "assistant", "content": "Thanks, Maya. I'll keep that in mind for your budget.", "retrieved": [], "context_tokens": 1800}
+{"user_id": "maya", "session_id": "m2", "ts": "2026-02-10T18:20:00", "role": "user", "content": "Quick update: I just moved to Portland. I also paid off my car loan last week!"}
+{"user_id": "maya", "session_id": "m2", "ts": "2026-02-10T18:20:04", "role": "assistant", "content": "Congratulations on paying it off! That frees up room in your budget.", "retrieved": [], "context_tokens": 2100}
+{"user_id": "maya", "session_id": "m3", "ts": "2026-03-02T12:00:00", "role": "user", "content": "Can you suggest a credit union near me?"}
+{"user_id": "maya", "session_id": "m3", "ts": "2026-03-02T12:00:06", "role": "assistant", "content": "Since you live in Seattle, BECU is a popular credit union near you.", "retrieved": [], "context_tokens": 2600}
+{"user_id": "maya", "session_id": "m3", "ts": "2026-03-02T12:01:00", "role": "user", "content": "That's wrong, I moved to Portland."}
+{"user_id": "maya", "session_id": "m3", "ts": "2026-03-02T12:01:05", "role": "assistant", "content": "Sorry about that. In Portland, OnPoint Community Credit Union is a good option.", "retrieved": [], "context_tokens": 2700}
+{"user_id": "maya", "session_id": "m3", "ts": "2026-03-02T12:03:00", "role": "user", "content": "What should I prioritize with extra cash this month?"}
+{"user_id": "maya", "session_id": "m3", "ts": "2026-03-02T12:03:06", "role": "assistant", "content": "I'd put extra money toward your car loan balance first.", "retrieved": [], "context_tokens": 2900}
+{"user_id": "maya", "session_id": "m3", "ts": "2026-03-02T12:04:00", "role": "user", "content": "I paid that off, remember?"}
+{"user_id": "maya", "session_id": "m3", "ts": "2026-03-02T12:06:00", "role": "user", "content": "What's the APR on the Platinum card?"}
+{"user_id": "maya", "session_id": "m3", "ts": "2026-03-02T12:06:05", "role": "assistant", "content": "The Platinum card has a purchase APR of 24.99%.", "retrieved": [{"id": "doc_platinum", "text": "Platinum Card: purchase APR of 21.49% variable. No annual fee."}], "context_tokens": 3400}
+{"user_id": "dev", "session_id": "d1", "ts": "2026-01-08T20:00:00", "role": "user", "content": "I work at Stripe and my income is $140k. My credit score is 712."}
+{"user_id": "dev", "session_id": "d1", "ts": "2026-01-08T20:00:05", "role": "assistant", "content": "Got it, thanks Dev.", "retrieved": [], "context_tokens": 1500}
+{"user_id": "dev", "session_id": "d1", "ts": "2026-01-08T20:01:00", "role": "user", "content": "What's the rate on the high-yield savings account?"}
+{"user_id": "dev", "session_id": "d1", "ts": "2026-01-08T20:01:04", "role": "assistant", "content": "The High-Yield Savings account has a rate of 4.10% APY.", "retrieved": [{"id": "doc_hysa", "text": "High-Yield Savings account: rate of 4.10% APY, no minimum balance."}], "context_tokens": 1900}
+{"user_id": "dev", "session_id": "d2", "ts": "2026-02-15T08:30:00", "role": "user", "content": "Please forget my income, I don't want it stored."}
+{"user_id": "dev", "session_id": "d2", "ts": "2026-02-15T08:30:03", "role": "assistant", "content": "Done. I won't use it going forward.", "retrieved": [], "context_tokens": 1200}
+{"user_id": "dev", "session_id": "d3", "ts": "2026-03-05T19:00:00", "role": "user", "content": "Can I afford $2,000 a month in rent?"}
+{"user_id": "dev", "session_id": "d3", "ts": "2026-03-05T19:00:06", "role": "assistant", "content": "With your income of $140,000, $2,000 a month is about 17% of gross income, so yes.", "retrieved": [], "context_tokens": 2400}
+{"user_id": "dev", "session_id": "d3", "ts": "2026-03-05T19:01:00", "role": "user", "content": "I asked you to forget my income."}
+{"user_id": "dev", "session_id": "d3", "ts": "2026-03-05T19:02:00", "role": "user", "content": "Does my employer offer anything for savings?"}
+{"user_id": "dev", "session_id": "d3", "ts": "2026-03-05T19:02:05", "role": "assistant", "content": "Where do you work? Some employers offer savings matches.", "retrieved": [], "context_tokens": 2500}
+{"user_id": "dev", "session_id": "d3", "ts": "2026-03-05T19:03:00", "role": "user", "content": "I already told you, Stripe. What's the balance transfer fee?"}
+{"user_id": "dev", "session_id": "d3", "ts": "2026-03-05T19:03:06", "role": "assistant", "content": "I'm not sure about the balance transfer fee.", "retrieved": [{"id": "doc_late_fee", "text": "Late payment fee of $40 applies to all cards."}, {"id": "doc_hysa", "text": "High-Yield Savings account: rate of 4.10% APY, no minimum balance."}], "context_tokens": 2800}
+{"user_id": "dev", "session_id": "d3", "ts": "2026-03-05T19:04:00", "role": "user", "content": "That's not helpful."}
+{"user_id": "lena", "session_id": "l1", "ts": "2026-01-12T14:00:00", "role": "user", "content": "I live in Austin. My credit score is 640."}
+{"user_id": "lena", "session_id": "l1", "ts": "2026-01-12T14:00:05", "role": "assistant", "content": "Thanks, Lena. I'll factor that into card suggestions.", "retrieved": [], "context_tokens": 1400}
+{"user_id": "lena", "session_id": "l2", "ts": "2026-03-06T10:00:00", "role": "user", "content": "Which card can I get approved for?"}
+{"user_id": "lena", "session_id": "l2", "ts": "2026-03-06T10:00:07", "role": "assistant", "content": "With a 712 credit score, you'd likely qualify for the Rewards card.", "retrieved": [{"id": "doc_rewards", "text": "Rewards Card: purchase APR of 24.99% variable. Annual fee of $95."}], "context_tokens": 3100}
+{"user_id": "lena", "session_id": "l2", "ts": "2026-03-06T10:01:00", "role": "user", "content": "That's not me, my score is 640."}
+{"user_id": "lena", "session_id": "l2", "ts": "2026-03-06T10:02:00", "role": "user", "content": "Any employer benefits I should use?"}
+{"user_id": "lena", "session_id": "l2", "ts": "2026-03-06T10:02:05", "role": "assistant", "content": "Since you work at Google, check whether they offer a 401(k) match.", "retrieved": [], "context_tokens": 3300}
+{"user_id": "lena", "session_id": "l2", "ts": "2026-03-06T10:05:00", "role": "user", "content": "What's the late fee if I miss a payment?"}
+{"user_id": "lena", "session_id": "l2", "ts": "2026-03-06T10:05:09", "role": "assistant", "content": "The late fee is $25.", "retrieved": [{"id": "doc_platinum", "text": "Platinum Card: purchase APR of 21.49% variable. No annual fee."}, {"id": "doc_rewards", "text": "Rewards Card: purchase APR of 24.99% variable. Annual fee of $95."}, {"id": "doc_hysa", "text": "High-Yield Savings account: rate of 4.10% APY, no minimum balance."}, {"id": "doc_balance_transfer", "text": "Balance transfer fee of 3% with a 0% intro APR for 15 months."}, {"id": "doc_late_fee", "text": "Late payment fee of $40 applies to all cards."}], "context_tokens": 48000}
