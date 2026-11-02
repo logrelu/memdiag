@@ -57,3 +57,7 @@ memdiag-mcp            # stdio server with tools diagnose_traces and diagnose_re
 - Extraction is rule-based: location, employer, income, loans and credit score. The `RuleExtractor` interface is where an LLM extractor plugs in to cover arbitrary facts.
 - The demo data is synthetic.
 - Vendor adapters (Zep, Mem0, graph stores) are not built yet; only the interface exists.
+
+### Known failure on unseen phrasing
+
+`examples/unseen_phrasing.jsonl` contains two real memory failures (a stale city and a stale employer) that v0 misses, because the user says "we relocated to" and "I left Target for a role at REI". When extraction misses an update, the strategy replay is graded against an incomplete timeline and can overrate strategies like full history. `tests/test_known_limits.py` records this as expected failures; the LLM extractor is the fix.
