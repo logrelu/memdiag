@@ -1,0 +1,9 @@
+{"user_id":"ana","session_id":"a1","ts":"2026-04-01T10:00:00","role":"user","content":"Hey! I live in Chicago and I work at Target."}
+{"user_id":"ana","session_id":"a1","ts":"2026-04-01T10:00:05","role":"assistant","content":"Nice to meet you, Ana."}
+{"user_id":"ana","session_id":"a2","ts":"2026-05-01T10:00:00","role":"user","content":"We relocated to Denver last month, and I left Target for a role at REI."}
+{"user_id":"ana","session_id":"a2","ts":"2026-05-01T10:00:05","role":"assistant","content":"Congrats on the move!"}
+{"user_id":"ana","session_id":"a3","ts":"2026-06-01T10:00:00","role":"user","content":"Any good banks nearby?"}
+{"user_id":"ana","session_id":"a3","ts":"2026-06-01T10:00:05","role":"assistant","content":"Given that you're in Chicago, Alliant is a solid choice."}
+{"user_id":"ana","session_id":"a3","ts":"2026-06-01T10:01:00","role":"user","content":"Nope, I'm in Denver now."}
+{"user_id":"ana","session_id":"a3","ts":"2026-06-01T10:02:00","role":"user","content":"Does my employer match 401k?"}
+{"user_id":"ana","session_id":"a3","ts":"2026-06-01T10:02:05","role":"assistant","content":"Since you work at Target, yes, Target matches up to 5%."}
