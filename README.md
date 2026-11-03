@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/9e0d56b5-6cf2-44fc-9ecf-4d43a656f8b7
+
 # memdiag
 
 **Memory diagnostics for AI agents.** Point it at your agent's conversation logs and it tells you:
