@@ -79,7 +79,7 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
         flagged_turns += flagged
         turn_findings: list[Finding] = []
 
-        def add(cat, **kw):
+        def add(cat, *, e=e, flagged=flagged, turn_findings=turn_findings, **kw):
             turn_findings.append(Finding(cat, e.user_id, e.session_id, e.ts, e.content,
                                          user_flagged=flagged, **kw))
 

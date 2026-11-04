@@ -6,7 +6,6 @@ failures, and replays user history through candidate memory strategies.
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 from .detect import diagnose
 from .extract import RuleExtractor
@@ -14,6 +13,7 @@ from .schema import CATEGORIES, Event, Finding
 from .strategies import compare
 
 __version__ = "0.1.0"
+__all__ = ["CATEGORIES", "Event", "Finding", "RuleExtractor", "load_events", "load_jsonl", "run", "run_files"]
 
 
 def load_jsonl(path) -> list[dict]:
