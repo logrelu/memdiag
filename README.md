@@ -29,6 +29,17 @@ memdiag diagnose traces.jsonl --docs docs.jsonl --html report.html --json report
 
 `retrieved` and `context_tokens` are optional. `docs.jsonl` (optional) is your knowledge base: `{"id": ..., "text": ...}`.
 
+## Scores
+
+Alongside the findings, every run produces normalized memory metrics (`memory_faithfulness`,
+`fact_currency`, `deletion_compliance`, `user_isolation`, `groundedness`, `recall_continuity`).
+Each is `1 - failures / opportunities`, reported with its counts, and `n/a` when the agent never
+had a chance to fail. Definitions: [docs/metrics.md](docs/metrics.md). Use them as a CI gate:
+
+```bash
+memdiag diagnose traces.jsonl --fail-under deletion_compliance=1.0 --fail-under user_isolation=0.99
+```
+
 ## What it detects
 
 | Class | Failure | How it's detected |

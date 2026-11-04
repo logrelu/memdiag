@@ -25,6 +25,15 @@ def text_report(res: dict, color: bool = True) -> str:
     out.append(f"  {d}{round(100 * s['memory_failures'] / total)}% of failures are memory problems; "
                f"more RAG tuning won't fix those.{x}\n")
 
+    out.append(f"{b}Memory scores{x} {d}(1.00 is best; n = chances to fail){x}")
+    for m in res["metrics"].values():
+        if m["score"] is None:
+            out.append(f"  {m['name']:<20} {d}n/a   n=0{x}")
+        else:
+            col = g if m["score"] >= 0.9 else (y if m["score"] >= 0.7 else r)
+            out.append(f"  {m['name']:<20} {col}{m['score']:.2f}{x}  {d}{m['failures']} failed of n={m['opportunities']}{x}")
+    out.append("")
+
     out.append(f"{b}What went wrong{x}")
     for f in res["findings"]:
         if f["category"] == "context_overload":
@@ -103,6 +112,11 @@ def html_report(res: dict, title: str = "memdiag report") -> str:
             f"<td><div class='bar'><i style='width:{pct}%'></i></div></td><td class='num'>{pct}%</td>"
             f"<td class='num'>{r['stale']}</td><td class='num'>{r['deleted_exposed']}</td>"
             f"<td class='num'>{r['cross_user']}</td><td class='num'>{r['missing']}</td><td class='num'>{r['avg_tokens']}</td></tr>")
+    mrows = "".join(
+        f"<tr><td><b>{_e(m['name'])}</b><div class='ev'>{_e(m['description'])}</div></td>"
+        f"<td class='num'>{'n/a' if m['score'] is None else format(m['score'], '.2f')}</td>"
+        f"<td class='num'>{m['failures']}</td><td class='num'>{m['opportunities']}</td></tr>"
+        for m in res["metrics"].values())
     tl = "".join(
         f"<tr><td class='mono'>{_e(t['user_id'])}</td><td>{_e(t['attribute'])}</td><td class='mono'>{_e(t['value'])}</td>"
         f"<td class='mono'>{_e(t['ts'][:10])}</td><td class='ev'>{_e(t['source'])}</td></tr>" for t in res["timeline"])
@@ -122,6 +136,8 @@ def html_report(res: dict, title: str = "memdiag report") -> str:
 <div class="tile"><span class="muted">Flagged by users</span><b>{st['user_flagged_turns']}</b></div></div>
 <div class="split"><span style="width:{mem_w:.1f}%;background:var(--mem)"></span><span style="width:{ret_w:.1f}%;background:var(--ret)"></span></div>
 <p class="muted">{round(mem_w)}% of failures are memory problems. Tuning retrieval won't fix those.</p>
+<h2>Memory scores</h2>
+<div class="box"><table><thead><tr><th>Metric</th><th>Score</th><th>Failures</th><th>Opportunities</th></tr></thead><tbody>{mrows}</tbody></table></div>
 <h2>Which memory approach fits?</h2>
 <p class="muted">Each user's history replayed through candidate strategies, scored on whether they would have recalled the user's current facts.</p>
 <div class="box"><table><thead><tr><th>Strategy</th><th></th><th>Correct</th><th>Stale</th><th>Deleted shown</th><th>Cross-user</th><th>Missing</th><th>~Tokens</th></tr></thead><tbody>{''.join(strat)}</tbody></table></div>

@@ -4,3 +4,7 @@ __pycache__/
 *.png
 *.zip
 examples/report.json
+.venv/
+build/
+dist/
+.ruff_cache/
