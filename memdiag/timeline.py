@@ -39,6 +39,15 @@ class Timeline:
             if a == attr and u != user and any(f.value == value and f.ts < at for f in fs)
         })
 
+    def other_users_have(self, user: str, attr: str, at: datetime) -> bool:
+        """True if some other user has stated a value for this attribute before `at`."""
+        return any(a == attr and u != user and any(f.ts < at and f.value is not None for f in fs)
+                   for (u, a), fs in self.facts.items())
+
+    def deletion_count(self) -> int:
+        """Number of deletion requests (one per user and attribute, counting each request)."""
+        return sum(f.deleted for fs in self.facts.values() for f in fs)
+
     def users(self) -> list[str]:
         return sorted({u for (u, _) in self.facts})
 

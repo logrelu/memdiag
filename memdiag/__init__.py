@@ -9,11 +9,13 @@ import json
 
 from .detect import diagnose
 from .extract import RuleExtractor
+from .metrics import Metric, check_thresholds, compute_metrics
 from .schema import CATEGORIES, Event, Finding
 from .strategies import compare
 
 __version__ = "0.1.0"
-__all__ = ["CATEGORIES", "Event", "Finding", "RuleExtractor", "load_events", "load_jsonl", "run", "run_files"]
+__all__ = ["CATEGORIES", "Event", "Finding", "Metric", "RuleExtractor", "check_thresholds", "compute_metrics",
+           "load_events", "load_jsonl", "run", "run_files"]
 
 
 def load_jsonl(path) -> list[dict]:
@@ -42,8 +44,11 @@ def run(events: list[Event], docs=None) -> dict:
     best = max(strategies, key=lambda r: (r["accuracy"], -r["avg_tokens"])) if strategies else None
     baseline = next((r for r in strategies if r["strategy"] == "Full history in context"), None)
 
+    findings_d = [f.to_dict() for f in findings]
+    metrics = compute_metrics(findings_d, stats["opportunities"])
     return {
         "stats": stats,
+        "metrics": {k: m.to_dict() for k, m in metrics.items()},
         "summary": {
             "findings": len(primary),
             "memory_failures": mem,
@@ -54,7 +59,7 @@ def run(events: list[Event], docs=None) -> dict:
             "best_strategy": best,
             "full_history_baseline": baseline,
         },
-        "findings": [f.to_dict() for f in findings],
+        "findings": findings_d,
         "strategies": strategies,
         "probes": len(probes),
         "timeline": tl.to_rows(),

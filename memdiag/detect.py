@@ -69,6 +69,8 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
     findings: list[Finding] = []
     assistant_turns = 0
     flagged_turns = 0
+    # Denominators for metrics.py: how many times each failure could have happened.
+    opp = {"fact_assertions": 0, "update_assertions": 0, "shared_attr_assertions": 0, "known_fact_questions": 0}
 
     for i, e in enumerate(events):
         if e.role != "assistant":
@@ -87,6 +89,9 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
         for attr, val in ex.assertions(e.content):
             cur = tl.current(e.user_id, attr, e.ts)
             past = tl.past_values(e.user_id, attr, e.ts)
+            opp["fact_assertions"] += 1
+            opp["update_assertions"] += len(past) >= 2
+            opp["shared_attr_assertions"] += tl.other_users_have(e.user_id, attr, e.ts)
             if cur is not None and cur.deleted:
                 add("failed_deletion", attribute=attr, expected="<deleted>", got=val,
                     evidence=f'User asked to forget: "{cur.source}"')
@@ -111,6 +116,7 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
         for attr in ex.forgotten_questions(e.content):
             cur = tl.current(e.user_id, attr, e.ts)
             if cur is not None and not cur.deleted:
+                opp["known_fact_questions"] += 1
                 add("forgotten_memory", attribute=attr, expected=cur.value, got="<asked again>",
                     evidence=f'Stated on {cur.ts.date()}: "{cur.source}"')
 
@@ -149,6 +155,7 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
 
         findings.extend(turn_findings)
 
-    stats = {"assistant_turns": assistant_turns, "user_flagged_turns": flagged_turns,
+    opp["deletion_requests"] = tl.deletion_count()
+    stats = {"assistant_turns": assistant_turns, "user_flagged_turns": flagged_turns, "opportunities": opp,
              "failed_turns": len({(f.user_id, f.session_id, f.ts) for f in findings if f.category != "context_overload"})}
     return findings, tl, stats
