@@ -10,7 +10,7 @@ import json
 import sys
 from pathlib import Path
 
-from . import Event, run, run_files
+from . import Event, check_thresholds, run, run_files
 from .report import html_report, json_report, text_report
 
 
@@ -39,6 +39,8 @@ def main(argv=None):
         sp.add_argument("--html", help="Write an HTML report")
         sp.add_argument("--json", help="Write a JSON report")
         sp.add_argument("--no-color", action="store_true")
+        sp.add_argument("--fail-under", action="append", default=[], metavar="METRIC=MIN",
+                        help="Exit 1 if a metric score is below MIN, e.g. deletion_compliance=0.95 (repeatable)")
 
     args = p.parse_args(argv)
     if args.cmd == "diagnose":
@@ -53,7 +55,22 @@ def main(argv=None):
             print(f"Wrote {out}/traces.jsonl and {out}/docs.jsonl")
         res = run([Event.from_dict(t, i) for i, t in enumerate(TRACES)], DOCS)
     _emit(res, args)
+    return _gate(res, args.fail_under)
+
+
+def _gate(res, specs) -> int:
+    try:
+        thresholds = {k: float(v) for k, v in (spec.split("=", 1) for spec in specs)}
+    except ValueError:
+        print("error: --fail-under expects METRIC=NUMBER, e.g. user_isolation=0.99", file=sys.stderr)
+        return 2
+    from .metrics import Metric
+    metrics = {k: Metric(**m) for k, m in res["metrics"].items()}
+    problems = check_thresholds(metrics, thresholds)
+    for msg in problems:
+        print(f"FAIL: {msg}", file=sys.stderr)
+    return 1 if problems else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
