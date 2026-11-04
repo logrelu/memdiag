@@ -12,6 +12,7 @@ dependencies = []
 
 [project.optional-dependencies]
 mcp = ["mcp>=2"]
+dev = ["pytest>=8", "ruff>=0.5"]
 
 [project.scripts]
 memdiag = "memdiag.cli:main"
@@ -19,3 +20,14 @@ memdiag-mcp = "memdiag.mcp_server:main"
 
 [tool.setuptools]
 packages = ["memdiag"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "B"]
+ignore = ["E501"]  # long lines are mostly HTML/CSS template strings
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
