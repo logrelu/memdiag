@@ -15,6 +15,7 @@ and scores the agent on memory behavior. Goal: be to memory what RAGAS is to RAG
 - `memdiag/metrics.py` normalized 0-1 scores computed from findings and opportunity counts
 - `memdiag/strategies.py` memory-strategy replay (`MemoryBackend` is the adapter interface)
 - `memdiag/report.py` text, HTML and JSON output; `cli.py`, `mcp_server.py` entry points
+- `docs/RELEASING.md` release steps; `scripts/release_check.py` guards the tag, version and changelog
 - `docs/metrics.md` the definition of every metric; keep it in sync with `metrics.py`
 
 ## Rules
