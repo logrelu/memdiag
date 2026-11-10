@@ -15,4 +15,12 @@ builds and smoke-tests the wheel, and creates a GitHub Release (marked pre-relea
 `aN`, `bN`, `rcN` versions). Publishing to PyPI is off until the repository variable
 `PUBLISH_TO_PYPI` is `true` and a PyPI trusted publisher is configured.
 
+## Dry run
+
+To check the pipeline without releasing anything, run the workflow manually from `main`:
+`gh workflow run release` (or Actions tab, Run workflow). It runs verify, test and build, and skips
+the GitHub Release and PyPI jobs. A failed verify step is only a warning in a dry run, so it works
+while `CHANGELOG.md` still says "Unreleased". Check the run after any change to `release.yml`.
+GitHub only offers manual runs for workflow files that exist on the default branch.
+
 A bad release is fixed forward with a new version. Do not move or delete a published tag.
