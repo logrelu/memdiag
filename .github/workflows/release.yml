@@ -2,9 +2,15 @@ name: release
 
 # Push a tag like v0.2.0 to run this. The tag must equal "v" + memdiag.__version__ and
 # CHANGELOG.md must have a "## 0.2.0" section. See docs/RELEASING.md.
+#
+# Run it manually (Actions tab, or `gh workflow run release`) for a dry run: it runs verify,
+# test and build against the current version but never creates a release or publishes.
+# In a dry run a failed verify step is a warning, so it still works while CHANGELOG.md
+# says "Unreleased".
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,11 +24,19 @@ jobs:
         with:
           python-version: "3.12"
       - name: Tag matches version and changelog has notes
-        run: python scripts/release_check.py "$GITHUB_REF_NAME" --notes release_notes.md
+        continue-on-error: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            TAG="$GITHUB_REF_NAME"
+          else
+            TAG="v$(sed -n 's/^__version__ = "\(.*\)"/\1/p' memdiag/__init__.py)"
+          fi
+          python scripts/release_check.py "$TAG" --notes release_notes.md
       - uses: actions/upload-artifact@v4
         with:
           name: release-notes
           path: release_notes.md
+          if-no-files-found: ignore
 
   test:
     needs: verify
@@ -53,6 +67,7 @@ jobs:
 
   github-release:
     needs: build
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -77,7 +92,7 @@ jobs:
   # publisher is configured for this repo and the "pypi" environment.
   publish-pypi:
     needs: github-release
-    if: vars.PUBLISH_TO_PYPI == 'true'
+    if: github.event_name == 'push' && vars.PUBLISH_TO_PYPI == 'true'
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
