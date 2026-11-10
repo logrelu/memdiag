@@ -6,3 +6,4 @@
 - Report metrics in text, HTML and JSON output.
 - Add CI workflow, `CLAUDE.md`, dev extras and ruff config.
 - Add tag-triggered release workflow, `scripts/release_check.py` and `docs/RELEASING.md`; version is now single-sourced from `memdiag/__init__.py`.
+- Add a manual dry-run trigger for the release workflow (no release or publish).
