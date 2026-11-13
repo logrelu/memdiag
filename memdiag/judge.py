@@ -166,3 +166,55 @@ def same_family(a: str, b: str) -> bool:
     """True when two models share a family; a judge should not grade its own family's answers (D9)."""
     fa, fb = model_family(a), model_family(b)
     return fa is not None and fa == fb
+
+
+class JudgeUnavailable(RuntimeError):
+    """The model endpoint could not be reached or returned an error."""
+
+
+DEFAULT_BASE_URL = "http://localhost:11434/v1"  # Ollama's OpenAI-compatible endpoint
+
+
+class OpenAICompatJudge(Judge):
+    """Any OpenAI-compatible chat endpoint: Ollama, vLLM, llama.cpp server, LM Studio or a hosted API.
+
+    The endpoint comes from `base_url` or MEMDIAG_BASE_URL (default: local Ollama). The key comes from
+    `api_key`, MEMDIAG_API_KEY or OPENAI_API_KEY, and is only ever sent in the Authorization header.
+    """
+
+    def __init__(self, model: str = "qwen2.5:7b", base_url: Optional[str] = None, api_key: Optional[str] = None,
+                 timeout: float = 600, cache: Optional[DiskCache] = None):
+        super().__init__(cache)
+        self.model = model
+        self.base_url = (base_url or os.environ.get("MEMDIAG_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
+        self._api_key = api_key or os.environ.get("MEMDIAG_API_KEY") or os.environ.get("OPENAI_API_KEY")
+        self.timeout = timeout
+
+    def __repr__(self) -> str:
+        return f"OpenAICompatJudge(model={self.model!r}, base_url={self.base_url!r})"  # never the key
+
+    def _complete(self, text, as_json, prompt_id):
+        import urllib.error
+        import urllib.request
+
+        body = {"model": self.model, "temperature": 0, "seed": 0, "messages": [{"role": "user", "content": text}]}
+        if as_json:
+            body["response_format"] = {"type": "json_object"}
+        headers = {"Content-Type": "application/json"}
+        if self._api_key:
+            headers["Authorization"] = f"Bearer {self._api_key}"
+        url = f"{self.base_url}/chat/completions"
+        req = urllib.request.Request(url, json.dumps(body).encode(), headers)
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+                reply = json.load(resp)
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode(errors="replace")[:300]
+            raise JudgeUnavailable(f"{url} returned HTTP {exc.code}: {detail}") from None
+        except (urllib.error.URLError, OSError) as exc:
+            raise JudgeUnavailable(
+                f"Could not reach a model at {url} ({getattr(exc, 'reason', exc)}). For a local model run "
+                f"`ollama serve` and `ollama pull {self.model}`, or set MEMDIAG_BASE_URL.") from None
+        usage = reply.get("usage") or {}
+        return reply["choices"][0]["message"]["content"], {
+            "prompt_tokens": usage.get("prompt_tokens", 0), "completion_tokens": usage.get("completion_tokens", 0)}
