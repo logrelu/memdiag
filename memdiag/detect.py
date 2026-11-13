@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+import re
 from collections import Counter
 from typing import Optional
 
@@ -11,6 +12,23 @@ from .timeline import Timeline
 
 CONTEXT_OVERLOAD_TOKENS = 32000
 REASKABLE = set(FORGOTTEN_QUESTIONS)  # attributes the rule extractor can spot a re-ask for
+DETECTOR_VERSION = "1"  # bump when a rule changes what it flags
+
+
+def _sentence(text: str, hint: str = "", pattern: str = "") -> str:
+    """The sentence of `text` that contains `hint` (or matches `pattern`); the whole text if none does.
+
+    Always a verbatim substring of `text`, so it can be quoted as evidence.
+    """
+    parts = [p for p in re.split(r"(?<=[.!?])\s+", text) if p.strip()]
+    digits = re.sub(r"\D", "", hint)
+    for p in parts:
+        if (pattern and re.search(pattern, p, re.I)) or (hint and hint.lower() in p.lower()):
+            return p.strip()
+    for p in parts:
+        if len(digits) >= 2 and digits[:2] in re.sub(r"\D", "", p):
+            return p.strip()
+    return text.strip()
 
 
 class BM25:
@@ -68,6 +86,12 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
     bm25 = BM25([d["text"] for d in docs]) if docs else None
 
     findings: list[Finding] = []
+    # Position of each event within its user's own history, for turn distances.
+    user_pos: dict[int, int] = {}
+    seen: Counter = Counter()
+    for ev in events:
+        user_pos[ev.index] = seen[ev.user_id]
+        seen[ev.user_id] += 1
     assistant_turns = 0
     flagged_turns = 0
     # Denominators for metrics.py: how many times each failure could have happened.
@@ -82,9 +106,21 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
         flagged_turns += flagged
         turn_findings: list[Finding] = []
 
-        def add(cat, *, e=e, flagged=flagged, turn_findings=turn_findings, **kw):
-            turn_findings.append(Finding(cat, e.user_id, e.session_id, e.ts, e.content,
-                                         user_flagged=flagged, **kw))
+        def add(cat, *, detector, e=e, flagged=flagged, turn_findings=turn_findings,
+                fact=None, hint="", pattern="", evidence_turn=None, evidence_quote="", **kw):
+            cov = {"context_tokens": e.context_tokens}
+            ev_turns = []
+            if fact is not None and fact.index >= 0:
+                ev_turns = [fact.index]
+                evidence_quote = fact.source
+                cov["turn_distance"] = user_pos[e.index] - user_pos.get(fact.index, user_pos[e.index])
+            elif evidence_turn is not None:
+                ev_turns = [evidence_turn]
+            turn_findings.append(Finding(
+                cat, e.user_id, e.session_id, e.ts, e.content, user_flagged=flagged,
+                failing_turn=e.index, evidence_turns=ev_turns, failing_quote=_sentence(e.content, hint, pattern),
+                evidence_quote=evidence_quote, detector=f"rules.{detector}", detector_version=DETECTOR_VERSION,
+                covariates=cov, **kw))
 
         # ---- memory: check every fact the agent asserts about this user ----
         for attr, val in ex.assertions(e.content):
@@ -94,23 +130,29 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
             opp["update_assertions"] += len(past) >= 2
             opp["shared_attr_assertions"] += tl.other_users_have(e.user_id, attr, e.ts)
             if cur is not None and cur.deleted:
-                add("failed_deletion", attribute=attr, expected="<deleted>", got=val,
+                add("failed_deletion", detector="memory_assertion", fact=cur, hint=val,
+                    attribute=attr, expected="<deleted>", got=val,
                     evidence=f'User asked to forget: "{cur.source}"')
             elif cur is not None and cur.value == val:
                 continue  # correct, current fact
             elif cur is not None and val in past:
-                add("stale_memory", attribute=attr, expected=cur.value, got=val,
+                add("stale_memory", detector="memory_assertion", fact=cur, hint=val,
+                    attribute=attr, expected=cur.value, got=val,
                     evidence=f'Updated on {cur.ts.date()}: "{cur.source}"')
             else:
                 others = tl.other_users_with(e.user_id, attr, val, e.ts)
                 if others:
-                    add("cross_user_leak", attribute=attr, expected=cur.value if cur else "<unknown>",
+                    owner = [f for f in tl.history(others[0], attr, e.ts) if f.value == val][-1]
+                    add("cross_user_leak", detector="memory_assertion", fact=owner, hint=val,
+                        attribute=attr, expected=cur.value if cur else "<unknown>",
                         got=val, evidence=f"Value belongs to user(s): {', '.join(others)}")
                 elif cur is None:
-                    add("hallucinated_memory", attribute=attr, expected="<never stated>", got=val,
+                    add("hallucinated_memory", detector="memory_assertion", hint=val,
+                        attribute=attr, expected="<never stated>", got=val,
                         evidence="User never stated this attribute")
                 else:
-                    add("hallucinated_memory", attribute=attr, expected=cur.value, got=val,
+                    add("hallucinated_memory", detector="memory_assertion", fact=cur, hint=val,
+                        attribute=attr, expected=cur.value, got=val,
                         evidence="Value never stated by any user")
 
         # ---- memory: asked again for something it was already told ----
@@ -120,7 +162,8 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
         for attr in ex.forgotten_questions(e.content):
             if attr in known:
                 cur = tl.current(e.user_id, attr, e.ts)
-                add("forgotten_memory", attribute=attr, expected=cur.value, got="<asked again>",
+                add("forgotten_memory", detector="reask", fact=cur, pattern=FORGOTTEN_QUESTIONS[attr],
+                    attribute=attr, expected=cur.value, got="<asked again>",
                     evidence=f'Stated on {cur.ts.date()}: "{cur.source}"')
 
         # ---- retrieval: answer contradicts a retrieved document ----
@@ -131,7 +174,8 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
             for label, dval in claims(text).items():
                 aval = answer_claims.get(label)
                 if aval and aval != dval:
-                    add("ignored_context", attribute=label, expected=dval, got=aval,
+                    add("ignored_context", detector="document_claims", hint=aval, evidence_quote=text,
+                        attribute=label, expected=dval, got=aval,
                         evidence=f'Retrieved {r.get("id")}: "{text}"')
 
         # ---- retrieval: the right doc existed but was not retrieved ----
@@ -141,7 +185,8 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
                 sc = bm25.scores(q.content)
                 best = max(range(len(sc)), key=sc.__getitem__)
                 if sc[best] > 1.0 and docs[best]["id"] not in retrieved_ids:
-                    add("retrieval_miss", attribute="document", expected=docs[best]["id"],
+                    add("retrieval_miss", detector="bm25_miss", evidence_turn=q.index,
+                        evidence_quote=q.content, attribute="document", expected=docs[best]["id"],
                         got=", ".join(retrieved_ids) or "<nothing retrieved>",
                         evidence=f'Best match for "{q.content}": {docs[best]["text"]}')
 
@@ -149,16 +194,18 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
         if (turn_findings or flagged) and (e.context_tokens or 0) >= CONTEXT_OVERLOAD_TOKENS:
             for f in turn_findings:
                 f.tags.append(f"context {e.context_tokens:,} tokens")
-            add("context_overload", attribute="context", expected=f"< {CONTEXT_OVERLOAD_TOKENS:,} tokens",
+            add("context_overload", detector="context_size",
+                attribute="context", expected=f"< {CONTEXT_OVERLOAD_TOKENS:,} tokens",
                 got=f"{e.context_tokens:,} tokens", evidence="Failure occurred with a very large context window")
 
         # ---- user pushback no rule explains ----
         if flagged and not turn_findings:
-            add("unattributed", evidence=f'User replied: "{nxt.content}"')
+            add("unattributed", detector="user_pushback", evidence_turn=nxt.index, evidence_quote=nxt.content,
+                evidence=f'User replied: "{nxt.content}"')
 
         findings.extend(turn_findings)
 
     opp["deletion_requests"] = tl.deletion_count()
     stats = {"assistant_turns": assistant_turns, "user_flagged_turns": flagged_turns, "opportunities": opp,
-             "failed_turns": len({(f.user_id, f.session_id, f.ts) for f in findings if f.category != "context_overload"})}
+             "failed_turns": len({f.failing_turn for f in findings if f.category != "context_overload"})}
     return findings, tl, stats
