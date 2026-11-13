@@ -21,6 +21,9 @@ memdiag-mcp = "memdiag.mcp_server:main"
 [tool.setuptools]
 packages = ["memdiag"]
 
+[tool.setuptools.package-data]
+memdiag = ["prompts/*.txt"]
+
 [tool.setuptools.dynamic]
 version = {attr = "memdiag.__version__"}
 
