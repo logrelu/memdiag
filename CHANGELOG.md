@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- New fact ledger (`memdiag.ledger`): each user's stated facts with verbatim quotes, normalized keys, updates (`superseded_by`) and deletions (`revoked_at_turn`), from rules plus an optional LLM extractor. LLM facts whose quote is not in the message are dropped and recorded.
+- New `memdiag ledger LOG [--model qwen2.5:7b]` command.
 - New judge layer (`memdiag.judge`): one stdlib client for any OpenAI-compatible endpoint (local Ollama by default), a disk cache keyed by model and prompt version, JSON parsing with one retry, per-role usage accounting, and `FakeJudge` for tests.
 - Versioned prompt files in `memdiag/prompts/` (first: `extract_facts` v1), shipped in the wheel.
 - Findings are localized: each one records `failing_turn`, `evidence_turns`, verbatim `failing_quote` and `evidence_quote`, its `detector` and `detector_version`, a stable `type` (e.g. `STALE_FACT`) and `mode`, and covariates. Existing keys are unchanged.

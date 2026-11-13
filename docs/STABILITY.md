@@ -58,3 +58,9 @@ Still to come: `item_id`, `location` (M5); `judge_model`, `prompt_version` (M3).
 
 Event fields: `user_id`, `session_id`, `ts`, `role`, `content`, and optionally `retrieved`, `memory` and
 `context_tokens`. The adapter formats are `events`, `openai` and `longmemeval`.
+
+## Ledger items
+
+`item_id`, `user_id`, `key` (`subject.attribute`, normalized), `subject`, `attribute`, `value`, `source_turn`, `ts`,
+`quote` (verbatim from the source turn), `extractor` (`rules`, `llm`, `rules+llm`), `superseded_by`, `revoked_at_turn`.
+Status: proposed.
