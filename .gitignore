@@ -8,3 +8,6 @@ examples/report.json
 build/
 dist/
 .ruff_cache/
+
+# Experiment data (downloaded datasets, caches)
+experiments/data/
