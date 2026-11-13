@@ -18,9 +18,9 @@ class Timeline:
             if e.role != "user":
                 continue
             for attr, val in self.extractor.user_facts(e.content):
-                self.facts[(e.user_id, attr)].append(Fact(e.user_id, attr, val, e.ts, e.content))
+                self.facts[(e.user_id, attr)].append(Fact(e.user_id, attr, val, e.ts, e.content, index=e.index))
             for attr in self.extractor.deletions(e.content):
-                self.facts[(e.user_id, attr)].append(Fact(e.user_id, attr, None, e.ts, e.content, deleted=True))
+                self.facts[(e.user_id, attr)].append(Fact(e.user_id, attr, None, e.ts, e.content, deleted=True, index=e.index))
 
     def history(self, user: str, attr: str, before: datetime) -> list[Fact]:
         return [f for f in self.facts.get((user, attr), []) if f.ts < before]
