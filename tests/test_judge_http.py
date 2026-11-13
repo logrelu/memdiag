@@ -27,7 +27,9 @@ def server():
                 return
             reply = {"choices": [{"message": {"content": '{"facts": []}'}}],
                      "usage": {"prompt_tokens": 12, "completion_tokens": 5}}
-            data = json.dumps(reply).encode()
+            data = {"empty": json.dumps({"choices": []}).encode(), "html": b"<html>oops</html>",
+                    "null": json.dumps({"choices": [{"message": {"content": None}}]}).encode(),
+                    }.get(body["model"], json.dumps(reply).encode())
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(data)))
@@ -78,3 +80,20 @@ def test_http_error_and_unreachable_endpoint(server):
 def test_base_url_from_environment(monkeypatch):
     monkeypatch.setenv("MEMDIAG_BASE_URL", "http://example.invalid/v1/")
     assert OpenAICompatJudge().base_url == "http://example.invalid/v1"
+
+
+def test_malformed_responses_raise_judge_unavailable(server):
+    url, _ = server
+    for model in ("empty", "html"):
+        for as_json in (True, False):
+            with pytest.raises(JudgeUnavailable, match="unexpected response"):
+                OpenAICompatJudge(model, base_url=url).ask(P, as_json=as_json, message="m")
+    r = OpenAICompatJudge("null", base_url=url).ask(P, message="m")  # null content is empty text
+    assert r.text == ""
+
+
+def test_seed_can_be_omitted_and_endpoint_is_in_cache_identity(server):
+    url, seen = server
+    OpenAICompatJudge(base_url=url, seed=None).ask(P, message="m")
+    assert "seed" not in seen[0]["body"]
+    assert OpenAICompatJudge(base_url="http://a/v1").cache_identity != OpenAICompatJudge(base_url="http://b/v1").cache_identity

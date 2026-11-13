@@ -38,6 +38,9 @@ class JudgeResult:
     completion_tokens: int = 0
 
 
+_CACHE_FIELDS = {"text", "data", "model", "prompt_id", "prompt_version"}
+
+
 class Usage:
     """Calls, cache hits, seconds and tokens per role, for the cost line at the end of every run."""
 
@@ -74,9 +77,10 @@ class DiskCache:
     def get(self, key: str) -> Optional[dict]:
         path = self.dir / f"{key}.json"
         try:
-            return json.loads(path.read_text())
-        except (FileNotFoundError, json.JSONDecodeError):
-            return None
+            value = json.loads(path.read_text())
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            return None  # a missing or corrupt entry is a miss
+        return value if isinstance(value, dict) and _CACHE_FIELDS <= value.keys() else None
 
     def put(self, key: str, value: dict) -> None:
         # Write to a temp file and rename, so a crash never leaves a half-written entry.
@@ -87,10 +91,18 @@ class DiskCache:
 
 
 def parse_json(text: str) -> Optional[dict]:
-    """A JSON object from model output, tolerating prose or code fences around it."""
-    for candidate in (text, *re.findall(r"\{.*\}", text, re.S)):
+    """The first JSON object in model output, tolerating prose or code fences around it.
+
+    A top-level JSON array is not an object, so it returns None rather than an element inside it.
+    """
+    text = text or ""
+    stripped = text.strip()
+    if stripped[:1] == "[":
+        return None
+    decoder = json.JSONDecoder()
+    for start in (m.start() for m in re.finditer(r"\{", text)):
         try:
-            data = json.loads(candidate)
+            data, _ = decoder.raw_decode(text, start)
         except json.JSONDecodeError:
             continue
         if isinstance(data, dict):
@@ -101,6 +113,11 @@ def parse_json(text: str) -> Optional[dict]:
 class Judge:
     model = "unknown"
 
+    @property
+    def cache_identity(self) -> str:
+        """What makes two judges' answers interchangeable in the cache (model, plus endpoint where relevant)."""
+        return self.model
+
     def __init__(self, cache: Optional[DiskCache] = None):
         self.cache = cache
         self.usage = Usage()
@@ -108,10 +125,13 @@ class Judge:
     def ask(self, prompt: Prompt, role: str = "", as_json: bool = False, **fields) -> JudgeResult:
         text = prompt.render(**fields)
         role = role or prompt.id
-        key = DiskCache.key(self.model, prompt.id, prompt.version, text, as_json)
+        key = DiskCache.key(self.cache_identity, prompt.id, prompt.version, text, as_json)
         hit = self.cache.get(key) if self.cache else None
         if hit is not None:
-            result = JudgeResult(**{**hit, "role": role, "cached": True, "seconds": 0.0})
+            # A hit costs nothing: zero the time and tokens so the usage line only counts real calls.
+            known = {k: v for k, v in hit.items() if k in JudgeResult.__dataclass_fields__}
+            result = JudgeResult(**{**known, "role": role, "cached": True, "seconds": 0.0,
+                                    "prompt_tokens": 0, "completion_tokens": 0})
         else:
             start = time.time()
             out, tokens = self._complete(text, as_json, prompt.id)
@@ -183,12 +203,17 @@ class OpenAICompatJudge(Judge):
     """
 
     def __init__(self, model: str = "qwen2.5:7b", base_url: Optional[str] = None, api_key: Optional[str] = None,
-                 timeout: float = 600, cache: Optional[DiskCache] = None):
+                 timeout: float = 600, cache: Optional[DiskCache] = None, seed: Optional[int] = 0):
         super().__init__(cache)
         self.model = model
+        self.seed = seed  # some servers reject `seed`; pass None to omit it
         self.base_url = (base_url or os.environ.get("MEMDIAG_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
         self._api_key = api_key or os.environ.get("MEMDIAG_API_KEY") or os.environ.get("OPENAI_API_KEY")
         self.timeout = timeout
+
+    @property
+    def cache_identity(self) -> str:
+        return f"{self.base_url}|{self.model}|seed={self.seed}"
 
     def __repr__(self) -> str:
         return f"OpenAICompatJudge(model={self.model!r}, base_url={self.base_url!r})"  # never the key
@@ -197,7 +222,9 @@ class OpenAICompatJudge(Judge):
         import urllib.error
         import urllib.request
 
-        body = {"model": self.model, "temperature": 0, "seed": 0, "messages": [{"role": "user", "content": text}]}
+        body = {"model": self.model, "temperature": 0, "messages": [{"role": "user", "content": text}]}
+        if self.seed is not None:
+            body["seed"] = self.seed
         if as_json:
             body["response_format"] = {"type": "json_object"}
         headers = {"Content-Type": "application/json"}
@@ -207,7 +234,7 @@ class OpenAICompatJudge(Judge):
         req = urllib.request.Request(url, json.dumps(body).encode(), headers)
         try:
             with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                reply = json.load(resp)
+                raw = resp.read()
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode(errors="replace")[:300]
             raise JudgeUnavailable(f"{url} returned HTTP {exc.code}: {detail}") from None
@@ -215,6 +242,11 @@ class OpenAICompatJudge(Judge):
             raise JudgeUnavailable(
                 f"Could not reach a model at {url} ({getattr(exc, 'reason', exc)}). For a local model run "
                 f"`ollama serve` and `ollama pull {self.model}`, or set MEMDIAG_BASE_URL.") from None
+        try:
+            reply = json.loads(raw)
+            content = reply["choices"][0]["message"]["content"] or ""
+        except (ValueError, KeyError, IndexError, TypeError):
+            raise JudgeUnavailable(f"{url} returned an unexpected response: {raw[:300]!r}") from None
         usage = reply.get("usage") or {}
-        return reply["choices"][0]["message"]["content"], {
+        return content, {
             "prompt_tokens": usage.get("prompt_tokens", 0), "completion_tokens": usage.get("completion_tokens", 0)}
