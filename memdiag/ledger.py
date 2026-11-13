@@ -135,9 +135,13 @@ def without_code(text: str) -> str:
     return re.sub(r"```.*?(```|$)", " ", text, flags=re.S)
 
 
+QUOTE_MARKS = "\"'“”‘’«»`"
+
+
 def quote_span(quote: str, text: str) -> Optional[str]:
-    """The exact span of `text` that `quote` matches, ignoring case and runs of whitespace; None if absent."""
-    words = (quote or "").split()
+    """The exact span of `text` that `quote` matches, ignoring case, runs of whitespace and quotation marks a
+    model wrapped around it; None if absent."""
+    words = (quote or "").strip().strip(QUOTE_MARKS).strip().split()
     if not words:
         return None
     m = re.search(r"\s+".join(map(re.escape, words)), text, re.I)
