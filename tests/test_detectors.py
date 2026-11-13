@@ -175,3 +175,46 @@ def test_reask_pattern_needs_the_right_subject():
                                      "quote": "My daughter Maya is 7"}]})
     judge = FakeJudge({"extract_facts": extract, "check_reask": '{"asks_again": []}'})
     assert [f for f in run(_ev(rows), judge=judge)["findings"] if f["type"] == "RECALL_MISS"] == []
+
+
+def _metrics_ok(res):
+    for m in res["metrics"].values():
+        assert m["failures"] <= m["opportunities"], m
+
+
+def test_legacy_stale_on_a_loan_is_an_opportunity():
+    # Review case: the reply never says "open"/"paid_off", so only the rule finding sees it.
+    for reply in ("Your car loan balance is $5,000.", "Your car loan payment is due Friday."):
+        res = run(_ev([["dev", "user", "I have a car loan."], ["dev", "assistant", "ok"],
+                       ["dev", "user", "I just paid off my car loan."], ["dev", "assistant", reply]]))
+        m = res["metrics"]["fact_currency"]
+        assert (m["failures"], m["opportunities"]) == (1, 1), reply
+        _metrics_ok(res)
+
+
+def test_decimal_income_stale_is_an_opportunity():
+    res = run(_ev([["dev", "user", "My salary is $85,000.50."], ["dev", "user", "My salary is now $95k."],
+                   ["dev", "assistant", "Your income of $85000.50 qualifies."]]))
+    _metrics_ok(res)
+    assert res["metrics"]["fact_currency"]["failures"] == 1
+
+
+def test_mentions_respects_units_times_cues_and_text():
+    assert not mentions("I have 7 days off", "7 years")
+    assert mentions("She is 7 years old", "7 years")
+    assert not mentions("At 7:30 pm", "7", "age")
+    assert not mentions("A $85,000 down payment works", "85000", "income")
+    assert mentions("Your $85,000 salary works", "85000", "income")
+    assert not mentions("room 123 elm", "123 Elm St") and mentions("We're at 123 Elm St now", "123 Elm St")
+    assert not mentions("I have 17 cats", "7")
+
+
+def test_reask_subject_must_be_named():
+    rows = [["u1", "user", "I am 40 and my daughter Maya is 7."],
+            ["u1", "assistant", "How old is your car? How old is he? How old is your daughter?"]]
+    facts = json.dumps({"facts": [{"subject": "user", "attribute": "age", "value": "40", "quote": "I am 40"},
+                                  {"subject": "daughter", "attribute": "age", "value": "7", "quote": "my daughter Maya is 7"},
+                                  {"subject": "daughter", "attribute": "name", "value": "Maya", "quote": "my daughter Maya"}]})
+    judge = FakeJudge({"extract_facts": facts, "check_reask": '{"asks_again": []}'})
+    found = {(f["attribute"], f["failing_quote"]) for f in run(_ev(rows), judge=judge)["findings"] if f["type"] == "RECALL_MISS"}
+    assert found == {("daughter.age", "How old is your daughter?")}  # not user.age, not "he", not the car

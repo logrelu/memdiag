@@ -50,7 +50,7 @@ def compute_metrics(findings: list[dict], opportunities: dict) -> dict[str, Metr
     # (a mention, not an assertion) count in fact_currency instead. Findings without a detector are legacy.
     on_assertions = Counter(f["category"] for f in findings if f.get("detector", "rules.").startswith("rules."))
     # fact_currency: one failure per (turn, fact), matching its per-(turn, fact) denominator.
-    stale_pairs = len({(f["user_id"], f.get("failing_turn", f["ts"]), _key(f["attribute"]))
+    stale_pairs = len({(f.get("failing_turn", f["ts"]), _key(f["attribute"]))
                        for f in findings if f["category"] == "stale_memory"})
     currency_opp = opportunities.get("updated_key_mentions", opportunities.get("update_assertions", 0))
     # A turn that re-asks for several known facts is one failure, matching the per-turn denominator.

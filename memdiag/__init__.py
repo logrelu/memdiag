@@ -28,13 +28,16 @@ def load_events(path) -> list[Event]:
     return [Event.from_dict(d, i) for i, d in enumerate(load_jsonl(path))]
 
 
+def _fact_key(attribute: str) -> str:
+    from .ledger import normalize_key
+    return attribute if "." in attribute else normalize_key("user", attribute)
+
+
 def _merge(legacy: list[Finding], extra: list[Finding]) -> list[Finding]:
     """Legacy rule findings plus ledger findings, minus duplicates (same turn, type and fact key)."""
-    from .ledger import normalize_key
 
     def ident(f: Finding):
-        key = f.attribute if "." in f.attribute else normalize_key("user", f.attribute)
-        return f.failing_turn, f.type, key
+        return f.failing_turn, f.type, _fact_key(f.attribute)
 
     seen = {ident(f) for f in legacy}
     merged = legacy + [f for f in extra if ident(f) not in seen]
@@ -64,7 +67,11 @@ def run(events: list[Event], docs=None, judge=None) -> dict:
     by_index = {e.index: e for e in events}
     for f in findings:
         f.location = locate(f, by_index[f.failing_turn], ledger)
-    stats["opportunities"]["updated_key_mentions"] = ledger_opp["updated_key_mentions"]
+    # Every stale finding's (turn, fact) is an opportunity, even when the ledger's mention check missed it
+    # (a rule assertion about a loan never says "paid_off"), so failures can never exceed opportunities.
+    pairs = set(ledger_opp["updated_pairs"]) | {(f.failing_turn, _fact_key(f.attribute))
+                                                for f in findings if f.category == "stale_memory"}
+    stats["opportunities"]["updated_key_mentions"] = len(pairs)
     # Re-asks are checked over ledger facts (pattern attributes, or any fact with a judge). The ledger holds
     # every rule fact, so this count includes every turn the legacy re-ask rule could flag.
     stats["opportunities"]["legacy_known_fact_turns"] = stats["opportunities"]["known_fact_turns"]

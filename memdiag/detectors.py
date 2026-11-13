@@ -23,28 +23,34 @@ REPAIR = re.compile(
     r"did you forget|you forgot|no,? i meant|i said\b[^.?!]*\bnot\b)|\bremember\?", re.I)
 
 
-# Questions that ask for an attribute, for re-ask detection over any ledger key (not only the legacy four).
-REASK_PATTERNS = {
-    "age": r"\bhow old\b|\bwhat(?:'s| is) (?:your|his|her|their) age\b",
-    "name": r"\bwhat(?:'s| is) (?:your|his|her|their) name\b",
-    "birthday": r"\bwhen(?:'s| is) (?:your|his|her|their) birthday\b",
-    "interest": r"\bwhat (?:is|are|'s) (?:he|she|they|you) (?:into|interested in)\b|\bwhat does (?:he|she) like\b|"
-                r"\bwhat do (?:you|they) like\b",
+# Questions that ask for an attribute, split by who is asked about. A user pattern must address "you"; a
+# pattern about someone else only counts when the question names that person (their relation or known
+# name). Pronoun-only questions ("How old is he?") are left to the judge: rules must be precise.
+USER_REASK = {
+    "age": r"\bhow old are you\b|\bwhat(?:'s| is) your age\b",
+    "name": r"\bwhat(?:'s| is) your name\b",
+    "birthday": r"\bwhen(?:'s| is) your birthday\b",
+    "interest": r"\bwhat are you (?:into|interested in)\b|\bwhat do you like\b",
     "city": r"\bwhere do you live\b|\bwhat city (?:are you in|do you live in)\b|\bwhere are you located\b",
     "employer": r"\bwhere do you work\b|\bwho do you work for\b|\bwho is your employer\b",
     "job_title": r"\bwhat do you do for (?:a living|work)\b|\bwhat(?:'s| is) your (?:job|role|occupation)\b",
     "income": r"\bwhat(?:'s| is) your (?:annual )?(?:income|salary)\b|\bhow much do you (?:make|earn)\b",
     "credit_score": r"\bwhat(?:'s| is) your credit score\b",
 }
+OTHER_REASK = {
+    "age": r"\bhow old (?:is|'s)\b|\bwhat(?:'s| is) (?:his|her|their)\b.*\bage\b",
+    "name": r"\bwhat(?:'s| is) (?:his|her|their|your \w+'s) name\b",
+    "birthday": r"\bwhen(?:'s| is)\b.*\bbirthday\b",
+    "interest": r"\bwhat (?:is|'s) (?:he|she|\w+) (?:into|interested in)\b|\bwhat does (?:he|she|\w+) like\b",
+}
+REASK_ATTRIBUTES = set(USER_REASK) | set(OTHER_REASK)
 
 
-def _asks_about(sentence_text: str, subject: str, names: list[str]) -> bool:
-    """Is a question sentence about this subject: 'you' for the user, the relation or a known name otherwise."""
-    words = set(tokens(sentence_text))
-    if subject == "user":
-        return bool(words & {"you", "your", "yours"})
-    return subject.replace("_", " ") in " ".join(tokens(sentence_text)) or any(
-        set(tokens(n)) <= words for n in names) or bool(words & {"he", "she", "his", "her", "they", "their"})
+def _names_person(question: str, subject: str, names: list[str]) -> bool:
+    """Does the question name this person: their relation ("your daughter") or a known name ("Maya")?"""
+    words = tokens(question)
+    joined = " ".join(words)
+    return subject.replace("_", " ") in joined or any(n and set(tokens(n)) <= set(words) for n in names)
 
 
 def rule_reasks(reply: str, live: dict, ledger: Ledger, user: str, before_turn: int) -> list[tuple[str, str]]:
@@ -54,26 +60,56 @@ def rule_reasks(reply: str, live: dict, ledger: Ledger, user: str, before_turn: 
     hits = []
     for key in sorted(live):
         subject, _, attribute = key.partition(".")
-        pattern = REASK_PATTERNS.get(attribute)
+        pattern = (USER_REASK if subject == "user" else OTHER_REASK).get(attribute)
         if not pattern:
             continue
         names = [people[subject]] if subject in people else []
         for q in questions:
-            if re.search(pattern, q, re.I) and _asks_about(q, subject, names):
+            if re.search(pattern, q, re.I) and (subject == "user" or _names_person(q, subject, names)):
                 hits.append((key, q))
                 break
     return hits
 
 
-def mentions(text: str, value: str) -> bool:
-    """Does `text` mention `value`? Numbers match by value ($140k == 140000); text as a token sequence."""
-    n, _ = number_and_unit(value)
-    if n is not None:
-        return any(abs(x - abs(n)) < 1e-9 for x in numbers(text))
-    want, have = tokens(value), tokens(text)
-    if not want:
-        return False
-    return any(have[i:i + len(want)] == want for i in range(len(have) - len(want) + 1))
+UNITS = {"year", "years", "yr", "yrs", "month", "months", "week", "weeks", "day", "days", "percent", "pct",
+         "kg", "lb", "lbs", "mile", "miles", "km", "dollar", "dollars", "usd", "k"}
+# A bare number only counts as a mention of an attribute when its sentence is about that attribute, so a
+# "$85,000 down payment" is not a mention of an $85,000 income.
+CUES = {
+    "income": {"income", "salary", "make", "earn", "earning", "earnings", "pay", "paid", "annual"},
+    "credit_score": {"score", "credit", "fico"},
+    "age": {"age", "old", "turn", "turns", "turning", "aged"},
+    "balance": {"balance", "owe", "owed", "debt"},
+}
+
+
+def _has_sequence(have: list[str], want: list[str]) -> bool:
+    return bool(want) and any(have[i:i + len(want)] == want for i in range(len(have) - len(want) + 1))
+
+
+def mentions(text: str, value: str, attribute: str = "") -> bool:
+    """Does `text` mention `value` (as the value of `attribute`)?
+
+    Plain numbers match by value ($140k == 140000), never inside a clock time, and with their unit if the value
+    has one ("7 years" is not "7 days"). A unitless number needs a cue for its attribute in the same sentence
+    when one is known. Anything else ("123 Elm St", "New York") matches as a token sequence.
+    """
+    n, unit = number_and_unit(value)
+    unit_words = unit.split()
+    if n is None or (unit_words and not set(unit_words) <= UNITS):
+        return _has_sequence(tokens(text), tokens(value))
+    cues = CUES.get(attribute, set())
+    for part in re.split(r"(?<=[.!?;])\s+", text):
+        clean = re.sub(r"\d+:\d+", " ", part)  # 7:30 is a time, not a 7
+        if not any(abs(x - abs(n)) < 1e-9 for x in numbers(clean)):
+            continue
+        words = tokens(clean)
+        if unit_words and not set(unit_words) & set(words):
+            continue
+        if not unit_words and cues and not cues & set(words):
+            continue
+        return True
+    return False
 
 
 def _finding(category: str, a: Event, detector: str, key: str, **kw) -> Finding:
@@ -82,12 +118,13 @@ def _finding(category: str, a: Event, detector: str, key: str, **kw) -> Finding:
 
 
 def detect_with_ledger(events: list[Event], ledger: Ledger, judge=None) -> tuple[list[Finding], dict]:
-    """STALE_FACT, RECALL_MISS (judge mode) and USER_REPAIR findings, plus their opportunity counts."""
+    """STALE_FACT, RECALL_MISS and USER_REPAIR findings, plus opportunities: the (turn, key) pairs where a reply
+    mentions an updated fact, and the number of turns with a checkable live fact."""
     events = sorted(events, key=lambda e: (e.ts, e.index))
     stale_prompt = load_prompt("check_stale") if judge is not None else None
     reask_prompt = load_prompt("check_reask") if judge is not None else None
     findings: list[Finding] = []
-    opp = {"updated_key_mentions": 0, "live_fact_turns": 0}
+    opp = {"updated_pairs": set(), "live_fact_turns": 0}
 
     for i, a in enumerate(events):
         if a.role != "assistant":
@@ -103,11 +140,12 @@ def detect_with_ledger(events: list[Event], ledger: Ledger, judge=None) -> tuple
             old = [h for h in ledger.history(a.user_id, key, before_turn=a.index) if not values_equal(h.value, cur.value)]
             if not old:
                 continue
-            said_old = [h for h in old if mentions(a.content, h.value)]
-            said_cur = mentions(a.content, cur.value)
+            attr = key.partition(".")[2]
+            said_old = [h for h in old if mentions(a.content, h.value, attr)]
+            said_cur = mentions(a.content, cur.value, attr)
             if not (said_old or said_cur):
                 continue
-            opp["updated_key_mentions"] += 1
+            opp["updated_pairs"].add((a.index, key))
             if not said_old or said_cur:
                 continue
             prev = said_old[-1]
@@ -128,7 +166,7 @@ def detect_with_ledger(events: list[Event], ledger: Ledger, judge=None) -> tuple
         # ---- RECALL_MISS (reask): rule patterns over any live fact, plus the judge for what patterns miss ----
         if live:
             reaskable = live if judge is not None else {k: v for k, v in live.items()
-                                                       if k.partition(".")[2] in REASK_PATTERNS}
+                                                       if k.partition(".")[2] in REASK_ATTRIBUTES}
             if reaskable:
                 opp["live_fact_turns"] += 1
             asked: dict[str, tuple[str, str, float]] = {}  # key -> (quote, detector, confidence)
@@ -157,7 +195,7 @@ def detect_with_ledger(events: list[Event], ledger: Ledger, judge=None) -> tuple
         # ---- USER_REPAIR: the user's next message repeats or corrects ----
         nxt = _next_user_msg(events, i)
         if nxt is not None and REPAIR.search(nxt.content):
-            key = next((k for k, v in sorted(live.items()) if mentions(nxt.content, v.value)), "")
+            key = next((k for k, v in sorted(live.items()) if mentions(nxt.content, v.value, k.partition(".")[2])), "")
             findings.append(_finding(
                 "user_repair", a, "rules.repair_phrase", key, failing_quote=a.content.strip(),
                 evidence_turns=[nxt.index], evidence_quote=sentence(nxt.content, pattern=REPAIR.pattern),
@@ -175,4 +213,4 @@ def locate(f: Finding, event: Event, ledger: Ledger) -> Optional[str]:
     if cur is None:
         return None
     memory_text = " ".join(str(m.get("text", "")) for m in event.memory if isinstance(m, dict))
-    return "use" if mentions(memory_text, cur.value) else "retrieve"
+    return "use" if mentions(memory_text, cur.value, key.partition(".")[2]) else "retrieve"
