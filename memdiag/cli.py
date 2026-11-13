@@ -101,7 +101,12 @@ def _ledger(args) -> int:
     s = ledger.stats
     superseded = sum(1 for i in ledger.items if i.superseded_by in by_id)
     print(f"\n{s['items']} facts from {s['messages']} user messages ({s['llm_messages']} sent to the model), "
-          f"{superseded} updates, {s['dropped']} model facts dropped (quote not in the message or incomplete)")
+          f"{superseded} updates, {s['dropped']} facts dropped")
+    reasons: dict[str, int] = {}
+    for d in ledger.dropped:
+        reasons[d["reason"]] = reasons.get(d["reason"], 0) + 1
+    for reason, n in sorted(reasons.items(), key=lambda kv: -kv[1]):
+        print(f"  dropped {n}: {reason}")
     if judge is not None:
         print(judge.usage.summary())
     if args.out:

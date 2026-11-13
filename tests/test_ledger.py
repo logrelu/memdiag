@@ -101,3 +101,20 @@ def test_cli_ledger_bad_inputs_exit_2(tmp_path, capsys):
     bad.write_text('{"user_id": "u", "role": "user", "content": "x", "ts": "2026-01-01T00:00:00"}\nnot json\n')
     assert main(["ledger", str(bad)]) == 2
     assert "line 2 is not valid JSON" in capsys.readouterr().err
+
+
+def test_known_people_are_passed_to_the_extractor():
+    seen = []
+
+    def reply(text):
+        seen.append(text)
+        if text.endswith("My daughter Maya loves chess."):
+            return json.dumps({"facts": [{"subject": "daughter", "attribute": "name", "value": "Maya",
+                                          "quote": "My daughter Maya"}]})
+        return json.dumps({"facts": [{"subject": "daughter", "attribute": "age", "value": "7", "quote": "Maya turns 7"}]})
+
+    events = _events([["u1", "user", "My daughter Maya loves chess."], ["u1", "user", "Maya turns 7 next month, she says."]])
+    ledger = build_ledger(events, judge=FakeJudge({"extract_facts": reply}))
+    assert "- (none yet)" in seen[0] and "- daughter: Maya" in seen[1]
+    assert ledger.current("u1", "daughter.age").value == "7"
+    assert ledger.known_people("u1") == [("daughter", "Maya")]
