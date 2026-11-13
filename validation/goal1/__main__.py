@@ -40,7 +40,11 @@ def main(argv=None) -> int:
     p.add_argument("--data", default=str(ROOT / "experiments/data/longmemeval_s_cleaned.json"))
     p.add_argument("--suite", default=str(ROOT / "validation/data/goal1_suite.jsonl"))
     p.add_argument("--rebuild", action="store_true")
+    p.add_argument("--report-only", action="store_true", help="regenerate docs/validation.md from saved results")
     args = p.parse_args(argv)
+    if args.report_only:
+        write_report(ROOT / "validation/results", ROOT / "docs/validation.md")
+        return 0
 
     data = Path(args.data)
     if not data.exists():

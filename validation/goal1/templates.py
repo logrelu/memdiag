@@ -75,6 +75,9 @@ REPAIR_CONTROL = [T("p_n1", DEV, "Thanks, that helps!"), T("p_n2", HELDOUT, "Gre
 
 
 def pick(pool: list[dict], split: str, rng) -> dict:
-    """A template from the pool for this split (falls back to the whole pool only if a split has none)."""
-    options = [t for t in pool if t["split"] == split] or pool
+    """A template from the pool for this split. A pool without one for the split is a bug, never a fallback:
+    falling back would leak dev phrasing into held-out cases."""
+    options = [t for t in pool if t["split"] == split]
+    if not options:
+        raise ValueError(f"no {split} template in pool {[t['id'] for t in pool]}")
     return rng.choice(options)
