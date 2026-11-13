@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import math
-import re
 from collections import Counter
 from typing import Optional
 
@@ -10,42 +9,12 @@ from .extract import FORGOTTEN_QUESTIONS, RuleExtractor, claims, is_complaint, i
 from dataclasses import replace
 
 from .schema import Event, Finding
+from .text import sentence as _sentence
 from .timeline import Timeline
 
 CONTEXT_OVERLOAD_TOKENS = 32000
 REASKABLE = set(FORGOTTEN_QUESTIONS)  # attributes the rule extractor can spot a re-ask for
 DETECTOR_VERSION = "1"  # bump when a rule changes what it flags
-
-
-def _sentence(text: str, hint: str = "", pattern: str = "") -> str:
-    """The sentence of `text` that contains `hint` (or matches `pattern`); the whole text if none does.
-
-    Always a verbatim substring of `text`, so it can be quoted as evidence.
-    """
-    parts = [p for p in re.split(r"(?<=[.!?])\s+", text) if p.strip()]
-    for p in parts:
-        if (pattern and re.search(pattern, p, re.I)) or (hint and hint.lower() in p.lower()):
-            return p.strip()
-    # Numeric values are normalized ("$140k" asserted as "140000"): match the same number, not a prefix.
-    target = _number(hint)
-    if target is not None:
-        for p in parts:
-            if target in _numbers(p):
-                return p.strip()
-    return text.strip()
-
-
-def _number(s: str) -> Optional[float]:
-    found = _numbers(s)
-    return found[0] if len(found) == 1 else None
-
-
-def _numbers(s: str) -> list[float]:
-    out = []
-    for num, suffix in re.findall(r"(\d[\d,]*(?:\.\d+)?)\s*([kKmM]?)\b", s):
-        v = float(num.replace(",", ""))
-        out.append(v * {"k": 1e3, "m": 1e6}.get(suffix.lower(), 1))
-    return out
 
 
 class BM25:
