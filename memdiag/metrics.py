@@ -76,6 +76,9 @@ def compute_metrics(findings: list[dict], opportunities: dict) -> dict[str, Metr
         _metric("recall_continuity",
                 "Share of turns, after the user gave a fact, where the agent did not re-ask for it",
                 reask_turns, opportunities.get("known_fact_turns", 0)),
+        _metric("constraint_retention",
+                "Share of checks where a reply kept an instruction the user gave earlier in the session",
+                count.get("constraint_drop", 0), opportunities.get("constraint_turn_pairs", 0)),
     ]
     return {m.name: m for m in metrics}
 

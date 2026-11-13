@@ -54,6 +54,7 @@ def run(events: list[Event], docs=None, judge=None) -> dict:
     With a judge (memdiag.judge), the ledger also uses the LLM extractor and the ledger detectors confirm
     candidates with one specific question each. Without one, everything is rule-based.
     """
+    from .constraints import detect_constraints
     from .detectors import detect_with_ledger, locate
     from .ledger import build_ledger
 
@@ -63,7 +64,9 @@ def run(events: list[Event], docs=None, judge=None) -> dict:
     findings, tl, stats = diagnose(events, docs, ex)
     ledger = build_ledger(events, judge=judge, extractor=ex)
     extra, ledger_opp = detect_with_ledger(events, ledger, judge)
-    findings = _merge(findings, extra)
+    dropped, constraint_pairs = detect_constraints(events)
+    findings = _merge(findings, extra + dropped)
+    stats["opportunities"]["constraint_turn_pairs"] = constraint_pairs
     by_index = {e.index: e for e in events}
     for f in findings:
         f.location = locate(f, by_index[f.failing_turn], ledger)

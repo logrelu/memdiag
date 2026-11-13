@@ -33,6 +33,7 @@ NA_REASONS = {
     "deletion_compliance": "no user asked to forget anything",
     "user_isolation": "no two users stated the same kind of fact",
     "recall_continuity": "no assistant turn came after a fact it could have re-asked",
+    "constraint_retention": "no reply came after a checkable instruction (word limit, language, format, banned word)",
 }
 RULE_ATTRIBUTES = "city, employer, income, credit score and loans"
 
