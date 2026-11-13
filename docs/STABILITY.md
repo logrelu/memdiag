@@ -27,7 +27,7 @@ opportunities is `None`.
 
 | Metric | Status | Failures / opportunities |
 |---|---|---|
-| `fact_recall` | proposed; renames existing `recall_continuity` | `RECALL_MISS` / assistant turns with a relevant earlier fact (the current `recall_continuity` denominator is broken; see the fix PR) |
+| `fact_recall` | proposed; renames existing `recall_continuity` | `RECALL_MISS` / assistant turns with a relevant earlier fact (today: assistant turns where the user had given a re-askable fact; see `docs/metrics.md`) |
 | `fact_currency` | proposed (exists) | `STALE_FACT` / assertions about an attribute the user has changed at least once |
 | `constraint_retention` | proposed | violations / (constraint, turn) pairs in scope |
 | `groundedness` | proposed (exists) | `HALLUCINATED_MEMORY` / user-fact assertions |
