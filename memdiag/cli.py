@@ -33,6 +33,10 @@ def main(argv=None):
     d.add_argument("traces", help="Log file: memdiag events JSONL, OpenAI-style conversations, or LongMemEval items")
     d.add_argument("--format", default="auto", choices=FORMATS, help="Log format (default: detect from the file)")
     d.add_argument("--docs", help="JSONL of knowledge-base docs: id, text")
+    d.add_argument("--model", help="Use this model as extractor and judge via an OpenAI-compatible endpoint "
+                                   "(default endpoint: local Ollama). Without it, rules only.")
+    d.add_argument("--base-url", help="Model endpoint, e.g. http://localhost:11434/v1 (or MEMDIAG_BASE_URL)")
+    d.add_argument("--cache", default=".memdiag_cache", help="Judge cache directory (default: .memdiag_cache)")
 
     lg = sub.add_parser("ledger", help="Show the facts each user stated, with updates and deletions")
     lg.add_argument("traces", help="Log file in any supported format")
@@ -57,9 +61,11 @@ def main(argv=None):
     if args.cmd == "ledger":
         return _ledger(args)
     if args.cmd == "diagnose":
+        from .judge import DiskCache, JudgeUnavailable, OpenAICompatJudge
+        judge = OpenAICompatJudge(args.model, base_url=args.base_url, cache=DiskCache(args.cache)) if args.model else None
         try:
-            res = run_files(args.traces, args.docs, args.format)
-        except (OSError, ValueError) as exc:
+            res = run_files(args.traces, args.docs, args.format, judge=judge)
+        except (OSError, ValueError, JudgeUnavailable) as exc:
             print(f"memdiag: {exc}", file=sys.stderr)
             return 2
     else:
@@ -72,6 +78,8 @@ def main(argv=None):
             print(f"Wrote {out}/traces.jsonl and {out}/docs.jsonl")
         res = run([Event.from_dict(t, i) for i, t in enumerate(TRACES)], DOCS)
     _emit(res, args)
+    if args.cmd == "diagnose" and judge is not None:
+        print(f"Judge: {judge.model} at {judge.base_url}\n{judge.usage.summary()}")
     return _gate(res, args.fail_under)
 
 
