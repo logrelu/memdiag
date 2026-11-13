@@ -12,7 +12,7 @@ a PR that edits this file, and the PR description says why.
 |---|---|---|
 | `RECALL_MISS` | proposed | modes: `reask`, `ignored`; mode `reask` is currently `forgotten_memory` |
 | `STALE_FACT` | proposed | currently `stale_memory` |
-| `CONSTRAINT_DROP` | proposed | |
+| `CONSTRAINT_DROP` | proposed | since M5c, rule-checkable kinds only; `attribute` is `constraint.<kind>` |
 | `USER_REPAIR` | proposed | a signal; never a score on its own |
 | `HALLUCINATED_MEMORY` | proposed | currently `hallucinated_memory` in `detect.py` |
 | `DELETION_VIOLATION` | proposed | currently `failed_deletion` |
@@ -33,7 +33,7 @@ opportunities is `None`.
 |---|---|---|
 | `fact_recall` | proposed; renames existing `recall_continuity` | `RECALL_MISS` / assistant turns with a relevant earlier fact (today: assistant turns where the user had given a re-askable fact; see `docs/metrics.md`) |
 | `fact_currency` | proposed (exists) | `STALE_FACT` (reply, fact) pairs / (reply, fact) pairs mentioning any value of a fact the user updated |
-| `constraint_retention` | proposed | violations / (constraint, turn) pairs in scope |
+| `constraint_retention` | proposed (since M5c) | `CONSTRAINT_DROP` / (instruction, reply) pairs checked in the same session |
 | `groundedness` | proposed (exists) | `HALLUCINATED_MEMORY` / user-fact assertions |
 | `deletion_compliance` | proposed (exists) | deletion requests violated / deletion requests |
 | `user_isolation` | proposed (exists) | `CROSS_USER_LEAK` / assertions on attributes other users share |
