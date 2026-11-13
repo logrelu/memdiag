@@ -41,6 +41,21 @@ memdiag also reads these formats directly; the format is detected from the file 
 Every finding records the turn it failed on, the earlier turn it contradicts, and verbatim quotes from
 both (`failing_turn`, `evidence_turns`, `failing_quote`, `evidence_quote`), so you can jump straight to it.
 
+## Local LLM mode
+
+Rules alone are fast and free, but they only read a few attributes. Add a local open-source model to
+extract any fact the user states and to confirm candidates:
+
+```bash
+ollama serve & ollama pull qwen2.5:7b
+memdiag diagnose traces.jsonl --model qwen2.5:7b      # any OpenAI-compatible endpoint: --base-url
+memdiag ledger traces.jsonl --model qwen2.5:7b        # what memdiag thinks each user said
+```
+
+Every model call is cached in `.memdiag_cache`, so reruns are free. If your log includes the memory
+context injected into each call (`"memory": [{"id": ..., "text": ...}]`), each failure is also located:
+**retrieve** means the memory never gave the model the fact, and **use** means it did and the model ignored it.
+
 ## Scores
 
 Alongside the findings, every run produces normalized memory metrics (`memory_faithfulness`,
