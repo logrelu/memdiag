@@ -25,3 +25,8 @@ jobs:
         run: |
           memdiag demo --no-color --fail-under groundedness=0.5
           ! memdiag demo --no-color --fail-under memory_faithfulness=0.9
+      - name: Wheel ships the prompt files
+        run: |
+          pip install build
+          python -m build --wheel --outdir dist
+          python -c "import glob, zipfile; names = zipfile.ZipFile(glob.glob('dist/*.whl')[0]).namelist(); assert 'memdiag/prompts/extract_facts.txt' in names, names"
