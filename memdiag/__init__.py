@@ -41,9 +41,15 @@ def _merge(legacy: list[Finding], extra: list[Finding]) -> list[Finding]:
 
     seen = {ident(f) for f in legacy}
     merged = legacy + [f for f in extra if ident(f) not in seen]
-    repaired = {f.failing_turn for f in merged if f.category == "user_repair"}
-    for f in merged:  # the user had to repeat themselves: more confidence it was a memory failure
-        if f.failing_turn in repaired and f.failure_class == "memory":
+    # The user had to repeat themselves: more confidence in a memory failure on that turn, about the fact they
+    # repeated (or any memory failure there, when the repair names no known fact).
+    repaired: dict[int, set] = {}
+    for f in merged:
+        if f.category == "user_repair":
+            repaired.setdefault(f.failing_turn, set()).add(f.attribute)
+    for f in merged:
+        keys = repaired.get(f.failing_turn)
+        if keys and f.failure_class == "memory" and ("" in keys or _fact_key(f.attribute) in keys):
             f.confidence = min(1.0, f.confidence + 0.25)
     return sorted(merged, key=lambda f: (f.ts, f.failing_turn))
 

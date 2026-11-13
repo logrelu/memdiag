@@ -218,3 +218,13 @@ def test_reask_subject_must_be_named():
     judge = FakeJudge({"extract_facts": facts, "check_reask": '{"asks_again": []}'})
     found = {(f["attribute"], f["failing_quote"]) for f in run(_ev(rows), judge=judge)["findings"] if f["type"] == "RECALL_MISS"}
     assert found == {("daughter.age", "How old is your daughter?")}  # not user.age, not "he", not the car
+
+
+def test_repair_boost_only_for_the_repeated_fact():
+    # Ledger-only stale mentions start at 0.5; the repair names Portland, so only the city finding is boosted.
+    rows = [["maya", "user", "I live in Seattle."], ["maya", "user", "We just moved to Portland."],
+            ["maya", "user", "My salary is $90k."], ["maya", "user", "My salary is now $95k."],
+            ["maya", "assistant", "Seattle weather is rainy, and a $90k salary goes far there."],
+            ["maya", "user", "I already told you, we moved to Portland!"]]
+    by_key = {f["attribute"]: f["confidence"] for f in run(_ev(rows))["findings"] if f["type"] == "STALE_FACT"}
+    assert by_key == {"user.city": 0.75, "user.income": 0.5}
