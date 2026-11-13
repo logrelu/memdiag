@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+- New `memdiag run LOG [--model M]`: writes `findings.jsonl` and an HTML report with each failing turn next to its evidence turn (quotes highlighted), location, confidence, signals, the ledger, and a "what this report can't see" section. Demo output: `examples/findings_report.html`.
+- Judge quotes wrapped in quotation marks are accepted (a live run lost a confirmed stale fact to this).
 - Ledger detectors run alongside the rules: `STALE_FACT` from mentions of an old value, `RECALL_MISS` re-asks by pattern over any ledger fact (or by the judge), and `USER_REPAIR` signals. When a log carries the injected `memory`, each finding is located at `retrieve` or `use`.
 - `memdiag diagnose --model qwen2.5:7b` runs the LLM extractor and judge (local Ollama by default).
 - `extract_facts` v2 links names to relations ("Maya" -> `daughter`); new prompts `check_stale` v1 and `check_reask` v1.
