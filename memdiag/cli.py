@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 from . import Event, check_thresholds, run, run_files
+from .adapters import FORMATS
 from .report import html_report, json_report, text_report
 
 
@@ -29,7 +30,8 @@ def main(argv=None):
     sub = p.add_subparsers(dest="cmd", required=True)
 
     d = sub.add_parser("diagnose", help="Diagnose an agent's conversation logs")
-    d.add_argument("traces", help="JSONL of messages: user_id, session_id, ts, role, content[, retrieved, context_tokens]")
+    d.add_argument("traces", help="Log file: memdiag events JSONL, OpenAI-style conversations, or LongMemEval items")
+    d.add_argument("--format", default="auto", choices=FORMATS, help="Log format (default: detect from the file)")
     d.add_argument("--docs", help="JSONL of knowledge-base docs: id, text")
 
     m = sub.add_parser("demo", help="Run on built-in synthetic fintech traces")
@@ -44,7 +46,11 @@ def main(argv=None):
 
     args = p.parse_args(argv)
     if args.cmd == "diagnose":
-        res = run_files(args.traces, args.docs)
+        try:
+            res = run_files(args.traces, args.docs, args.format)
+        except ValueError as exc:
+            print(f"memdiag: {exc}", file=sys.stderr)
+            return 2
     else:
         from .demo_data import DOCS, TRACES
         if args.write:
