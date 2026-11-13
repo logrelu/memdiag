@@ -18,6 +18,10 @@ a PR that edits this file, and the PR description says why.
 | `DELETION_VIOLATION` | proposed | currently `failed_deletion` |
 | `CROSS_USER_LEAK` | proposed | currently `cross_user_leak` |
 
+Retrieval and context types from the legacy rules are also emitted, as proposed names: `RETRIEVAL_MISS`
+(currently `retrieval_miss`), `IGNORED_CONTEXT` (`ignored_context`), `CONTEXT_OVERLOAD` (`context_overload`) and
+`UNATTRIBUTED` (`unattributed`).
+
 Failure locations (L2 logs only): `retrieve`, `use`.
 
 ## Metrics
@@ -43,7 +47,14 @@ first finding).
 
 ## Finding fields
 
-Target fields, added in M2. The current `schema.py` uses `category` (becomes `type`) and has no turn indices yet.
+Emitted since M2: `type`, `mode`, `failing_turn`, `evidence_turns`, `failing_quote`, `evidence_quote`,
+`confidence`, `detector`, `detector_version`, `covariates` (`turn_distance`, `context_tokens`). Turn indices are
+positions in the input log. The legacy keys (`category`, `class`, `turn`, `expected`, `got`, `evidence`) are still
+emitted. Whether they stay after v0.2.0 is decided before the freeze.
 
-`type`, `mode`, `failing_turn`, `evidence_turns`, `failing_quote`, `evidence_quote`, `item_id`, `location`,
-`confidence`, `detector`, `detector_version`, `judge_model`, `prompt_version`, `covariates`.
+Still to come: `item_id`, `location` (M5); `judge_model`, `prompt_version` (M3).
+
+## Input fields
+
+Event fields: `user_id`, `session_id`, `ts`, `role`, `content`, and optionally `retrieved`, `memory` and
+`context_tokens`. The adapter formats are `events`, `openai` and `longmemeval`.

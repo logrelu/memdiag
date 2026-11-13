@@ -27,7 +27,19 @@ memdiag diagnose traces.jsonl --docs docs.jsonl --html report.html --json report
  "retrieved": [{"id": "doc_platinum", "text": "..."}], "context_tokens": 2600}
 ```
 
-`retrieved` and `context_tokens` are optional. `docs.jsonl` (optional) is your knowledge base: `{"id": ..., "text": ...}`.
+`retrieved` (RAG documents), `memory` (memory context injected into the call) and `context_tokens` are optional.
+`docs.jsonl` (optional) is your knowledge base: `{"id": ..., "text": ...}`.
+
+memdiag also reads these formats directly; the format is detected from the file (or pass `--format`):
+
+| `--format` | Shape |
+|---|---|
+| `events` | the JSONL above, one message per line |
+| `openai` | one conversation per line: `{"user_id": ..., "session_id": ..., "messages": [{"role": ..., "content": ...}]}`. System and tool messages are skipped, and missing timestamps are filled in order. |
+| `longmemeval` | LongMemEval items (JSON list). Each item becomes one user, with its haystack sessions and the final question. |
+
+Every finding records the turn it failed on, the earlier turn it contradicts, and verbatim quotes from
+both (`failing_turn`, `evidence_turns`, `failing_quote`, `evidence_quote`), so you can jump straight to it.
 
 ## Scores
 
