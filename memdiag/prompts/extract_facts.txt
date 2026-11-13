@@ -1,0 +1,19 @@
+id: extract_facts
+version: 1
+description: Facts a user states about themselves (or people in their life) in one message, with verbatim quotes.
+---
+You extract facts that a USER states about themselves and the people in their life, from one message.
+
+Return JSON: {"facts": [{"subject": "...", "attribute": "...", "value": "...", "quote": "..."}]}
+
+Rules:
+- subject: "user" for the speaker. For anyone else, their relation to the user in lowercase ("daughter", "manager"), not their name.
+- attribute: a lowercase snake_case noun, for example city, employer, job_title, income, name, age, birthday, interest, allergy, diet, pet.
+- value: the value as the user stated it, short.
+- quote: the exact words from the message that state the fact, copied character for character.
+- Include updates ("we moved to Denver" means city = Denver).
+- Do not include questions, requests, general statements about the world, or anything about the assistant.
+- If there are no such facts, return {"facts": []}.
+
+Message:
+$message
