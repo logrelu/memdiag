@@ -53,3 +53,12 @@ def test_pronoun_subjects_name_nobody_and_possessives_stay_distinct():
 def test_values_equal(a, b, equal):
     from memdiag.ledger import values_equal
     assert values_equal(a, b) is equal
+
+
+def test_quote_span_ignores_wrapping_quote_marks():
+    from memdiag.ledger import quote_span
+    reply = "Since you work at Target, yes, Target matches up to 5%."
+    for q in ('"Since you work at Target"', "“Since you work at Target”", "'since you work at target'"):
+        assert quote_span(q, reply) == "Since you work at Target"
+    assert quote_span('"you work at REI"', reply) is None
+    assert quote_span('""', reply) is None
