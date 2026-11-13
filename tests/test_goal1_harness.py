@@ -73,3 +73,17 @@ def test_wilson():
     lo, hi = wilson(17, 20)
     assert 0.6 < lo < 0.7 and 0.94 < hi < 0.96
     assert wilson(0, 0) == (0.0, 0.0)
+
+
+def test_background_findings_shared_with_the_control_do_not_count_as_recall():
+    rows = [{"case_id": "x-dev-000", "type": "STALE_FACT", "split": "dev", "attr": "city", "control": False,
+             "found_turns": [3], "detected": True, "exact_turn": False},
+            {"case_id": "x-dev-000-ctl", "type": "STALE_FACT", "split": "dev", "attr": "city", "control": True,
+             "found_turns": [3], "false_positive": True}]
+    agg = aggregate(rows)["dev|STALE_FACT|all"]
+    assert agg["recall"]["k"] == 0 and agg["false_positive"]["k"] == 1
+
+
+def test_pick_never_falls_back_across_splits():
+    with pytest.raises(ValueError, match="no heldout template"):
+        T.pick([T.T("a", T.DEV, "x")], T.HELDOUT, random.Random(0))

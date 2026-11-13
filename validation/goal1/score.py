@@ -38,8 +38,18 @@ def _rate(k: int, n: int) -> dict:
     return {"k": k, "n": n, "rate": (k / n) if n else None, "ci95": [round(lo, 3), round(hi, 3)]}
 
 
+def net_detected(rows: list[dict]) -> dict[str, bool]:
+    """Recall without background: a positive counts only if it has a finding its paired control (same sessions,
+    no failure injected) does not have on the same turn. Background findings show up on both and cancel out."""
+    controls = {r["case_id"].removesuffix("-ctl"): set(r["found_turns"]) for r in rows if r["control"]}
+    return {r["case_id"]: bool(set(r["found_turns"]) - controls.get(r["case_id"], set()))
+            for r in rows if not r["control"]}
+
+
 def aggregate(rows: list[dict]) -> dict:
     """Per (split, type) and per (split, type, attr): recall, exact-turn accuracy and false-positive rate."""
+    net = net_detected(rows)
+    rows = [dict(r, detected=net[r["case_id"]]) if not r["control"] else r for r in rows]
     groups: dict[tuple, list[dict]] = defaultdict(list)
     for r in rows:
         groups[(r["split"], r["type"], "all")].append(r)
