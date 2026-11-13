@@ -2,6 +2,21 @@
 
 Releases are cut by pushing a tag. `.github/workflows/release.yml` does the rest.
 
+## Release plan
+
+| Release | Contents | Gate |
+|---------|----------|------|
+| v0.2.0rc1 | Release 1 candidate; the first real tag-push run, as a pre-release | Steps below |
+| v0.2.0 | Release 1: validated turn-localized findings (see "Release 1" in `docs/ROADMAP.md`) | Release 1 criteria met and recorded in `docs/validation.md`; `docs/STABILITY.md` frozen |
+
+There is no v0.1.0 tag: public names freeze at the first release, and they are still changing. Bump
+`__version__` to `0.2.0rc1` on the release branch.
+
+Before tagging a release that has success criteria, check each criterion and write the result in
+the PR description. A missed criterion goes in the release notes with the number, not omitted.
+
+## Steps
+
 1. Branch `release/vX.Y.Z` from `main`.
 2. Set `__version__` in `memdiag/__init__.py` (the only place; `pyproject.toml` reads it).
 3. Rename `## Unreleased` in `CHANGELOG.md` to `## X.Y.Z`; these lines become the release notes.
