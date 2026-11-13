@@ -69,3 +69,31 @@ def test_reask_mode_and_same_timestamp_turns_count_separately():
 def test_sentence_falls_back_to_whole_text():
     assert _sentence("No match here", hint="Seattle") == "No match here"
     assert _sentence("A. With your $140k salary, yes.", hint="140000") == "With your $140k salary, yes."
+
+
+def test_numeric_quote_matches_the_number_not_a_prefix():
+    # Review case: "14 days" must not be quoted for an asserted 140000.
+    assert _sentence("Yes. 14 days ok. Total 1,40,000.", hint="140000") == "Total 1,40,000."
+    assert _sentence("Ok. Your $140k salary works.", hint="140000") == "Your $140k salary works."
+
+
+def test_cross_user_leak_has_no_cross_user_turn_distance():
+    rows = [
+        _t("dev", 0, "user", "I live in Austin."),
+        _t("maya", 1, "user", "I live in Seattle."),
+        _t("maya", 2, "assistant", "Since you live in Austin, try UFCU."),
+    ]
+    _, res = _run(rows)
+    (f,) = [f for f in res["findings"] if f["type"] == "CROSS_USER_LEAK"]
+    assert "turn_distance" not in f["covariates"]
+
+
+def test_events_without_indices_are_numbered_in_order():
+    rows = [
+        _t("maya", 0, "user", "I live in Seattle."),
+        _t("maya", 1, "assistant", "Where do you live?"),
+        _t("maya", 2, "assistant", "Where do you live, again?"),
+    ]
+    res = run([Event.from_dict(t) for t in rows])  # every index defaults to 0
+    assert sorted(f["failing_turn"] for f in res["findings"]) == [1, 2]
+    assert res["metrics"]["recall_continuity"]["failures"] == 2

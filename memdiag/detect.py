@@ -7,6 +7,8 @@ from collections import Counter
 from typing import Optional
 
 from .extract import FORGOTTEN_QUESTIONS, RuleExtractor, claims, is_complaint, is_unsure, tokens
+from dataclasses import replace
+
 from .schema import Event, Finding
 from .timeline import Timeline
 
@@ -21,14 +23,29 @@ def _sentence(text: str, hint: str = "", pattern: str = "") -> str:
     Always a verbatim substring of `text`, so it can be quoted as evidence.
     """
     parts = [p for p in re.split(r"(?<=[.!?])\s+", text) if p.strip()]
-    digits = re.sub(r"\D", "", hint)
     for p in parts:
         if (pattern and re.search(pattern, p, re.I)) or (hint and hint.lower() in p.lower()):
             return p.strip()
-    for p in parts:
-        if len(digits) >= 2 and digits[:2] in re.sub(r"\D", "", p):
-            return p.strip()
+    # Numeric values are normalized ("$140k" asserted as "140000"): match the same number, not a prefix.
+    target = _number(hint)
+    if target is not None:
+        for p in parts:
+            if target in _numbers(p):
+                return p.strip()
     return text.strip()
+
+
+def _number(s: str) -> Optional[float]:
+    found = _numbers(s)
+    return found[0] if len(found) == 1 else None
+
+
+def _numbers(s: str) -> list[float]:
+    out = []
+    for num, suffix in re.findall(r"(\d[\d,]*(?:\.\d+)?)\s*([kKmM]?)\b", s):
+        v = float(num.replace(",", ""))
+        out.append(v * {"k": 1e3, "m": 1e6}.get(suffix.lower(), 1))
+    return out
 
 
 class BM25:
@@ -79,6 +96,9 @@ def _prev_user_msg(events: list[Event], i: int) -> Optional[Event]:
 def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
              extractor: Optional[RuleExtractor] = None) -> tuple[list[Finding], Timeline, dict]:
     ex = extractor or RuleExtractor()
+    if len({e.index for e in events}) < len(events):
+        # Events built without explicit indices would all share index 0; number them in input order.
+        events = [replace(e, index=i) for i, e in enumerate(events)]
     events = sorted(events, key=lambda e: (e.ts, e.index))
     tl = Timeline(events, ex)
     docs = docs or []
@@ -113,7 +133,8 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
             if fact is not None and fact.index >= 0:
                 ev_turns = [fact.index]
                 evidence_quote = fact.source
-                cov["turn_distance"] = user_pos[e.index] - user_pos.get(fact.index, user_pos[e.index])
+                if fact.user_id == e.user_id:  # a distance across two users' histories means nothing
+                    cov["turn_distance"] = user_pos[e.index] - user_pos[fact.index]
             elif evidence_turn is not None:
                 ev_turns = [evidence_turn]
             turn_findings.append(Finding(
