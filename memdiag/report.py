@@ -95,6 +95,8 @@ def html_report(res: dict, title: str = "memdiag report") -> str:
     best = s["best_strategy"]
     rows = []
     for f in res["findings"]:
+        if f["class"] == "signal":
+            continue
         cls = {"memory": "mem", "retrieval": "ret"}.get(f["class"], "muted")
         tags = "".join(f' <span class="pill muted">{_e(t)}</span>' for t in f["tags"])
         flag = ' <span class="pill muted">user flagged</span>' if f["user_flagged"] else ""
