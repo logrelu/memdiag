@@ -5,11 +5,12 @@ import math
 from collections import Counter
 from typing import Optional
 
-from .extract import RuleExtractor, claims, is_complaint, is_unsure, tokens
+from .extract import FORGOTTEN_QUESTIONS, RuleExtractor, claims, is_complaint, is_unsure, tokens
 from .schema import Event, Finding
 from .timeline import Timeline
 
 CONTEXT_OVERLOAD_TOKENS = 32000
+REASKABLE = set(FORGOTTEN_QUESTIONS)  # attributes the rule extractor can spot a re-ask for
 
 
 class BM25:
@@ -70,7 +71,7 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
     assistant_turns = 0
     flagged_turns = 0
     # Denominators for metrics.py: how many times each failure could have happened.
-    opp = {"fact_assertions": 0, "update_assertions": 0, "shared_attr_assertions": 0, "known_fact_questions": 0}
+    opp = {"fact_assertions": 0, "update_assertions": 0, "shared_attr_assertions": 0, "known_fact_turns": 0}
 
     for i, e in enumerate(events):
         if e.role != "assistant":
@@ -113,10 +114,12 @@ def diagnose(events: list[Event], docs: Optional[list[dict]] = None,
                         evidence="Value never stated by any user")
 
         # ---- memory: asked again for something it was already told ----
+        # Every turn where the user had already given a re-askable fact is a chance to re-ask.
+        known = tl.known_attrs(e.user_id, e.ts) & REASKABLE
+        opp["known_fact_turns"] += bool(known)
         for attr in ex.forgotten_questions(e.content):
-            cur = tl.current(e.user_id, attr, e.ts)
-            if cur is not None and not cur.deleted:
-                opp["known_fact_questions"] += 1
+            if attr in known:
+                cur = tl.current(e.user_id, attr, e.ts)
                 add("forgotten_memory", attribute=attr, expected=cur.value, got="<asked again>",
                     evidence=f'Stated on {cur.ts.date()}: "{cur.source}"')
 

@@ -44,6 +44,11 @@ class Timeline:
         return any(a == attr and u != user and any(f.ts < at and f.value is not None for f in fs)
                    for (u, a), fs in self.facts.items())
 
+    def known_attrs(self, user: str, at: datetime) -> set:
+        """Attributes the user has stated before `at` and not asked to forget."""
+        return {a for (u, a) in self.facts if u == user
+                and (cur := self.current(user, a, at)) is not None and not cur.deleted}
+
     def deletion_count(self) -> int:
         """Number of deletion requests (one per user and attribute, counting each request)."""
         return sum(f.deleted for fs in self.facts.values() for f in fs)
