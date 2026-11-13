@@ -10,8 +10,8 @@ a PR that edits this file, and the PR description says why.
 
 | Type | Status | Notes |
 |---|---|---|
-| `RECALL_MISS` | proposed | modes: `reask`, `ignored` |
-| `STALE_FACT` | proposed | |
+| `RECALL_MISS` | proposed | modes: `reask`, `ignored`; mode `reask` is currently `forgotten_memory` |
+| `STALE_FACT` | proposed | currently `stale_memory` |
 | `CONSTRAINT_DROP` | proposed | |
 | `USER_REPAIR` | proposed | a signal; never a score on its own |
 | `HALLUCINATED_MEMORY` | proposed | currently `hallucinated_memory` in `detect.py` |
@@ -27,13 +27,13 @@ opportunities is `None`.
 
 | Metric | Status | Failures / opportunities |
 |---|---|---|
-| `fact_recall` | proposed (replaces `recall_continuity`) | `RECALL_MISS` / turns with a relevant earlier fact |
-| `fact_currency` | proposed (exists) | `STALE_FACT` / turns that use a fact the user updated |
+| `fact_recall` | proposed; renames existing `recall_continuity` | `RECALL_MISS` / assistant turns with a relevant earlier fact (the current `recall_continuity` denominator is broken; see the fix PR) |
+| `fact_currency` | proposed (exists) | `STALE_FACT` / assertions about an attribute the user has changed at least once |
 | `constraint_retention` | proposed | violations / (constraint, turn) pairs in scope |
 | `groundedness` | proposed (exists) | `HALLUCINATED_MEMORY` / user-fact assertions |
 | `deletion_compliance` | proposed (exists) | deletion requests violated / deletion requests |
 | `user_isolation` | proposed (exists) | `CROSS_USER_LEAK` / assertions on attributes other users share |
-| `memory_faithfulness` | proposed (exists) | any memory finding / user-fact assertions |
+| `memory_faithfulness` | proposed (exists) | `STALE_FACT` + `DELETION_VIOLATION` + `CROSS_USER_LEAK` + `HALLUCINATED_MEMORY` / user-fact assertions (exactly the current four categories; widening it is a breaking change) |
 | `context_sufficiency` | proposed (L2) | calls whose context lacked a needed fact / calls with a needed fact |
 | `context_use` | proposed (L2) | use failures / calls whose context was sufficient |
 | `context_precision` | proposed (L2) | irrelevant injected memories / injected memories |
@@ -42,6 +42,8 @@ Reported as counts, not scores: `repair_count`, `memory_loss_onset` (turn index 
 first finding).
 
 ## Finding fields
+
+Target fields, added in M2. The current `schema.py` uses `category` (becomes `type`) and has no turn indices yet.
 
 `type`, `mode`, `failing_turn`, `evidence_turns`, `failing_quote`, `evidence_quote`, `item_id`, `location`,
 `confidence`, `detector`, `detector_version`, `judge_model`, `prompt_version`, `covariates`.

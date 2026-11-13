@@ -17,17 +17,17 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 - `memdiag/detect.py` detectors -> `Finding`s and opportunity counts; `metrics.py` scores from findings
 - `memdiag/strategies.py` memory-strategy replay; `report.py` text/HTML/JSON; `cli.py`, `mcp_server.py`
 - `docs/ROADMAP.md` plan; `docs/STABILITY.md` public names; `docs/metrics.md` metric definitions; `docs/RELEASING.md`
-- `docs/plans/M<n>.md` the plan for each milestone, written before its code
+- `docs/plans/M<n>.md` the plan for each milestone from M2 on, written before its code
 
 ## Non-negotiables
 - The core has zero runtime dependencies (stdlib only). Optional extras are fine; the core must not import them.
-- Every Finding carries its failing turn, evidence turn(s), quotes and detector version.
+- Every Finding carries its failing turn, evidence turn(s), quotes and detector version (schema lands in M2; the legacy detectors migrate there).
 - Every metric has an explicit denominator documented in `docs/metrics.md`. A metric with zero opportunities is `None`, never 1.0.
 - Names in `docs/STABILITY.md` change only in a PR that edits that file and says why.
 - Run rules before any LLM call. Do not add an LLM call where a rule suffices.
 - Ledger items and judge verdicts need a quote that appears verbatim in the source; otherwise drop them or mark them unverified.
-- Tests never call a live model. Use the FakeJudge or recorded responses.
-- Prompts live in `memdiag/prompts/` with an id and version. Bump the version on any edit.
+- Tests never call a live model. Use the FakeJudge or recorded responses (judge layer lands in M3).
+- Prompts live in `memdiag/prompts/` (from M3) with an id and version. Bump the version on any edit.
 - Known extractor misses are `xfail` in `tests/test_known_limits.py`. Don't delete them to get a green suite.
 - Demo and experiment data are synthetic or small. Never present them as benchmark results.
 - Targets in the roadmap are pre-registered. Report a miss with its number; never move the target or tune on the held-out split.
