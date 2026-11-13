@@ -142,3 +142,36 @@ def test_cli_diagnose_with_unreachable_model_exits_2(tmp_path, capsys):
     code = main(["diagnose", str(log), "--model", "qwen2.5:7b", "--base-url", f"http://127.0.0.1:{port}/v1",
                  "--cache", str(tmp_path / "c")])
     assert code == 2 and "ollama serve" in capsys.readouterr().err
+
+
+def test_ledger_reask_denominator_covers_every_legacy_reask_turn():
+    for events in ([Event.from_dict(t, i) for i, t in enumerate(TRACES)],
+                   _ev(MOVED + [["maya", "assistant", "Where do you live?"], ["maya", "assistant", "Try OnPoint."]])):
+        opp = run(events, DOCS)["stats"]["opportunities"]
+        assert opp["legacy_known_fact_turns"] <= opp["known_fact_turns"]
+
+
+def test_rule_reask_over_ledger_facts_and_judge_cannot_veto():
+    rows = [["u1", "user", "My daughter Maya loves chess."], ["u1", "user", "Maya is 7, she says."],
+            ["u1", "assistant", "Happy to help! How old is Maya, and what is she into?"]]
+    facts = {"My daughter Maya loves chess.": [{"subject": "daughter", "attribute": "name", "value": "Maya",
+                                                "quote": "My daughter Maya"}],
+             "Maya is 7, she says.": [{"subject": "daughter", "attribute": "age", "value": "7", "quote": "Maya is 7"}]}
+
+    def extract(text):
+        return json.dumps({"facts": next((v for k, v in facts.items() if text.endswith(k)), [])})
+
+    judge = FakeJudge({"extract_facts": extract, "check_stale": '{"uses_old": false}',
+                       "check_reask": '{"asks_again": []}'})  # the 7B judge's real answer on this case
+    res = run(_ev(rows), judge=judge)
+    (f,) = [f for f in res["findings"] if f["type"] == "RECALL_MISS"]
+    assert (f["attribute"], f["detector"], f["confidence"]) == ("daughter.age", "ledger.reask_pattern", 0.6)
+    assert f["failing_quote"] == "How old is Maya, and what is she into?"
+
+
+def test_reask_pattern_needs_the_right_subject():
+    rows = [["u1", "user", "My daughter Maya is 7 and I love it."], ["u1", "assistant", "How old is your dog?"]]
+    extract = json.dumps({"facts": [{"subject": "daughter", "attribute": "age", "value": "7",
+                                     "quote": "My daughter Maya is 7"}]})
+    judge = FakeJudge({"extract_facts": extract, "check_reask": '{"asks_again": []}'})
+    assert [f for f in run(_ev(rows), judge=judge)["findings"] if f["type"] == "RECALL_MISS"] == []

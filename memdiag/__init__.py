@@ -65,8 +65,10 @@ def run(events: list[Event], docs=None, judge=None) -> dict:
     for f in findings:
         f.location = locate(f, by_index[f.failing_turn], ledger)
     stats["opportunities"]["updated_key_mentions"] = ledger_opp["updated_key_mentions"]
-    if judge is not None:  # re-asks of any ledger fact can be checked, not only the rule attributes
-        stats["opportunities"]["known_fact_turns"] = ledger_opp["live_fact_turns"]
+    # Re-asks are checked over ledger facts (pattern attributes, or any fact with a judge). The ledger holds
+    # every rule fact, so this count includes every turn the legacy re-ask rule could flag.
+    stats["opportunities"]["legacy_known_fact_turns"] = stats["opportunities"]["known_fact_turns"]
+    stats["opportunities"]["known_fact_turns"] = ledger_opp["live_fact_turns"]
     stats["failed_turns"] = len({f.failing_turn for f in findings if f.failure_class in ("memory", "retrieval")})
     strategies, probes = compare(events, tl, ex)
 

@@ -23,6 +23,48 @@ REPAIR = re.compile(
     r"did you forget|you forgot|no,? i meant|i said\b[^.?!]*\bnot\b)|\bremember\?", re.I)
 
 
+# Questions that ask for an attribute, for re-ask detection over any ledger key (not only the legacy four).
+REASK_PATTERNS = {
+    "age": r"\bhow old\b|\bwhat(?:'s| is) (?:your|his|her|their) age\b",
+    "name": r"\bwhat(?:'s| is) (?:your|his|her|their) name\b",
+    "birthday": r"\bwhen(?:'s| is) (?:your|his|her|their) birthday\b",
+    "interest": r"\bwhat (?:is|are|'s) (?:he|she|they|you) (?:into|interested in)\b|\bwhat does (?:he|she) like\b|"
+                r"\bwhat do (?:you|they) like\b",
+    "city": r"\bwhere do you live\b|\bwhat city (?:are you in|do you live in)\b|\bwhere are you located\b",
+    "employer": r"\bwhere do you work\b|\bwho do you work for\b|\bwho is your employer\b",
+    "job_title": r"\bwhat do you do for (?:a living|work)\b|\bwhat(?:'s| is) your (?:job|role|occupation)\b",
+    "income": r"\bwhat(?:'s| is) your (?:annual )?(?:income|salary)\b|\bhow much do you (?:make|earn)\b",
+    "credit_score": r"\bwhat(?:'s| is) your credit score\b",
+}
+
+
+def _asks_about(sentence_text: str, subject: str, names: list[str]) -> bool:
+    """Is a question sentence about this subject: 'you' for the user, the relation or a known name otherwise."""
+    words = set(tokens(sentence_text))
+    if subject == "user":
+        return bool(words & {"you", "your", "yours"})
+    return subject.replace("_", " ") in " ".join(tokens(sentence_text)) or any(
+        set(tokens(n)) <= words for n in names) or bool(words & {"he", "she", "his", "her", "they", "their"})
+
+
+def rule_reasks(reply: str, live: dict, ledger: Ledger, user: str, before_turn: int) -> list[tuple[str, str]]:
+    """(key, question) pairs where the reply asks again for a live fact, by pattern; no model needed."""
+    questions = [q.strip() for q in re.split(r"(?<=[.!?])\s+", reply) if q.strip().endswith("?")]
+    people = dict(ledger.known_people(user, before_turn))
+    hits = []
+    for key in sorted(live):
+        subject, _, attribute = key.partition(".")
+        pattern = REASK_PATTERNS.get(attribute)
+        if not pattern:
+            continue
+        names = [people[subject]] if subject in people else []
+        for q in questions:
+            if re.search(pattern, q, re.I) and _asks_about(q, subject, names):
+                hits.append((key, q))
+                break
+    return hits
+
+
 def mentions(text: str, value: str) -> bool:
     """Does `text` mention `value`? Numbers match by value ($140k == 140000); text as a token sequence."""
     n, _ = number_and_unit(value)
@@ -83,24 +125,34 @@ def detect_with_ledger(events: list[Event], ledger: Ledger, judge=None) -> tuple
                 evidence=f'Updated at turn {cur.source_turn}: "{cur.quote}"',
                 covariates={"context_tokens": a.context_tokens}))
 
-        # ---- RECALL_MISS (reask), judge mode: asks again for any live fact ----
-        if judge is not None and live:
-            opp["live_fact_turns"] += 1
-            if "?" in a.content:
+        # ---- RECALL_MISS (reask): rule patterns over any live fact, plus the judge for what patterns miss ----
+        if live:
+            reaskable = live if judge is not None else {k: v for k, v in live.items()
+                                                       if k.partition(".")[2] in REASK_PATTERNS}
+            if reaskable:
+                opp["live_fact_turns"] += 1
+            asked: dict[str, tuple[str, str, float]] = {}  # key -> (quote, detector, confidence)
+            for key, q in rule_reasks(a.content, reaskable, ledger, a.user_id, a.index):
+                asked[key] = (q, "ledger.reask_pattern", 0.6)
+            if judge is not None and "?" in a.content:
                 facts = "\n".join(f'- {k} = {v.value} (the user said: "{v.quote}")' for k, v in sorted(live.items()))
                 r = judge.ask(reask_prompt, role="judge_reask", as_json=True, facts=facts, reply=a.content)
-                asked = (r.data or {}).get("asks_again") or []
-                for item in asked if isinstance(asked, list) else []:
+                items = (r.data or {}).get("asks_again") or []
+                for item in items if isinstance(items, list) else []:
                     key = str(item.get("key", "")) if isinstance(item, dict) else ""
                     span = quote_span(str(item.get("quote") or ""), a.content) if key in live else None
                     if span is None:
                         continue
-                    cur = live[key]
-                    findings.append(_finding(
-                        "forgotten_memory", a, "llm.check_reask", key, expected=cur.value, got="<asked again>",
-                        failing_quote=span, evidence_turns=[cur.source_turn], evidence_quote=cur.quote,
-                        confidence=0.9, evidence=f'Stated at turn {cur.source_turn}: "{cur.quote}"',
-                        covariates={"context_tokens": a.context_tokens}))
+                    # The judge can add a re-ask or confirm a rule hit; it can't veto one.
+                    asked[key] = (asked[key][0], "ledger.reask_pattern+llm", 0.9) if key in asked else (
+                        span, "llm.check_reask", 0.9)
+            for key, (quote, detector, confidence) in asked.items():
+                cur = live[key]
+                findings.append(_finding(
+                    "forgotten_memory", a, detector, key, expected=cur.value, got="<asked again>",
+                    failing_quote=quote, evidence_turns=[cur.source_turn], evidence_quote=cur.quote,
+                    confidence=confidence, evidence=f'Stated at turn {cur.source_turn}: "{cur.quote}"',
+                    covariates={"context_tokens": a.context_tokens}))
 
         # ---- USER_REPAIR: the user's next message repeats or corrects ----
         nxt = _next_user_msg(events, i)
