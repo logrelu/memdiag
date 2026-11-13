@@ -46,7 +46,7 @@ What nobody ships, and what memdiag will:
 | D7 | The core is stdlib-only, with no pydantic or httpx. | `pip install memdiag` must stay instant and safe. This overrides the helper plans. |
 | D8 | Judge calls are cached on disk, keyed by prompt id and version, model, and inputs. Tests use a FakeJudge and never a live model. | Reruns are free and the validation numbers can be reproduced. |
 | D9 | The judge's model family differs from the model that generated the responses, or the report warns. | Avoids self-preference bias. |
-| D10 | Scores are in [0, 1], higher is better, shown with counts and denominators. A score with no opportunities is `None`. | Same convention as `metrics.py` today. Signals such as `repair_rate` are reported as counts. |
+| D10 | Scores are in [0, 1], higher is better, shown with counts and denominators. A score with no opportunities is `None`. | Same convention as `metrics.py` today. Signals such as `repair_count` are reported as counts. |
 | D11 | Names in `docs/STABILITY.md` are frozen when v0.2.0 ships. Renames after that get an alias for two minor versions. | Breaking renames cost RAGAS users' goodwill. |
 | D12 | Validation starts with mutation tests, then public benchmarks, then human labels. | Mutation tests are cheap, run locally and give exact labels. Humans are the slowest step. |
 | D13 | The gold labels from benchmark judges are checked by hand before use. | In our runs the LongMemEval-style judge was wrong in both directions. |
@@ -70,7 +70,7 @@ not finding types.
 ## Observability tiers
 
 - **L0 transcript only:** all in-session types, plus `USER_REPAIR`.
-- **L1 adds `user_id` across sessions:** the same types across sessions, with the ledger built from earlier sessions.
+- **L1 adds `user_id` across sessions:** `RECALL_MISS`, `STALE_FACT` and `HALLUCINATED_MEMORY` across sessions, with the ledger built from earlier sessions.
 - **L2 adds the injected memory context per call:** retrieve-vs-use location, context precision, conflicts within the context.
 - **L3 adds the memory store's reads and writes:** write-quality checks and replay. Later.
 
@@ -79,8 +79,8 @@ not finding types.
 | M | PR | Exit criterion |
 |---|----|----------------|
 | M0 | Metrics, CI gate, release workflow | Done: PRs #1, #2 |
-| M1 | Instruction files: this roadmap, `CLAUDE.md`, `STABILITY.md`, reviewer agent (a test-running Stop hook is left to the owner to add) | Merged |
-| M1b | `experiments/`: LongMemEval toy and black-box walkthrough notebooks | Merged; results summarized below |
+| M1 | Instruction files: this roadmap, `CLAUDE.md`, `STABILITY.md`, reviewer agent (a test-running Stop hook is left to the owner to add) | This PR (#3) |
+| M1b | `experiments/`: LongMemEval toy and black-box walkthrough notebooks | Merged; notebooks run end to end |
 | M2 | Schema (`Turn`, `Session`, `Call`, `LedgerItem`, `Finding`) and adapters: OpenAI messages, generic JSONL, LongMemEval | Fixtures round-trip; old detectors still pass |
 | M3 | Judge layer: OpenAI-compatible client, disk cache, versioned prompts in `memdiag/prompts/`, FakeJudge, time and token accounting | A cached rerun makes zero calls; tests make no network calls |
 | M4 | Ledger: rule plus LLM extraction, verbatim-quote check, deterministic key normalization, replacements and revocations | 20 hand-written fixtures pass (updates, revocations, scope) |
