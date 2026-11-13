@@ -8,6 +8,7 @@ Definitions live in docs/metrics.md; keep both in sync.
 """
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
 from typing import Optional
 
@@ -32,6 +33,11 @@ def _metric(name: str, description: str, failures: int, opportunities: int) -> M
     return Metric(name, description, score, failures, opportunities)
 
 
+def _key(attribute: str) -> str:
+    from .ledger import normalize_key
+    return attribute if "." in attribute else normalize_key("user", attribute)
+
+
 def compute_metrics(findings: list[dict], opportunities: dict) -> dict[str, Metric]:
     """Score an agent from findings (as dicts, see Finding.to_dict) and opportunity counts."""
     count = {}
@@ -40,6 +46,13 @@ def compute_metrics(findings: list[dict], opportunities: dict) -> dict[str, Metr
     # A fact the user asked to forget counts once, however many times the agent repeated it.
     leaked = len({(f["user_id"], f["attribute"]) for f in findings if f["category"] == "failed_deletion"})
     asserted = opportunities.get("fact_assertions", 0)
+    # Assertion-based metrics count only findings on rule-read assertions; ledger-only stale findings
+    # (a mention, not an assertion) count in fact_currency instead. Findings without a detector are legacy.
+    on_assertions = Counter(f["category"] for f in findings if f.get("detector", "rules.").startswith("rules."))
+    # fact_currency: one failure per (turn, fact), matching its per-(turn, fact) denominator.
+    stale_pairs = len({(f["user_id"], f.get("failing_turn", f["ts"]), _key(f["attribute"]))
+                       for f in findings if f["category"] == "stale_memory"})
+    currency_opp = opportunities.get("updated_key_mentions", opportunities.get("update_assertions", 0))
     # A turn that re-asks for several known facts is one failure, matching the per-turn denominator.
     reask_turns = len({(f["user_id"], f.get("failing_turn", f["ts"])) for f in findings
                        if f["category"] == "forgotten_memory"})
@@ -47,10 +60,10 @@ def compute_metrics(findings: list[dict], opportunities: dict) -> dict[str, Metr
     metrics = [
         _metric("memory_faithfulness",
                 "Share of user facts the agent asserted that were correct and current",
-                sum(count.get(c, 0) for c in MEMORY_CATEGORIES), asserted),
+                sum(on_assertions.get(c, 0) for c in MEMORY_CATEGORIES), asserted),
         _metric("fact_currency",
-                "Share of assertions about a fact the user had updated that used the latest value",
-                count.get("stale_memory", 0), opportunities.get("update_assertions", 0)),
+                "Share of replies mentioning a fact the user had updated that used the latest value",
+                stale_pairs, currency_opp),
         _metric("deletion_compliance",
                 "Share of 'forget this' requests the agent never later violated",
                 leaked, opportunities.get("deletion_requests", 0)),

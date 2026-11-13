@@ -36,7 +36,7 @@ _SYNONYM = {alias: canon for canon, aliases in ATTRIBUTE_SYNONYMS.items() for al
 ATTRIBUTE_NAMES = set(ATTRIBUTE_SYNONYMS) | set(_SYNONYM) - {"name"}
 
 
-def _tokens(s: str) -> list[str]:
+def tokens(s: str) -> list[str]:
     return [t for t in re.split(r"[^a-z0-9]+", (s or "").lower()) if t]
 
 
@@ -46,7 +46,7 @@ def normalize_subject(subject: str) -> str:
     A bare pronoun ('she', 'his') names nobody we can key on, so it returns '' and the fact is dropped.
     'his manager' and 'her manager' stay distinct.
     """
-    rest = [t for t in _tokens(subject) if t not in SELF and t not in FILLER]
+    rest = [t for t in tokens(subject) if t not in SELF and t not in FILLER]
     if len(rest) == 1 and rest[0] in PRONOUNS:
         return ""
     return "_".join(rest) or "user"
@@ -54,7 +54,7 @@ def normalize_subject(subject: str) -> str:
 
 def normalize_attribute(attribute: str) -> str:
     """Lowercase snake_case with synonyms folded: 'Home City' -> 'city', 'loan:car loan' -> 'loan_car_loan'."""
-    toks = _tokens(attribute)
+    toks = tokens(attribute)
     while toks and toks[0] in SELF | FILLER:
         toks = toks[1:]
     name = "_".join(toks)
@@ -68,20 +68,20 @@ def normalize_key(subject: str, attribute: str) -> str:
 _NUMBER = r"(\d[\d,]*(?:\.\d+)?)\s*[kKmM]?\b"
 
 
-def _number_and_unit(value) -> tuple[Optional[float], str]:
+def number_and_unit(value) -> tuple[Optional[float], str]:
     """'-$1.5k' -> (-1500.0, ''); '4.10%' -> (4.1, ''); '7 years' -> (7.0, 'years'); 'Denver' -> (None, 'denver')."""
     text = str(value or "")
     nums = numbers(text)
     if len(nums) != 1:
-        return None, " ".join(_tokens(text))
+        return None, " ".join(tokens(text))
     sign = -1 if re.search(r"(?<![\w.])-\s*[$€£]?\s*\d", text) else 1
-    unit = " ".join(_tokens(re.sub(_NUMBER + r"|[$€£%,\-]", " ", text)))
+    unit = " ".join(tokens(re.sub(_NUMBER + r"|[$€£%,\-]", " ", text)))
     return sign * nums[0], unit
 
 
 def normalize_value(value) -> str:
     """Canonical text for a value: '$140k' -> '140000', '4.10%' -> '4.1', 'Denver.' -> 'denver'."""
-    n, unit = _number_and_unit(value)
+    n, unit = number_and_unit(value)
     if n is None:
         return unit
     num = str(int(n)) if n == int(n) else str(n)
@@ -90,7 +90,7 @@ def normalize_value(value) -> str:
 
 def values_equal(a, b) -> bool:
     """Same value stated two ways: '$140k' == '140000', '7 years' == '7', but '-5' != '5', '7 years' != '7 months'."""
-    (na, ua), (nb, ub) = _number_and_unit(a), _number_and_unit(b)
+    (na, ua), (nb, ub) = number_and_unit(a), number_and_unit(b)
     if na is None or nb is None:
         return normalize_value(a) == normalize_value(b)
     return na == nb and (ua == ub or not ua or not ub)
