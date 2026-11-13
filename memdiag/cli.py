@@ -34,6 +34,15 @@ def main(argv=None):
     d.add_argument("--format", default="auto", choices=FORMATS, help="Log format (default: detect from the file)")
     d.add_argument("--docs", help="JSONL of knowledge-base docs: id, text")
 
+    lg = sub.add_parser("ledger", help="Show the facts each user stated, with updates and deletions")
+    lg.add_argument("traces", help="Log file in any supported format")
+    lg.add_argument("--format", default="auto", choices=FORMATS)
+    lg.add_argument("--model", help="Also extract with this model via an OpenAI-compatible endpoint "
+                                    "(default endpoint: local Ollama). Without it, rules only.")
+    lg.add_argument("--base-url", help="Model endpoint, e.g. http://localhost:11434/v1 (or MEMDIAG_BASE_URL)")
+    lg.add_argument("--cache", default=".memdiag_cache", help="Judge cache directory (default: .memdiag_cache)")
+    lg.add_argument("--out", help="Write ledger items as JSONL")
+
     m = sub.add_parser("demo", help="Run on built-in synthetic fintech traces")
     m.add_argument("--write", metavar="DIR", help="Also write the demo traces and docs as JSONL to DIR")
 
@@ -45,6 +54,8 @@ def main(argv=None):
                         help="Exit 1 if a metric score is below MIN, e.g. deletion_compliance=0.95 (repeatable)")
 
     args = p.parse_args(argv)
+    if args.cmd == "ledger":
+        return _ledger(args)
     if args.cmd == "diagnose":
         try:
             res = run_files(args.traces, args.docs, args.format)
@@ -62,6 +73,41 @@ def main(argv=None):
         res = run([Event.from_dict(t, i) for i, t in enumerate(TRACES)], DOCS)
     _emit(res, args)
     return _gate(res, args.fail_under)
+
+
+def _ledger(args) -> int:
+    from .adapters import load
+    from .judge import DiskCache, JudgeUnavailable, OpenAICompatJudge
+    from .ledger import build_ledger
+
+    judge = None
+    if args.model:
+        judge = OpenAICompatJudge(args.model, base_url=args.base_url, cache=DiskCache(args.cache))
+    try:
+        ledger = build_ledger(load(args.traces, args.format), judge=judge)
+    except (ValueError, JudgeUnavailable) as exc:
+        print(f"memdiag: {exc}", file=sys.stderr)
+        return 2
+    by_id = {i.item_id: i for i in ledger.items}
+    for user in sorted({i.user_id for i in ledger.items}):
+        print(user)
+        for key in ledger.keys_for(user):
+            chain = ledger.history(user, key)
+            live = ledger.current(user, key)
+            shown = " -> ".join(i.value for i in chain)
+            state = "" if live else "  (deleted)"
+            last = chain[-1]
+            print(f"  {key:24s} {shown}{state}   [turn {last.source_turn}, {last.extractor}: \"{last.quote}\"]")
+    s = ledger.stats
+    superseded = sum(1 for i in ledger.items if i.superseded_by in by_id)
+    print(f"\n{s['items']} facts from {s['messages']} user messages ({s['llm_messages']} sent to the model), "
+          f"{superseded} updates, {s['dropped']} model facts dropped (quote not in the message or incomplete)")
+    if judge is not None:
+        print(judge.usage.summary())
+    if args.out:
+        Path(args.out).write_text("".join(json.dumps(r) + "\n" for r in ledger.to_rows()))
+        print(f"Wrote {args.out}")
+    return 0
 
 
 def _gate(res, specs) -> int:

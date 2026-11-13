@@ -73,3 +73,16 @@ def test_current_respects_the_turn():
     assert ledger.current("maya", "user.city", before_turn=2).value == "Portland"
     assert ledger.current("maya", "user.city") is None
     assert [i.value for i in ledger.history("maya", "user.city")] == ["Seattle", "Portland"]
+
+
+def test_cli_ledger_rules_only(tmp_path, capsys):
+    from memdiag.cli import main
+    log = tmp_path / "log.jsonl"
+    rows = [{"user_id": "maya", "session_id": "s", "ts": f"2026-03-01T10:0{i}:00", "role": "user", "content": c}
+            for i, c in enumerate(["I live in Seattle.", "We just moved to Portland."])]
+    log.write_text("".join(json.dumps(r) + "\n" for r in rows))
+    out = tmp_path / "ledger.jsonl"
+    assert main(["ledger", str(log), "--out", str(out)]) == 0
+    printed = capsys.readouterr().out
+    assert "user.city" in printed and "Seattle -> Portland" in printed and "1 updates" in printed
+    assert [json.loads(line)["value"] for line in out.read_text().splitlines()] == ["Seattle", "Portland"]
