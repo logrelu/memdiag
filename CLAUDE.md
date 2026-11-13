@@ -1,28 +1,48 @@
 # memdiag
 
-Offline eval for agent memory: reads conversation logs, reconstructs what each user said,
-and scores the agent on memory behavior. Goal: be to memory what RAGAS is to RAG.
+Eval for agent memory: reads the logs an agent already writes and reports each memory failure at the
+turn it happened, with the earlier turn it contradicts, quoted, and scores built from those findings.
+Goal: be to memory what RAGAS is to RAG, with published validation numbers.
+
+Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-D13, milestones and success criteria.
 
 ## Commands
-- `pip install -e ".[dev]"` (Python >= 3.10; the core has zero runtime dependencies, keep it that way)
-- `pytest -q` and `ruff check .` must both pass before any commit
-- `memdiag demo` is the end-to-end smoke test
+- `pip install -e ".[dev]"` into `.venv` (Python >= 3.10). Verify with an editable install; a non-editable one tests stale code.
+- `ruff check .` and `pytest -q` must both pass before any commit.
+- `memdiag demo` is the end-to-end smoke test.
+- Local judge: `ollama serve`, model `qwen2.5:7b` (16 GB Mac reference). Experiments live in `experiments/`; their data goes in `experiments/data/` (git-ignored).
 
 ## Layout
-- `memdiag/extract.py` rule-based fact extraction (`RuleExtractor`; the seam for an LLM extractor)
-- `memdiag/timeline.py` per-user fact timeline built from user messages
-- `memdiag/detect.py` per-turn failure detectors -> `Finding`s plus opportunity counts
-- `memdiag/metrics.py` normalized 0-1 scores computed from findings and opportunity counts
-- `memdiag/strategies.py` memory-strategy replay (`MemoryBackend` is the adapter interface)
-- `memdiag/report.py` text, HTML and JSON output; `cli.py`, `mcp_server.py` entry points
-- `docs/RELEASING.md` release steps; `scripts/release_check.py` guards the tag, version and changelog
-- `docs/metrics.md` the definition of every metric; keep it in sync with `metrics.py`
+- `memdiag/extract.py` rule-based extraction (`RuleExtractor`); `timeline.py` per-user fact timeline
+- `memdiag/detect.py` detectors -> `Finding`s and opportunity counts; `metrics.py` scores from findings
+- `memdiag/strategies.py` memory-strategy replay; `report.py` text/HTML/JSON; `cli.py`, `mcp_server.py`
+- `docs/ROADMAP.md` plan; `docs/STABILITY.md` public names; `docs/metrics.md` metric definitions; `docs/RELEASING.md`
+- `docs/plans/M<n>.md` the plan for each milestone, written before its code
 
-## Rules
-- Every metric needs an explicit denominator ("opportunities") documented in `docs/metrics.md`.
-  Never report a score without saying what it was out of.
-- A metric with zero opportunities is `None` (not applicable), never 1.0.
-- Known extractor misses are recorded as `xfail` in `tests/test_known_limits.py`. Do not delete
-  them to make the suite green; fix the extractor or leave them.
-- Demo data is synthetic. Do not present demo numbers as benchmark results.
-- Work on a branch; do not merge to main without the owner's approval.
+## Non-negotiables
+- The core has zero runtime dependencies (stdlib only). Optional extras are fine; the core must not import them.
+- Every Finding carries its failing turn, evidence turn(s), quotes and detector version.
+- Every metric has an explicit denominator documented in `docs/metrics.md`. A metric with zero opportunities is `None`, never 1.0.
+- Names in `docs/STABILITY.md` change only in a PR that edits that file and says why.
+- Run rules before any LLM call. Do not add an LLM call where a rule suffices.
+- Ledger items and judge verdicts need a quote that appears verbatim in the source; otherwise drop them or mark them unverified.
+- Tests never call a live model. Use the FakeJudge or recorded responses.
+- Prompts live in `memdiag/prompts/` with an id and version. Bump the version on any edit.
+- Known extractor misses are `xfail` in `tests/test_known_limits.py`. Don't delete them to get a green suite.
+- Demo and experiment data are synthetic or small. Never present them as benchmark results.
+- Targets in the roadmap are pre-registered. Report a miss with its number; never move the target or tune on the held-out split.
+- Never commit raw WildChat or other PII-bearing transcripts, or API keys.
+
+## Workflow
+- At the start of each milestone, update the instruction files first (this file, the roadmap, `docs/plans/M<n>.md`) in their own commit.
+- One branch and one PR per milestone. One logical commit at a time, never one big commit.
+- The owner has authorized committing, opening PRs and rebase-merging once CI is green. Report after each merge.
+- Before merging, run the `reviewer` subagent (`.claude/agents/reviewer.md`) on the diff and fix what it confirms.
+- Never push tags, publish to PyPI, or enable `PUBLISH_TO_PYPI`; the owner does these. Ask before spending money, running untrusted downloaded code, or anything public.
+- Use the session scratchpad for throwaway files.
+
+## Gotchas (learned the hard way)
+- LLM-extracted fact keys vary (`user|myself.city` vs `user.city`). Normalize keys deterministically, or stale detection silently fails.
+- 7B judges answer open questions badly: they misread queries and claim a response used the context when it didn't. Ask one specific question per check.
+- Benchmark gold judges are wrong in both directions. Hand-check gold before trusting it.
+- `pip download --no-binary` runs the package's build backend; treat it as running untrusted code.
