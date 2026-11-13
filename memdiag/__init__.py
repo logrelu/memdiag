@@ -98,6 +98,7 @@ def run(events: list[Event], docs=None, judge=None) -> dict:
         "judge_usage": dict(judge.usage.by_role) if judge is not None else {},
         "repair_count": sum(f.category == "user_repair" for f in findings),
         "ledger": ledger.to_rows(),
+        "ledger_dropped": ledger.dropped,
         "stats": stats,
         "metrics": {k: m.to_dict() for k, m in metrics.items()},
         "summary": {
