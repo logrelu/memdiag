@@ -34,6 +34,7 @@ CATEGORIES = {
     "context_overload": ("context", "Failure happened with a very large context"),
     "unattributed": ("unknown", "User signaled an error that no rule explains"),
     "user_repair": ("signal", "User had to repeat or correct something the agent should have known"),
+    "constraint_drop": ("memory", "Broke an instruction the user gave earlier in the session"),
 }
 
 # Stable Finding type for each legacy category (docs/STABILITY.md), and the mode where one applies.
@@ -48,6 +49,7 @@ TYPES = {
     "context_overload": "CONTEXT_OVERLOAD",
     "unattributed": "UNATTRIBUTED",
     "user_repair": "USER_REPAIR",
+    "constraint_drop": "CONSTRAINT_DROP",
 }
 MODES = {"forgotten_memory": "reask"}
 
