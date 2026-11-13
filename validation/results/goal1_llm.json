@@ -1,0 +1,1121 @@
+{
+ "meta": {
+  "mode": "llm",
+  "judge_model": "qwen2.5:7b",
+  "date": "2026-11-13",
+  "memdiag_version": "0.1.0",
+  "commit": "2db294c",
+  "data_sha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "cases": 64,
+  "limit": 8,
+  "split": "heldout",
+  "background": {
+   "checked": 456,
+   "rejected": 1
+  }
+ },
+ "aggregate": {
+  "heldout|ALL|all": {
+   "recall": {
+    "k": 28,
+    "n": 32,
+    "rate": 0.875,
+    "ci95": [
+     0.719,
+     0.95
+    ]
+   },
+   "exact_turn": {
+    "k": 28,
+    "n": 32,
+    "rate": 0.875,
+    "ci95": [
+     0.719,
+     0.95
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 32,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.107
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|all": {
+   "recall": {
+    "k": 8,
+    "n": 8,
+    "rate": 1.0,
+    "ci95": [
+     0.676,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 8,
+    "n": 8,
+    "rate": 1.0,
+    "ci95": [
+     0.676,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 8,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.324
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|banned_word": {
+   "recall": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 2,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.658
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|max_words": {
+   "recall": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 2,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.658
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|no_bullets": {
+   "recall": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 2,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.658
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|no_emoji": {
+   "recall": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 2,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.658
+    ]
+   }
+  },
+  "heldout|RECALL_MISS|all": {
+   "recall": {
+    "k": 7,
+    "n": 8,
+    "rate": 0.875,
+    "ci95": [
+     0.529,
+     0.978
+    ]
+   },
+   "exact_turn": {
+    "k": 7,
+    "n": 8,
+    "rate": 0.875,
+    "ci95": [
+     0.529,
+     0.978
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 8,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.324
+    ]
+   }
+  },
+  "heldout|RECALL_MISS|child_age": {
+   "recall": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 2,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.658
+    ]
+   }
+  },
+  "heldout|RECALL_MISS|city": {
+   "recall": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6666666666666666,
+    "ci95": [
+     0.208,
+     0.939
+    ]
+   },
+   "exact_turn": {
+    "k": 2,
+    "n": 3,
+    "rate": 0.6666666666666666,
+    "ci95": [
+     0.208,
+     0.939
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.562
+    ]
+   }
+  },
+  "heldout|RECALL_MISS|employer": {
+   "recall": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci95": [
+     0.438,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 3,
+    "n": 3,
+    "rate": 1.0,
+    "ci95": [
+     0.438,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.562
+    ]
+   }
+  },
+  "heldout|STALE_FACT|all": {
+   "recall": {
+    "k": 5,
+    "n": 8,
+    "rate": 0.625,
+    "ci95": [
+     0.306,
+     0.863
+    ]
+   },
+   "exact_turn": {
+    "k": 5,
+    "n": 8,
+    "rate": 0.625,
+    "ci95": [
+     0.306,
+     0.863
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 8,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.324
+    ]
+   }
+  },
+  "heldout|STALE_FACT|city": {
+   "recall": {
+    "k": 1,
+    "n": 4,
+    "rate": 0.25,
+    "ci95": [
+     0.046,
+     0.699
+    ]
+   },
+   "exact_turn": {
+    "k": 1,
+    "n": 4,
+    "rate": 0.25,
+    "ci95": [
+     0.046,
+     0.699
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 4,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.49
+    ]
+   }
+  },
+  "heldout|STALE_FACT|employer": {
+   "recall": {
+    "k": 4,
+    "n": 4,
+    "rate": 1.0,
+    "ci95": [
+     0.51,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 4,
+    "n": 4,
+    "rate": 1.0,
+    "ci95": [
+     0.51,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 4,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.49
+    ]
+   }
+  },
+  "heldout|USER_REPAIR|all": {
+   "recall": {
+    "k": 8,
+    "n": 8,
+    "rate": 1.0,
+    "ci95": [
+     0.676,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 8,
+    "n": 8,
+    "rate": 1.0,
+    "ci95": [
+     0.676,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 8,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.324
+    ]
+   }
+  },
+  "heldout|USER_REPAIR|repair": {
+   "recall": {
+    "k": 8,
+    "n": 8,
+    "rate": 1.0,
+    "ci95": [
+     0.676,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 8,
+    "n": 8,
+    "rate": 1.0,
+    "ci95": [
+     0.676,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 8,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.324
+    ]
+   }
+  }
+ },
+ "rows": [
+  {
+   "case_id": "stale_fact-heldout-000",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-heldout-000-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-001",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-heldout-001-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-002",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-002-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-003",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-heldout-003-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-004",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-004-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-005",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-heldout-005-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-006",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-006-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-007",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-heldout-007-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-000",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-000-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-001",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-001-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-002",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-002-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-003",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-003-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-004",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-004-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-005",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-005-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-006",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-006-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-007",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-007-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-000",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-000-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-001",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-001-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-002",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-002-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-003",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-003-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-004",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-004-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-005",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-005-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-006",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-006-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-007",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-007-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-000",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-000-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-001",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-001-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-002",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-002-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-003",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-003-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-004",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-004-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-005",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-005-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-006",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-006-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-007",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-007-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  }
+ ],
+ "flip": null
+}
