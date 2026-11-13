@@ -4,18 +4,39 @@ https://github.com/user-attachments/assets/9e0d56b5-6cf2-44fc-9ecf-4d43a656f8b7
 
 # memdiag
 
-**Memory diagnostics for AI agents.** Point it at your agent's conversation logs and it tells you:
+**Find where your agent's memory fails, in the logs you already have.**
 
-1. **Is it a memory problem or a retrieval problem?** Every agent answer is checked against a reconstructed timeline of what each user actually said, and against the documents the agent retrieved.
-2. **Which memory approach would fix it?** Each user's history is replayed through candidate memory strategies, scored on whether they would have recalled the user's *current* facts.
+memdiag reads an agent's conversation logs and reports each memory failure at the turn it happened,
+next to the earlier turn it contradicts, quoted word for word (from the `experiments/` walkthrough, `--model` mode):
 
-No integration, no memory framework required. It reads logs you already have, offline.
+```
+STALE_FACT · retrieve · confidence 1.00 · u1 · user.city
+  user, turn 4    "Update: we relocated to Austin for my new job."
+  agent, turn 7   "Try Mount Falcon Park, about 30 minutes from Denver."
+```
+
+- **No ground truth needed.** The reference is what each user actually said, rebuilt from the log.
+- **Works with any memory setup.** Built-in context, Mem0, Zep, a vector store: memdiag only needs the
+  messages, plus (optionally) the memory context each call received.
+- **Says where it broke.** With the memory context logged, every failure is labelled **retrieve** (memory
+  never supplied the fact) or **use** (the model had it and ignored it).
+- **Runs locally.** Rules by default, with zero dependencies. Add a local open-source model (Ollama) to read
+  any fact. No API key needed.
 
 ```bash
-pip install .            # no dependencies
-memdiag demo --html report.html
-memdiag diagnose traces.jsonl --docs docs.jsonl --html report.html --json report.json
+pip install .                              # no dependencies
+memdiag demo                               # synthetic example
+memdiag run your_logs.jsonl                # writes findings.jsonl and report.html
+memdiag run your_logs.jsonl --model qwen2.5:7b   # local LLM mode (ollama serve; ollama pull qwen2.5:7b)
 ```
+
+The report puts each failing turn next to its evidence. See
+[`examples/findings_report.html`](examples/findings_report.html) for the demo's report.
+
+**Status: not yet validated.** The detectors are unit-tested and checked on small synthetic and
+LongMemEval samples (see `experiments/`). The validation that makes the scores trustworthy is in progress:
+mutation tests, then public benchmarks, then human agreement. See [docs/ROADMAP.md](docs/ROADMAP.md). Until
+then, read the quotes, not just the scores.
 
 ## Input
 
@@ -48,7 +69,7 @@ extract any fact the user states and to confirm candidates:
 
 ```bash
 ollama serve & ollama pull qwen2.5:7b
-memdiag diagnose traces.jsonl --model qwen2.5:7b      # any OpenAI-compatible endpoint: --base-url
+memdiag run traces.jsonl --model qwen2.5:7b           # any OpenAI-compatible endpoint: --base-url
 memdiag ledger traces.jsonl --model qwen2.5:7b        # what memdiag thinks each user said
 ```
 
@@ -83,7 +104,9 @@ memdiag diagnose traces.jsonl --fail-under deletion_compliance=1.0 --fail-under 
 
 User pushback ("that's wrong", "I asked you to forget") is used as a failure signal.
 
-## Strategy replay
+## Strategy replay (`memdiag diagnose`)
+
+`memdiag diagnose` adds a strategy replay on top of the findings.
 
 Candidate strategies today: no memory, full history in context, top-k search (per user and shared index), latest-value profile, and profile with deletion. Real backends plug in by implementing `MemoryBackend` (`add`, `recall`) in `memdiag/strategies.py` and replaying the same history.
 
@@ -94,12 +117,15 @@ pip install ".[mcp]"
 memdiag-mcp            # stdio server with tools diagnose_traces and diagnose_report
 ```
 
-## Limits of v0
+## Limits
 
-- Extraction is rule-based: location, employer, income, loans and credit score. The `RuleExtractor` interface is where an LLM extractor plugs in to cover arbitrary facts.
-- The demo data is synthetic.
-- Vendor adapters (Zep, Mem0, graph stores) are not built yet; only the interface exists.
+- Rules mode reads location, employer, income, loans and credit score. `--model` reads any fact, but a 7B
+  judge misses things: rules decide where they fire, and the judge only adds or confirms findings.
+- A failure that leaves no trace in the reply is invisible. Every report has a "what this report can't see"
+  section, so silence isn't mistaken for good memory.
+- The demo data is synthetic, and the experiment samples are tiny. Neither is a benchmark.
+- Vendor adapters (Zep, Mem0, graph stores) are not built yet. Log the injected memory as `memory` on each call instead.
 
 ### Known failure on unseen phrasing
 
-`examples/unseen_phrasing.jsonl` contains two real memory failures (a stale city and a stale employer) that v0 misses, because the user says "we relocated to" and "I left Target for a role at REI". When extraction misses an update, the strategy replay is graded against an incomplete timeline and can overrate strategies like full history. `tests/test_known_limits.py` records this as expected failures; the LLM extractor is the fix.
+`examples/unseen_phrasing.jsonl` contains two real memory failures (a stale city and a stale employer) that rules mode misses, because the user says "we relocated to" and "I left Target for a role at REI". When extraction misses an update, the strategy replay is graded against an incomplete timeline and can overrate strategies like full history. `tests/test_known_limits.py` records this as expected failures; `--model` is the fix.
