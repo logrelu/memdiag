@@ -36,10 +36,25 @@ memdiag run your_logs.jsonl --model qwen2.5:7b   # local LLM mode (ollama serve;
 The report puts each failing turn next to its evidence. See
 [`examples/findings_report.html`](examples/findings_report.html) for the demo's report.
 
-**Status: not yet validated.** The detectors are unit-tested and checked on small synthetic and
-LongMemEval samples (see `experiments/`). The validation that makes the scores trustworthy is in progress:
-mutation tests, then public benchmarks, then human agreement. See [docs/ROADMAP.md](docs/ROADMAP.md). Until
-then, read the quotes, not just the scores.
+## Validation so far
+
+Goal 1 injects one known memory failure into clean LongMemEval conversations and checks that memdiag reports it
+at the right turn. Each injection has a look-alike control. The targets were pre-registered, and the numbers
+below are held-out (templates and conversations the detectors were never tuned on). Full method, intervals and
+misses: [docs/validation.md](docs/validation.md).
+
+| Held-out | Rules only (200 cases) | Local LLM, qwen2.5:7b (64 cases) | Target |
+|---|---|---|---|
+| Stale facts | 0.16 | 0.62 | ≥ 0.85 |
+| Re-asked facts | 0.24 | 0.88 | ≥ 0.85 |
+| Dropped instructions | 1.00 | 1.00 | ≥ 0.85 |
+| User repairs | 1.00 | 1.00 | ≥ 0.85 |
+| False positives | 0 / 100 | 0 / 32 | ≤ 0.05 |
+
+**Goal 1 is not met yet.** Stale-fact recall misses in LLM mode: the 7B judge rejected correct candidates.
+The LLM sample is small, and agreement with real labels and humans (Goal 2) hasn't been measured. The
+injected failures are explicit, so treat these numbers as an upper bound for real logs. Read the quotes, not
+just the scores.
 
 ## Input
 
