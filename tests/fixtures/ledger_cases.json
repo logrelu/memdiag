@@ -80,6 +80,11 @@
   "expect": {"current": {"u1|son.age": "7"}, "superseded": [], "items": 1}},
  {"name": "code_block_not_sent", "events": [["dev", "user", "```\nwe = load(my_config)\n```"]],
   "expect": {"llm_messages": 0}},
+ {"name": "attribute_as_subject_dropped", "events": [["u1", "user", "Update: we relocated to Austin for my new job."]],
+  "llm": {"Update: we relocated to Austin for my new job.": [
+    {"subject": "user", "attribute": "city", "value": "Austin", "quote": "we relocated to Austin"},
+    {"subject": "job_title", "attribute": "employer", "value": "new job", "quote": "my new job"}]},
+  "expect": {"current": {"u1|user.city": "Austin"}, "dropped": 1, "items": 1}},
  {"name": "incomplete_fact_dropped", "events": [["maya", "user", "I got a new puppy, Biscuit."]],
   "llm": {"I got a new puppy, Biscuit.": [{"subject": "user", "attribute": "", "value": "Biscuit", "quote": "a new puppy, Biscuit"}]},
   "expect": {"items": 0, "dropped": 1}}

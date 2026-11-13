@@ -33,6 +33,7 @@ ATTRIBUTE_SYNONYMS = {
     "birthday": {"dob", "date_of_birth", "birth_date"},
 }
 _SYNONYM = {alias: canon for canon, aliases in ATTRIBUTE_SYNONYMS.items() for alias in aliases}
+ATTRIBUTE_NAMES = set(ATTRIBUTE_SYNONYMS) | set(_SYNONYM) - {"name"}
 
 
 def _tokens(s: str) -> list[str]:
@@ -175,6 +176,17 @@ class Ledger:
     def items_for(self, user: str) -> list[LedgerItem]:
         return [i for i in self.items if i.user_id == user]
 
+    def known_people(self, user: str, before_turn: Optional[int] = None) -> list[tuple[str, str]]:
+        """(relation, name) for people in the user's life with a live name, e.g. ("daughter", "Maya")."""
+        out = []
+        for (u, key) in self._by_key:
+            subject, _, attribute = key.partition(".")
+            if u == user and subject != "user" and attribute == "name":
+                item = self.current(user, key, before_turn)
+                if item is not None:
+                    out.append((subject, item.value))
+        return sorted(out)
+
     def keys_for(self, user: str) -> list[str]:
         return sorted({k for (u, k) in self._by_key if u == user})
 
@@ -227,7 +239,9 @@ def build_ledger(events: list[Event], judge=None, extractor: Optional[RuleExtrac
         text = without_code(e.content)
         if prompt is not None and worth_extracting(text):
             ledger.stats["llm_messages"] += 1
-            reply = judge.ask(prompt, role="extractor", as_json=True, message=text)
+            people = ledger.known_people(e.user_id, before_turn=e.index)
+            known = "\n".join(f"- {rel}: {name}" for rel, name in people) or "- (none yet)"
+            reply = judge.ask(prompt, role="extractor", as_json=True, message=text, known_people=known)
             facts = (reply.data or {}).get("facts") or []
             for f in facts if isinstance(facts, list) else []:
                 if not isinstance(f, dict):
@@ -238,6 +252,9 @@ def build_ledger(events: list[Event], judge=None, extractor: Optional[RuleExtrac
                 value = str(f.get("value") or "").strip()
                 if not subject or not attribute or not value:
                     drop(f, "incomplete" if subject else "subject is only a pronoun")
+                    continue
+                if subject in ATTRIBUTE_NAMES:  # e.g. subject "job_title": the model swapped the fields
+                    drop(f, f"subject {subject!r} is an attribute name")
                     continue
                 span = quote_span(str(f.get("quote") or ""), e.content)
                 if span is None:

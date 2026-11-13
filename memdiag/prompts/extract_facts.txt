@@ -1,5 +1,5 @@
 id: extract_facts
-version: 1
+version: 2
 description: Facts a user states about themselves (or people in their life) in one message, with verbatim quotes.
 ---
 You extract facts that a USER states about themselves and the people in their life, from one message.
@@ -14,6 +14,12 @@ Rules:
 - Include updates ("we moved to Denver" means city = Denver).
 - Do not include questions, requests, general statements about the world, or anything about the assistant.
 - If there are no such facts, return {"facts": []}.
+- People the user already mentioned are listed below. When the message is about one of them, even by name or
+  as "he"/"she", use their relation as the subject ("Maya turns 7" with "daughter: Maya" means subject
+  "daughter", attribute "age", value "7").
+
+People the user already mentioned:
+$known_people
 
 Message:
 $message
