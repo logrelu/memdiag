@@ -1,12 +1,13 @@
 # Changelog
 
 ## Unreleased
+- New `CONSTRAINT_DROP` findings and `constraint_retention` metric: instructions about replies (word or sentence limits, reply language, bullets or no bullets, JSON only, banned words, no emojis, lowercase) checked against later replies in the same session, honoring revocations, replacements and one-turn overrides. Rule-based, no model.
 - New `memdiag run LOG [--model M]`: writes `findings.jsonl` and an HTML report with each failing turn next to its evidence turn (quotes highlighted), location, confidence, signals, the ledger, and a "what this report can't see" section. Demo output: `examples/findings_report.html`.
 - Judge quotes wrapped in quotation marks are accepted (a live run lost a confirmed stale fact to this).
 - Ledger detectors run alongside the rules: `STALE_FACT` from mentions of an old value, `RECALL_MISS` re-asks by pattern over any ledger fact (or by the judge), and `USER_REPAIR` signals. When a log carries the injected `memory`, each finding is located at `retrieve` or `use`.
 - `memdiag diagnose --model qwen2.5:7b` runs the LLM extractor and judge (local Ollama by default).
 - `extract_facts` v2 links names to relations ("Maya" -> `daughter`); new prompts `check_stale` v1 and `check_reask` v1.
-- `fact_currency` now counts (reply, updated fact) pairs; `recall_continuity` counts turns with any checkable live fact. Demo scores are unchanged.
+- `fact_currency` now counts (reply, updated fact) pairs; `recall_continuity` counts turns with any checkable live fact. The demo's `fact_currency` goes from 0.00 (2 of 2) to 0.33 (2 of 3): the old count missed the opportunity for a stale car-loan reply, so a failure sat outside its denominator.
 - New fact ledger (`memdiag.ledger`): each user's stated facts with verbatim quotes, normalized keys, updates (`superseded_by`) and deletions (`revoked_at_turn`), from rules plus an optional LLM extractor. LLM facts whose quote is not in the message are dropped and recorded.
 - New `memdiag ledger LOG [--model qwen2.5:7b]` command.
 - New judge layer (`memdiag.judge`): one stdlib client for any OpenAI-compatible endpoint (local Ollama by default), a disk cache keyed by model and prompt version, JSON parsing with one retry, per-role usage accounting, and `FakeJudge` for tests.
