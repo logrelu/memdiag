@@ -53,3 +53,17 @@ def test_location_shows_on_cards():
     rows = STALE[:2] + [STALE[2] + [[{"id": "m1", "text": "User lives in Portland."}]]]
     page = findings_html(run(_ev(rows)), _ev(rows))
     assert '<span class="pill">use</span>' in page and "<b>1</b> use" in page
+
+
+def test_mark_never_splits_an_html_entity():
+    from memdiag.findings_report import _mark
+    assert _mark("R&D at amp <b>", "amp") == "R&amp;D at <mark>amp</mark> &lt;b&gt;"
+    assert _mark("it's x27 ok", "x27") == "it&#x27;s <mark>x27</mark> ok"
+    assert _mark("no quote here", "absent") == "no quote here"
+
+
+def test_dropped_reasons_are_listed():
+    res = {"mode": "llm", "judge_model": "m", "metrics": {}, "ledger_dropped": [
+        {"reason": "quote not in message"}, {"reason": "quote not in message"}, {"reason": "incomplete"}]}
+    line = [x for x in cant_see(res, _ev(STALE)) if "dropped" in x][0]
+    assert "3 extracted facts were dropped (2 quote not in message; 1 incomplete)" in line

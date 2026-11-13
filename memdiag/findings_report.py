@@ -42,10 +42,14 @@ def _e(s) -> str:
 
 
 def _mark(text: str, quote: str) -> str:
-    """Escape `text`, then highlight the first occurrence of `quote` (a verbatim substring)."""
-    escaped = _e(text)
-    q = _e(quote) if quote else ""
-    return escaped.replace(q, f"<mark>{q}</mark>", 1) if q and q in escaped else escaped
+    """Highlight the first occurrence of `quote` (a verbatim substring) in `text`, escaping each piece.
+
+    The match is found in the raw text, so a quote can never land inside an HTML entity like `&amp;`.
+    """
+    i = text.find(quote) if quote else -1
+    if i < 0:
+        return _e(text)
+    return f"{_e(text[:i])}<mark>{_e(quote)}</mark>{_e(text[i + len(quote):])}"
 
 
 def _turn(e: Event, quote: str, kind: str) -> str:
@@ -95,10 +99,14 @@ def cant_see(res: dict, events: list[Event]) -> list[str]:
     for name, m in res["metrics"].items():
         if m["score"] is None:
             out.append(f"<b>{_e(name)}</b> is n/a: {NA_REASONS.get(name, 'it had no opportunities')}.")
-    dropped = len(res.get("ledger_dropped", []))
-    if dropped:
-        out.append(f"{dropped} extracted fact{'s were' if dropped != 1 else ' was'} dropped (quote not in the "
-                   "message, incomplete, or in conflict with a rule); see <code>memdiag ledger</code>.")
+    reasons: dict[str, int] = {}
+    for d in res.get("ledger_dropped", []):
+        reasons[d["reason"]] = reasons.get(d["reason"], 0) + 1
+    if reasons:
+        total = sum(reasons.values())
+        detail = "; ".join(f"{n} {_e(r)}" for r, n in sorted(reasons.items(), key=lambda kv: -kv[1]))
+        out.append(f"{total} extracted fact{'s were' if total != 1 else ' was'} dropped ({detail}); see "
+                   "<code>memdiag ledger</code>.")
     return out
 
 
