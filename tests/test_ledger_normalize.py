@@ -62,3 +62,10 @@ def test_quote_span_ignores_wrapping_quote_marks():
         assert quote_span(q, reply) == "Since you work at Target"
     assert quote_span('"you work at REI"', reply) is None
     assert quote_span('""', reply) is None
+
+
+def test_quote_span_whole_words_and_only_wrapping_marks():
+    from memdiag.ledger import quote_span
+    assert quote_span("'hi'", "this") is None and quote_span("hi", "this") is None
+    assert quote_span("I'm 6'", "I'm 6 feet") is None  # a trailing apostrophe is not a wrapper
+    assert quote_span("'tis the season", "Well, 'tis the season.") == "'tis the season"

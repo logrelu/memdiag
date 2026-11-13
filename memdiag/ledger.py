@@ -139,12 +139,21 @@ QUOTE_MARKS = "\"'“”‘’«»`"
 
 
 def quote_span(quote: str, text: str) -> Optional[str]:
-    """The exact span of `text` that `quote` matches, ignoring case, runs of whitespace and quotation marks a
-    model wrapped around it; None if absent."""
-    words = (quote or "").strip().strip(QUOTE_MARKS).strip().split()
+    """The exact span of `text` that `quote` matches, ignoring case, runs of whitespace and one pair of
+    quotation marks a model wrapped around it; None if absent. Matches whole words only ("hi" is not in "this").
+    """
+    q = (quote or "").strip()
+    if len(q) >= 2 and q[0] in QUOTE_MARKS and q[-1] in QUOTE_MARKS:
+        q = q[1:-1].strip()
+    words = q.split()
     if not words:
         return None
-    m = re.search(r"\s+".join(map(re.escape, words)), text, re.I)
+    pattern = r"\s+".join(map(re.escape, words))
+    if re.match(r"\w", words[0]):
+        pattern = r"(?<!\w)" + pattern
+    if re.search(r"\w$", words[-1]):
+        pattern += r"(?!\w)"
+    m = re.search(pattern, text, re.I)
     return m.group(0) if m else None
 
 
