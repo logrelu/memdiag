@@ -37,3 +37,4 @@ ignore = ["E501"]  # long lines are mostly HTML/CSS template strings
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]  # so tests can import validation/ (not part of the installed package)
