@@ -1,0 +1,6246 @@
+{
+ "meta": {
+  "mode": "rules",
+  "judge_model": null,
+  "date": "2026-11-13",
+  "memdiag_version": "0.1.0",
+  "commit": "6e7c076",
+  "data_sha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "cases": 520,
+  "limit": null,
+  "split": null,
+  "background": {
+   "checked": 456,
+   "rejected": 1
+  }
+ },
+ "aggregate": {
+  "dev|ALL|all": {
+   "recall": {
+    "k": 147,
+    "n": 160,
+    "rate": 0.91875,
+    "ci95": [
+     0.866,
+     0.952
+    ]
+   },
+   "exact_turn": {
+    "k": 147,
+    "n": 160,
+    "rate": 0.91875,
+    "ci95": [
+     0.866,
+     0.952
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 160,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.023
+    ]
+   }
+  },
+  "dev|CONSTRAINT_DROP|all": {
+   "recall": {
+    "k": 40,
+    "n": 40,
+    "rate": 1.0,
+    "ci95": [
+     0.912,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 40,
+    "n": 40,
+    "rate": 1.0,
+    "ci95": [
+     0.912,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 40,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.088
+    ]
+   }
+  },
+  "dev|CONSTRAINT_DROP|banned_word": {
+   "recall": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.278
+    ]
+   }
+  },
+  "dev|CONSTRAINT_DROP|max_words": {
+   "recall": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.278
+    ]
+   }
+  },
+  "dev|CONSTRAINT_DROP|no_bullets": {
+   "recall": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.278
+    ]
+   }
+  },
+  "dev|CONSTRAINT_DROP|no_emoji": {
+   "recall": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 10,
+    "n": 10,
+    "rate": 1.0,
+    "ci95": [
+     0.722,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.278
+    ]
+   }
+  },
+  "dev|RECALL_MISS|all": {
+   "recall": {
+    "k": 27,
+    "n": 40,
+    "rate": 0.675,
+    "ci95": [
+     0.52,
+     0.799
+    ]
+   },
+   "exact_turn": {
+    "k": 27,
+    "n": 40,
+    "rate": 0.675,
+    "ci95": [
+     0.52,
+     0.799
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 40,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.088
+    ]
+   }
+  },
+  "dev|RECALL_MISS|child_age": {
+   "recall": {
+    "k": 0,
+    "n": 13,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.228
+    ]
+   },
+   "exact_turn": {
+    "k": 0,
+    "n": 13,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.228
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 13,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.228
+    ]
+   }
+  },
+  "dev|RECALL_MISS|city": {
+   "recall": {
+    "k": 14,
+    "n": 14,
+    "rate": 1.0,
+    "ci95": [
+     0.785,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 14,
+    "n": 14,
+    "rate": 1.0,
+    "ci95": [
+     0.785,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 14,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.215
+    ]
+   }
+  },
+  "dev|RECALL_MISS|employer": {
+   "recall": {
+    "k": 13,
+    "n": 13,
+    "rate": 1.0,
+    "ci95": [
+     0.772,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 13,
+    "n": 13,
+    "rate": 1.0,
+    "ci95": [
+     0.772,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 13,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.228
+    ]
+   }
+  },
+  "dev|STALE_FACT|all": {
+   "recall": {
+    "k": 40,
+    "n": 40,
+    "rate": 1.0,
+    "ci95": [
+     0.912,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 40,
+    "n": 40,
+    "rate": 1.0,
+    "ci95": [
+     0.912,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 40,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.088
+    ]
+   }
+  },
+  "dev|STALE_FACT|city": {
+   "recall": {
+    "k": 20,
+    "n": 20,
+    "rate": 1.0,
+    "ci95": [
+     0.839,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 20,
+    "n": 20,
+    "rate": 1.0,
+    "ci95": [
+     0.839,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 20,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.161
+    ]
+   }
+  },
+  "dev|STALE_FACT|employer": {
+   "recall": {
+    "k": 20,
+    "n": 20,
+    "rate": 1.0,
+    "ci95": [
+     0.839,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 20,
+    "n": 20,
+    "rate": 1.0,
+    "ci95": [
+     0.839,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 20,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.161
+    ]
+   }
+  },
+  "dev|USER_REPAIR|all": {
+   "recall": {
+    "k": 40,
+    "n": 40,
+    "rate": 1.0,
+    "ci95": [
+     0.912,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 40,
+    "n": 40,
+    "rate": 1.0,
+    "ci95": [
+     0.912,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 40,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.088
+    ]
+   }
+  },
+  "dev|USER_REPAIR|repair": {
+   "recall": {
+    "k": 40,
+    "n": 40,
+    "rate": 1.0,
+    "ci95": [
+     0.912,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 40,
+    "n": 40,
+    "rate": 1.0,
+    "ci95": [
+     0.912,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 40,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.088
+    ]
+   }
+  },
+  "heldout|ALL|all": {
+   "recall": {
+    "k": 60,
+    "n": 100,
+    "rate": 0.6,
+    "ci95": [
+     0.502,
+     0.691
+    ]
+   },
+   "exact_turn": {
+    "k": 60,
+    "n": 100,
+    "rate": 0.6,
+    "ci95": [
+     0.502,
+     0.691
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 100,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.037
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|all": {
+   "recall": {
+    "k": 25,
+    "n": 25,
+    "rate": 1.0,
+    "ci95": [
+     0.867,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 25,
+    "n": 25,
+    "rate": 1.0,
+    "ci95": [
+     0.867,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 25,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.133
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|banned_word": {
+   "recall": {
+    "k": 6,
+    "n": 6,
+    "rate": 1.0,
+    "ci95": [
+     0.61,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 6,
+    "n": 6,
+    "rate": 1.0,
+    "ci95": [
+     0.61,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 6,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.39
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|max_words": {
+   "recall": {
+    "k": 7,
+    "n": 7,
+    "rate": 1.0,
+    "ci95": [
+     0.646,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 7,
+    "n": 7,
+    "rate": 1.0,
+    "ci95": [
+     0.646,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 7,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.354
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|no_bullets": {
+   "recall": {
+    "k": 6,
+    "n": 6,
+    "rate": 1.0,
+    "ci95": [
+     0.61,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 6,
+    "n": 6,
+    "rate": 1.0,
+    "ci95": [
+     0.61,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 6,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.39
+    ]
+   }
+  },
+  "heldout|CONSTRAINT_DROP|no_emoji": {
+   "recall": {
+    "k": 6,
+    "n": 6,
+    "rate": 1.0,
+    "ci95": [
+     0.61,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 6,
+    "n": 6,
+    "rate": 1.0,
+    "ci95": [
+     0.61,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 6,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.39
+    ]
+   }
+  },
+  "heldout|RECALL_MISS|all": {
+   "recall": {
+    "k": 6,
+    "n": 25,
+    "rate": 0.24,
+    "ci95": [
+     0.115,
+     0.434
+    ]
+   },
+   "exact_turn": {
+    "k": 6,
+    "n": 25,
+    "rate": 0.24,
+    "ci95": [
+     0.115,
+     0.434
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 25,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.133
+    ]
+   }
+  },
+  "heldout|RECALL_MISS|child_age": {
+   "recall": {
+    "k": 0,
+    "n": 8,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.324
+    ]
+   },
+   "exact_turn": {
+    "k": 0,
+    "n": 8,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.324
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 8,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.324
+    ]
+   }
+  },
+  "heldout|RECALL_MISS|city": {
+   "recall": {
+    "k": 2,
+    "n": 9,
+    "rate": 0.2222222222222222,
+    "ci95": [
+     0.063,
+     0.547
+    ]
+   },
+   "exact_turn": {
+    "k": 2,
+    "n": 9,
+    "rate": 0.2222222222222222,
+    "ci95": [
+     0.063,
+     0.547
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 9,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.299
+    ]
+   }
+  },
+  "heldout|RECALL_MISS|employer": {
+   "recall": {
+    "k": 4,
+    "n": 8,
+    "rate": 0.5,
+    "ci95": [
+     0.215,
+     0.785
+    ]
+   },
+   "exact_turn": {
+    "k": 4,
+    "n": 8,
+    "rate": 0.5,
+    "ci95": [
+     0.215,
+     0.785
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 8,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.324
+    ]
+   }
+  },
+  "heldout|STALE_FACT|all": {
+   "recall": {
+    "k": 4,
+    "n": 25,
+    "rate": 0.16,
+    "ci95": [
+     0.064,
+     0.347
+    ]
+   },
+   "exact_turn": {
+    "k": 4,
+    "n": 25,
+    "rate": 0.16,
+    "ci95": [
+     0.064,
+     0.347
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 25,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.133
+    ]
+   }
+  },
+  "heldout|STALE_FACT|city": {
+   "recall": {
+    "k": 4,
+    "n": 13,
+    "rate": 0.3076923076923077,
+    "ci95": [
+     0.127,
+     0.576
+    ]
+   },
+   "exact_turn": {
+    "k": 4,
+    "n": 13,
+    "rate": 0.3076923076923077,
+    "ci95": [
+     0.127,
+     0.576
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 13,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.228
+    ]
+   }
+  },
+  "heldout|STALE_FACT|employer": {
+   "recall": {
+    "k": 0,
+    "n": 12,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.243
+    ]
+   },
+   "exact_turn": {
+    "k": 0,
+    "n": 12,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.243
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 12,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.243
+    ]
+   }
+  },
+  "heldout|USER_REPAIR|all": {
+   "recall": {
+    "k": 25,
+    "n": 25,
+    "rate": 1.0,
+    "ci95": [
+     0.867,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 25,
+    "n": 25,
+    "rate": 1.0,
+    "ci95": [
+     0.867,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 25,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.133
+    ]
+   }
+  },
+  "heldout|USER_REPAIR|repair": {
+   "recall": {
+    "k": 25,
+    "n": 25,
+    "rate": 1.0,
+    "ci95": [
+     0.867,
+     1.0
+    ]
+   },
+   "exact_turn": {
+    "k": 25,
+    "n": 25,
+    "rate": 1.0,
+    "ci95": [
+     0.867,
+     1.0
+    ]
+   },
+   "false_positive": {
+    "k": 0,
+    "n": 25,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.133
+    ]
+   }
+  }
+ },
+ "rows": [
+  {
+   "case_id": "stale_fact-dev-000",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-000-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-001",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-001-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-002",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-002-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-003",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-003-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-004",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-004-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-005",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-005-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-006",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-006-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-007",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-007-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-008",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-008-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-009",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-009-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-010",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-010-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-011",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-011-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-012",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-012-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-013",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-013-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-014",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-014-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-015",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-015-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-016",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-016-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-017",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-017-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-018",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-018-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-019",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-019-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-020",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-020-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-021",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-021-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-022",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-022-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-023",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-023-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-024",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-024-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-025",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-025-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-026",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-026-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-027",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-027-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-028",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-028-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-029",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-029-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-030",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-030-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-031",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-031-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-032",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-032-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-033",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-033-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-034",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-034-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-035",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-035-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-036",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-036-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-037",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-037-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-038",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-038-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-dev-039",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-dev-039-ctl",
+   "type": "STALE_FACT",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-000",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-000-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-001",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-001-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-002",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-002-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-003",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-003-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-004",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-004-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-005",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-005-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-006",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-006-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-007",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-007-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-008",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-008-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-009",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-009-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-010",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-010-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-011",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-011-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-012",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-heldout-012-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-013",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-013-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-014",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-heldout-014-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-015",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-015-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-016",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-016-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-017",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-017-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-018",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-018-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-019",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-019-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-020",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-heldout-020-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-021",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-021-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-022",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    21
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "stale_fact-heldout-022-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-023",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-023-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "stale_fact-heldout-024",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "stale_fact-heldout-024-ctl",
+   "type": "STALE_FACT",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-000",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-000-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-001",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-001-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-002",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-002-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-003",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-003-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-004",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-004-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-005",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-005-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-006",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-006-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-007",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-007-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-008",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-008-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-009",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-009-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-010",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-010-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-011",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-011-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-012",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-012-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-013",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-013-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-014",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-014-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-015",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-015-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-016",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-016-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-017",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-017-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-018",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-018-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-019",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-019-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-020",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-020-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-021",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-021-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-022",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-022-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-023",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-023-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-024",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-024-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-025",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-025-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-026",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-026-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-027",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-027-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-028",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-028-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-029",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-029-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-030",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-030-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-031",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-031-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-032",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-032-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-033",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-033-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-034",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-034-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-035",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-035-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-036",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-036-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-037",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-037-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-038",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-dev-038-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-dev-039",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-dev-039-ctl",
+   "type": "RECALL_MISS",
+   "split": "dev",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-000",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-000-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-001",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-001-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-002",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-002-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-003",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-003-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-004",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-004-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-005",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-005-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-006",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-006-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-007",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-007-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-008",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-008-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-009",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-009-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-010",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [
+    11
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "recall_miss-heldout-010-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-011",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-011-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-012",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-012-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-013",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-013-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-014",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-014-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-015",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-015-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-016",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-016-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-017",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-017-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-018",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-018-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-019",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-019-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-020",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-020-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-021",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-021-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-022",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-022-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "employer",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-023",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-023-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "child_age",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "recall_miss-heldout-024",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": false,
+   "found_turns": [],
+   "detected": false,
+   "exact_turn": false
+  },
+  {
+   "case_id": "recall_miss-heldout-024-ctl",
+   "type": "RECALL_MISS",
+   "split": "heldout",
+   "attr": "city",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-000",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-000-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-001",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-001-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-002",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-002-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-003",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-003-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-004",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-004-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-005",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-005-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-006",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-006-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-007",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-007-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-008",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-008-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-009",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-009-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-010",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-010-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-011",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-011-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-012",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-012-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-013",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-013-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-014",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-014-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-015",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-015-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-016",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-016-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-017",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-017-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-018",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-018-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-019",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-019-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-020",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-020-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-021",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-021-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-022",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-022-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-023",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-023-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-024",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-024-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-025",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-025-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-026",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-026-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-027",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-027-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-028",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-028-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-029",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-029-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-030",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-030-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-031",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-031-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-032",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-032-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-033",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-033-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-034",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-034-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-035",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-035-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-036",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-036-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-037",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-037-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-038",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-038-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-dev-039",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-dev-039-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "dev",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-000",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-000-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-001",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-001-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-002",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-002-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-003",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-003-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-004",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-004-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-005",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-005-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-006",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-006-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-007",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-007-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-008",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-008-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-009",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-009-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-010",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-010-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-011",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-011-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-012",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-012-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-013",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-013-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-014",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-014-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-015",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-015-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-016",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-016-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-017",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-017-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-018",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-018-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-019",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-019-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-020",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-020-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-021",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-021-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_bullets",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-022",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-022-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "banned_word",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-023",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-023-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "no_emoji",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "constraint_drop-heldout-024",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": false,
+   "found_turns": [
+    9
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "constraint_drop-heldout-024-ctl",
+   "type": "CONSTRAINT_DROP",
+   "split": "heldout",
+   "attr": "max_words",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-000",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-000-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-001",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-001-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-002",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-002-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-003",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-003-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-004",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-004-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-005",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-005-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-006",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-006-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-007",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-007-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-008",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-008-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-009",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-009-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-010",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-010-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-011",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-011-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-012",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-012-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-013",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-013-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-014",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-014-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-015",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-015-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-016",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-016-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-017",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-017-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-018",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-018-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-019",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-019-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-020",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-020-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-021",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-021-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-022",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-022-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-023",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-023-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-024",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-024-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-025",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-025-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-026",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-026-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-027",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-027-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-028",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-028-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-029",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-029-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-030",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-030-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-031",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-031-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-032",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-032-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-033",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-033-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-034",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-034-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-035",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-035-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-036",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-036-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-037",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-037-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-038",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-038-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-dev-039",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-dev-039-ctl",
+   "type": "USER_REPAIR",
+   "split": "dev",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-000",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-000-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-001",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-001-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-002",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-002-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-003",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-003-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-004",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-004-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-005",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-005-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-006",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-006-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-007",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-007-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-008",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-008-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-009",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-009-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-010",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-010-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-011",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-011-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-012",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-012-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-013",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-013-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-014",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-014-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-015",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-015-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-016",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-016-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-017",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-017-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-018",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-018-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-019",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-019-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-020",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-020-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-021",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-021-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-022",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-022-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-023",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-023-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  },
+  {
+   "case_id": "user_repair-heldout-024",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": false,
+   "found_turns": [
+    3
+   ],
+   "detected": true,
+   "exact_turn": true
+  },
+  {
+   "case_id": "user_repair-heldout-024-ctl",
+   "type": "USER_REPAIR",
+   "split": "heldout",
+   "attr": "repair",
+   "control": true,
+   "found_turns": [],
+   "false_positive": false
+  }
+ ],
+ "flip": null
+}
