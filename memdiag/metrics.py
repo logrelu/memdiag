@@ -41,7 +41,7 @@ def compute_metrics(findings: list[dict], opportunities: dict) -> dict[str, Metr
     leaked = len({(f["user_id"], f["attribute"]) for f in findings if f["category"] == "failed_deletion"})
     asserted = opportunities.get("fact_assertions", 0)
     # A turn that re-asks for several known facts is one failure, matching the per-turn denominator.
-    reask_turns = len({(f["user_id"], f["session_id"], f["ts"]) for f in findings
+    reask_turns = len({(f["user_id"], f.get("failing_turn", f["ts"])) for f in findings
                        if f["category"] == "forgotten_memory"})
 
     metrics = [
