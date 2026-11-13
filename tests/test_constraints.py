@@ -43,3 +43,52 @@ def test_language_id():
     assert detect_language("Claro, la mejor época para visitar es en la primavera.") == "es"
     assert detect_language("The best time to visit is in the spring when it is warm.") == "en"
     assert detect_language("OK, thanks.") is None
+
+
+@pytest.mark.parametrize("text", [
+    "No emojis in my wedding invite.", "Use bullet points for the slides.", "Write an essay under 500 words.",
+    "Reply in Spanish to this email I wrote.", "Write me a poem in 3 sentences.", "Can you reply in one sentence?",
+    "Write a function that returns JSON only.", "Please write in lowercase letters for my sign.",
+    "Never use bullet points in my resume.", "Stop using emojis in the commit messages.",
+    "I wrote it in Spanish.", "The report should be under 10 words.",
+])
+def test_one_off_tasks_are_not_standing_instructions(text):
+    assert extract_constraints(text) == []  # review cases: none of these govern later replies
+
+
+@pytest.mark.parametrize("text,kind", [
+    ("Max 50 words.", "max_words"), ("Only use lowercase.", "lowercase"), ("Never mention pricing.", "banned_word"),
+    ("Please respond in Spanish from now on.", "language"), ("Answer only in German.", "language"),
+    ("From now on, keep your answers under 30 words.", "max_words"), ("No emojis please.", "no_emoji"),
+])
+def test_common_instruction_phrasings(text, kind):
+    assert [k for k, _, _ in extract_constraints(text)] == [kind]
+
+
+def test_revoke_after_add_in_the_same_message():
+    events = _events([["s1", "user", "Reply in under 5 words. Actually, you can go longer."],
+                      ["s1", "assistant", "Sure, here is a longer answer than five words."]])
+    assert detect_constraints(events) == ([], 0)
+
+
+@pytest.mark.parametrize("override", ["Translate 'hello' into English.", "Translate this to German: hello."])
+def test_one_off_translation_skips_the_language_check(override):
+    events = _events([["s1", "user", "Please reply in French."], ["s1", "user", override],
+                      ["s1", "assistant", "Hello is a greeting that people use in the morning and the evening."]])
+    findings, pairs = detect_constraints(events)
+    assert findings == [] and pairs == 0
+
+
+def test_check_counting_and_format_edge_cases():
+    from memdiag.constraints import Constraint, check
+    words = Constraint("max_words", "4", 0, "")
+    assert check(words, "It's 3.5 - well-known.")[1] == "3 words"
+    sentences = Constraint("max_sentences", "1", 0, "")
+    assert check(sentences, "Dr. Smith said e.g. this is 3.5 fine.")[0] is True
+    no_bullets = Constraint("no_bullets", "", 0, "")
+    assert check(no_bullets, "Run:\n```\n- a\n```")[0] is True
+    assert check(Constraint("json_only", "", 0, ""), "```JSON\n{\"a\": 1}\n```")[0] is True
+    no_emoji = Constraint("no_emoji", "", 0, "")
+    assert check(no_emoji, "Done ✓ ★ → next") [0] is True and check(no_emoji, "Done 🎉")[0] is False
+    lower = Constraint("lowercase", "", 0, "")
+    assert check(lower, "use `NULL` and the API here")[0] is True and check(lower, "Hello there")[0] is False
