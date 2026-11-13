@@ -1,6 +1,10 @@
 # Changelog
 
 ## Unreleased
+- Ledger detectors run alongside the rules: `STALE_FACT` from mentions of an old value, `RECALL_MISS` re-asks by pattern over any ledger fact (or by the judge), and `USER_REPAIR` signals. When a log carries the injected `memory`, each finding is located at `retrieve` or `use`.
+- `memdiag diagnose --model qwen2.5:7b` runs the LLM extractor and judge (local Ollama by default).
+- `extract_facts` v2 links names to relations ("Maya" -> `daughter`); new prompts `check_stale` v1 and `check_reask` v1.
+- `fact_currency` now counts (reply, updated fact) pairs; `recall_continuity` counts turns with any checkable live fact. Demo scores are unchanged.
 - New fact ledger (`memdiag.ledger`): each user's stated facts with verbatim quotes, normalized keys, updates (`superseded_by`) and deletions (`revoked_at_turn`), from rules plus an optional LLM extractor. LLM facts whose quote is not in the message are dropped and recorded.
 - New `memdiag ledger LOG [--model qwen2.5:7b]` command.
 - New judge layer (`memdiag.judge`): one stdlib client for any OpenAI-compatible endpoint (local Ollama by default), a disk cache keyed by model and prompt version, JSON parsing with one retry, per-role usage accounting, and `FakeJudge` for tests.

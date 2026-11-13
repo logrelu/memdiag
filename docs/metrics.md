@@ -15,11 +15,21 @@ Seattle"), found by the extractor. Scores are only as complete as the extractor;
 | Metric | Failures | Opportunities |
 |---|---|---|
 | `memory_faithfulness` | stale + deleted-fact + cross-user + invented assertions | all asserted facts |
-| `fact_currency` | stale assertions | assertions about an attribute the user had changed at least once |
+| `fact_currency` | (reply, fact) pairs where the reply uses an old value of a fact the user updated: a stale rule assertion, or a mention of the old value without the current one (confirmed by the judge in `--model` mode) | (reply, fact) pairs where the reply mentions any value, old or current, of a fact the user had updated |
 | `deletion_compliance` | forget requests the agent later violated (counted once per user and fact) | forget requests |
 | `user_isolation` | assertions using another user's value | assertions about attributes another user also has |
 | `groundedness` | assertions of a fact nobody stated | all asserted facts |
-| `recall_continuity` | assistant turns that re-ask for a fact the user already gave (one per turn) | assistant turns where the user had already given a fact the rules can spot a re-ask for (city, employer, income, credit score) and hadn't deleted it |
+| `recall_continuity` | assistant turns that re-ask for a fact the user already gave (one per turn): by rule patterns, or by the judge in `--model` mode | assistant turns where the user had a live fact (not deleted) that can be checked: one with a re-ask pattern (city, employer, income, credit score, age, name, birthday, interest, job title), or any fact in `--model` mode |
+
+`memory_faithfulness` and `groundedness` count only assertions the rules can read ("since you live in
+Seattle"). A stale value the ledger finds as a plain mention ("Seattle weather is rainy") counts in
+`fact_currency` and not in them, so their denominators stay assertions.
+
+Signals, not scores: `repair_count` is the number of assistant turns followed by a user repair ("I already
+told you"). A repair raises the confidence of memory findings on that turn by 0.25.
+
+With `--model`, the run's `mode` is `llm`, `judge_model` names the judge, and `judge_usage` reports calls and
+cache hits per role. Scores from different judges are not comparable.
 
 ## Using the scores
 

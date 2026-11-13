@@ -32,7 +32,7 @@ opportunities is `None`.
 | Metric | Status | Failures / opportunities |
 |---|---|---|
 | `fact_recall` | proposed; renames existing `recall_continuity` | `RECALL_MISS` / assistant turns with a relevant earlier fact (today: assistant turns where the user had given a re-askable fact; see `docs/metrics.md`) |
-| `fact_currency` | proposed (exists) | `STALE_FACT` / assertions about an attribute the user has changed at least once |
+| `fact_currency` | proposed (exists) | `STALE_FACT` (reply, fact) pairs / (reply, fact) pairs mentioning any value of a fact the user updated |
 | `constraint_retention` | proposed | violations / (constraint, turn) pairs in scope |
 | `groundedness` | proposed (exists) | `HALLUCINATED_MEMORY` / user-fact assertions |
 | `deletion_compliance` | proposed (exists) | deletion requests violated / deletion requests |
@@ -52,7 +52,8 @@ Emitted since M2: `type`, `mode`, `failing_turn`, `evidence_turns`, `failing_quo
 positions in the input log. The legacy keys (`category`, `class`, `turn`, `expected`, `got`, `evidence`) are still
 emitted. Whether they stay after v0.2.0 is decided before the freeze.
 
-Still to come: `item_id`, `location` (M5); `judge_model`, `prompt_version` (M3).
+Emitted since M5a: `location` (`retrieve` or `use`, L2 logs only). Still to come on findings: `item_id`, `judge_model`,
+`prompt_version` (run-level `mode`, `judge_model` and `judge_usage` exist since M5a).
 
 ## Input fields
 

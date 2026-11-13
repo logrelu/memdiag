@@ -17,6 +17,7 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 - `memdiag/detect.py` detectors -> `Finding`s and opportunity counts; `metrics.py` scores from findings
 - `memdiag/strategies.py` memory-strategy replay; `report.py` text/HTML/JSON; `cli.py`, `mcp_server.py`
 - `memdiag/adapters.py` log formats -> `Event`s (events, openai, longmemeval)
+- `memdiag/detectors.py` ledger detectors (stale mentions, re-ask patterns + judge, user repair, retrieve/use); merged with `detect.py` in `run()`
 - `memdiag/ledger.py` the fact ledger: rules + LLM extraction, verbatim quotes, normalized keys, updates/deletions; `text.py` quote helpers
 - `memdiag/judge.py` every model call: `Judge.ask` (cache, JSON retry, usage), `OpenAICompatJudge`, `FakeJudge` for tests
 - `memdiag/prompt.py` + `memdiag/prompts/*.txt` versioned prompts (id/version header, `$field` placeholders)
@@ -47,7 +48,8 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 
 ## Gotchas (learned the hard way)
 - LLM-extracted fact keys vary (`user|myself.city` vs `user.city`). Always go through `ledger.normalize_key`, or stale detection silently fails.
-- The extractor sees one message at a time, so it can't link "Maya" to `daughter`. Don't assume person keys are consistent until `extract_facts` v2.
+- The extractor links names to relations only through the known people passed in (`extract_facts` v2); a person never named with a relation stays under their name.
+- A 7B judge misses easy re-asks. Rules decide where they fire; the judge may add or confirm, never veto.
 - 7B judges answer open questions badly: they misread queries and claim a response used the context when it didn't. Ask one specific question per check.
 - Benchmark gold judges are wrong in both directions. Hand-check gold before trusting it.
 - `gh pr checks --watch` right after a push can report "no checks" before CI registers. Wait until the checks exist and pass before merging.
