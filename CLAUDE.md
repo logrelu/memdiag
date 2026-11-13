@@ -45,4 +45,5 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 - LLM-extracted fact keys vary (`user|myself.city` vs `user.city`). Normalize keys deterministically, or stale detection silently fails.
 - 7B judges answer open questions badly: they misread queries and claim a response used the context when it didn't. Ask one specific question per check.
 - Benchmark gold judges are wrong in both directions. Hand-check gold before trusting it.
+- `gh pr checks --watch` right after a push can report "no checks" before CI registers. Wait until the checks exist and pass before merging.
 - `pip download --no-binary` runs the package's build backend; treat it as running untrusted code.
