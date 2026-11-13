@@ -21,7 +21,8 @@ from .schema import Event
 from .text import numbers, sentence
 
 SELF = {"user", "i", "me", "myself", "self", "speaker", "mine", "im"}
-FILLER = {"my", "our", "the", "a", "an", "of", "his", "her", "their"}
+FILLER = {"my", "our", "the", "a", "an", "of"}
+PRONOUNS = {"he", "she", "they", "him", "her", "his", "their", "them", "it", "its"}
 ATTRIBUTE_SYNONYMS = {
     "city": {"location", "home_city", "current_city", "residence", "home", "lives_in", "city_of_residence",
              "current_location", "place_of_residence"},
@@ -39,8 +40,14 @@ def _tokens(s: str) -> list[str]:
 
 
 def normalize_subject(subject: str) -> str:
-    """'I', 'user|myself', '' -> 'user'; 'my daughter' -> 'daughter'; 'user|Maya' -> 'maya'."""
+    """'I', 'user|myself', '' -> 'user'; 'my daughter' -> 'daughter'; 'user|Maya' -> 'maya'.
+
+    A bare pronoun ('she', 'his') names nobody we can key on, so it returns '' and the fact is dropped.
+    'his manager' and 'her manager' stay distinct.
+    """
     rest = [t for t in _tokens(subject) if t not in SELF and t not in FILLER]
+    if len(rest) == 1 and rest[0] in PRONOUNS:
+        return ""
     return "_".join(rest) or "user"
 
 
@@ -57,15 +64,35 @@ def normalize_key(subject: str, attribute: str) -> str:
     return f"{normalize_subject(subject)}.{normalize_attribute(attribute)}"
 
 
-def normalize_value(value) -> str:
-    """For comparing values: '$140k' == '140000', 'Denver.' == 'denver'."""
+_NUMBER = r"(\d[\d,]*(?:\.\d+)?)\s*[kKmM]?\b"
+
+
+def _number_and_unit(value) -> tuple[Optional[float], str]:
+    """'-$1.5k' -> (-1500.0, ''); '4.10%' -> (4.1, ''); '7 years' -> (7.0, 'years'); 'Denver' -> (None, 'denver')."""
     text = str(value or "")
     nums = numbers(text)
-    leftover = re.sub(r"(\d[\d,]*(?:\.\d+)?)\s*[kKmM]?\b|[$€£,\s]", "", text)
-    if len(nums) == 1 and not leftover:
-        n = nums[0]
-        return str(int(n)) if n == int(n) else str(n)
-    return " ".join(_tokens(text))
+    if len(nums) != 1:
+        return None, " ".join(_tokens(text))
+    sign = -1 if re.search(r"(?<![\w.])-\s*[$€£]?\s*\d", text) else 1
+    unit = " ".join(_tokens(re.sub(_NUMBER + r"|[$€£%,\-]", " ", text)))
+    return sign * nums[0], unit
+
+
+def normalize_value(value) -> str:
+    """Canonical text for a value: '$140k' -> '140000', '4.10%' -> '4.1', 'Denver.' -> 'denver'."""
+    n, unit = _number_and_unit(value)
+    if n is None:
+        return unit
+    num = str(int(n)) if n == int(n) else str(n)
+    return f"{num} {unit}".strip()
+
+
+def values_equal(a, b) -> bool:
+    """Same value stated two ways: '$140k' == '140000', '7 years' == '7', but '-5' != '5', '7 years' != '7 months'."""
+    (na, ua), (nb, ub) = _number_and_unit(a), _number_and_unit(b)
+    if na is None or nb is None:
+        return normalize_value(a) == normalize_value(b)
+    return na == nb and (ua == ub or not ua or not ub)
 
 
 @dataclass
@@ -102,6 +129,11 @@ def worth_extracting(text: str) -> bool:
     return any(not p.rstrip().endswith("?") for p in parts)
 
 
+def without_code(text: str) -> str:
+    """Drop fenced code blocks: pasted code carries no facts about the user, only cost."""
+    return re.sub(r"```.*?(```|$)", " ", text, flags=re.S)
+
+
 def quote_span(quote: str, text: str) -> Optional[str]:
     """The exact span of `text` that `quote` matches, ignoring case and runs of whitespace; None if absent."""
     words = (quote or "").split()
@@ -114,13 +146,17 @@ def quote_span(quote: str, text: str) -> Optional[str]:
 class Ledger:
     def __init__(self, order: dict[int, int]):
         self.items: list[LedgerItem] = []
-        self.dropped: list[dict] = []  # LLM facts rejected, with the reason, for audit
+        self.dropped: list[dict] = []  # facts rejected or overridden, with the reason, for audit
         self.stats = {"messages": 0, "llm_messages": 0, "items": 0, "dropped": 0}
         self._order = order  # event index -> position in time order
         self._by_key: dict[tuple, list[LedgerItem]] = defaultdict(list)
 
     def _before(self, item_turn: int, turn: Optional[int]) -> bool:
-        return turn is None or self._order[item_turn] < self._order[turn]
+        if turn is None:
+            return True
+        if turn not in self._order:
+            raise ValueError(f"turn {turn} is not in this log (turns are event indices 0..{len(self._order) - 1})")
+        return self._order[item_turn] < self._order[turn]
 
     def history(self, user: str, key: str, before_turn: Optional[int] = None) -> list[LedgerItem]:
         """Items for this key stated before `before_turn` (all of them when None), oldest first."""
@@ -147,7 +183,7 @@ class Ledger:
 
     def _add(self, e: Event, key: str, subject: str, attribute: str, value: str, quote: str, extractor: str):
         live = self.current(e.user_id, key, before_turn=e.index)
-        if live is not None and normalize_value(live.value) == normalize_value(value):
+        if live is not None and values_equal(live.value, value):
             return  # restating the same value is not an update
         item = LedgerItem(f"{e.user_id}:{key}:{e.index}", e.user_id, key, subject, attribute, value, e.index, e.ts,
                           quote, extractor)
@@ -177,31 +213,45 @@ def build_ledger(events: list[Event], judge=None, extractor: Optional[RuleExtrac
             continue
         ledger.stats["messages"] += 1
         found: dict[str, dict] = {}  # key -> fact found in this turn
+
+        def drop(fact, reason, e=e):
+            ledger.dropped.append({"turn": e.index, "fact": fact, "reason": reason})
+
         for attr, value in ex.user_facts(e.content):
             key = normalize_key("user", attr)
+            if key in found:  # the same message states it twice; the later statement wins
+                drop(found[key], "restated later in the same message")
             found[key] = {"subject": "user", "attribute": normalize_attribute(attr), "value": value,
                           "quote": sentence(e.content, hint=value), "extractor": "rules"}
 
-        if prompt is not None and worth_extracting(e.content):
+        text = without_code(e.content)
+        if prompt is not None and worth_extracting(text):
             ledger.stats["llm_messages"] += 1
-            reply = judge.ask(prompt, role="extractor", as_json=True, message=e.content)
+            reply = judge.ask(prompt, role="extractor", as_json=True, message=text)
             facts = (reply.data or {}).get("facts") or []
             for f in facts if isinstance(facts, list) else []:
-                if not isinstance(f, dict) or not str(f.get("attribute") or "").strip() or not str(f.get("value") or "").strip():
-                    ledger.dropped.append({"turn": e.index, "fact": f, "reason": "incomplete"})
+                if not isinstance(f, dict):
+                    drop(f, "incomplete")
+                    continue
+                subject = normalize_subject(str(f.get("subject") or ""))
+                attribute = normalize_attribute(str(f.get("attribute") or ""))
+                value = str(f.get("value") or "").strip()
+                if not subject or not attribute or not value:
+                    drop(f, "incomplete" if subject else "subject is only a pronoun")
                     continue
                 span = quote_span(str(f.get("quote") or ""), e.content)
                 if span is None:
-                    ledger.dropped.append({"turn": e.index, "fact": f, "reason": "quote not in message"})
+                    drop(f, "quote not in message")
                     continue
-                key = normalize_key(str(f.get("subject") or ""), str(f["attribute"]))
-                value = str(f["value"]).strip()
+                key = f"{subject}.{attribute}"
                 prior = found.get(key)
-                if prior is not None and normalize_value(prior["value"]) == normalize_value(value):
-                    prior["extractor"] = "rules+llm"
+                if prior is not None:
+                    if values_equal(prior["value"], value):
+                        prior["extractor"] = "rules+llm"
+                    else:  # rules are precise where they fire; keep them and record the disagreement
+                        drop(f, f"conflicts with rule fact {prior['value']!r} in the same message")
                     continue
-                found[key] = {"subject": normalize_subject(str(f.get("subject") or "")),
-                              "attribute": normalize_attribute(str(f["attribute"])), "value": value, "quote": span,
+                found[key] = {"subject": subject, "attribute": attribute, "value": value, "quote": span,
                               "extractor": "llm"}
 
         for key, f in found.items():

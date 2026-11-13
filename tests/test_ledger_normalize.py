@@ -36,3 +36,20 @@ def test_equal_values(a, b):
 @pytest.mark.parametrize("a,b", [("Denver", "Austin"), ("$140k", "$150k"), ("7 years", "7")])
 def test_different_values(a, b):
     assert normalize_value(a) != normalize_value(b)
+
+
+def test_pronoun_subjects_name_nobody_and_possessives_stay_distinct():
+    from memdiag.ledger import normalize_subject
+    assert normalize_subject("her") == normalize_subject("He") == ""
+    assert normalize_key("his manager", "salary") != normalize_key("her manager", "salary")
+    assert normalize_attribute("my") == ""
+
+
+@pytest.mark.parametrize("a,b,equal", [
+    ("$140k", "140000", True), ("4.10%", "4.1%", True), ("7 years", "7", True), ("-5", "5", False),
+    ("7 years", "7 months", False), ("-$1.5k", "-1500", True), ("2023/05/30", "2023/05/03", False),
+    ("Denver", "denver.", True),
+])
+def test_values_equal(a, b, equal):
+    from memdiag.ledger import values_equal
+    assert values_equal(a, b) is equal
