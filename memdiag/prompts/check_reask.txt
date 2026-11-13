@@ -1,0 +1,17 @@
+id: check_reask
+version: 1
+description: Does an assistant reply ask the user again for something the user already said?
+---
+The user already told the assistant these facts:
+$facts
+
+Here is the assistant's reply:
+"""
+$reply
+"""
+
+Does the reply ask the user for any of these facts again? Asking for the same information counts.
+Confirming a detail right before an important action ("just to confirm, ship to 12 Elm St?") does not.
+
+Return JSON: {"asks_again": [{"key": "<a key from the list>", "quote": "<the exact words from the reply that ask for it>"}]}
+Return {"asks_again": []} if it asks for none of them.

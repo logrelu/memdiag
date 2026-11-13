@@ -1,0 +1,18 @@
+id: check_stale
+version: 1
+description: Does an assistant reply use a value the user has since updated, as if it were still true?
+---
+The user told an assistant one thing, and later updated it.
+
+Earlier the user said: "$old_quote" (so $key was: $old)
+Later the user said: "$new_quote" (so $key is now: $new)
+
+Here is a later reply from the assistant:
+"""
+$reply
+"""
+
+Does this reply use the OLD value "$old" as if it were still true for the user? Mentioning it as past
+history ("you used to live in ...") does not count.
+
+Return JSON: {"uses_old": true or false, "quote": "<the exact words from the reply that use the old value, or empty>"}

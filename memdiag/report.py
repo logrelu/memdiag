@@ -36,7 +36,7 @@ def text_report(res: dict, color: bool = True) -> str:
 
     out.append(f"{b}What went wrong{x}")
     for f in res["findings"]:
-        if f["category"] == "context_overload":
+        if f["category"] == "context_overload" or f["class"] == "signal":
             continue
         col = r if f["class"] == "memory" else y
         tag = f" {d}[{', '.join(f['tags'])}]{x}" if f["tags"] else ""

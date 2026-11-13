@@ -33,6 +33,7 @@ CATEGORIES = {
     "ignored_context": ("retrieval", "Retrieved the right document but answered against it"),
     "context_overload": ("context", "Failure happened with a very large context"),
     "unattributed": ("unknown", "User signaled an error that no rule explains"),
+    "user_repair": ("signal", "User had to repeat or correct something the agent should have known"),
 }
 
 # Stable Finding type for each legacy category (docs/STABILITY.md), and the mode where one applies.
@@ -46,6 +47,7 @@ TYPES = {
     "ignored_context": "IGNORED_CONTEXT",
     "context_overload": "CONTEXT_OVERLOAD",
     "unattributed": "UNATTRIBUTED",
+    "user_repair": "USER_REPAIR",
 }
 MODES = {"forgotten_memory": "reask"}
 
@@ -111,6 +113,7 @@ class Finding:
     detector_version: str = ""
     confidence: float = 1.0
     covariates: dict = field(default_factory=dict)
+    location: Optional[str] = None  # "retrieve" or "use", when the log shows the memory context (L2)
 
     @property
     def failure_class(self) -> str:
@@ -148,4 +151,5 @@ class Finding:
             "detector_version": self.detector_version,
             "confidence": self.confidence,
             "covariates": self.covariates,
+            "location": self.location,
         }
