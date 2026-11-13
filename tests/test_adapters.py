@@ -40,3 +40,14 @@ def test_auto_detect_and_errors():
     with pytest.raises(ValueError, match="Unknown format"):
         convert([{"messages": []}], fmt="langfuse")
     assert convert([]) == []
+
+
+def test_cli_reads_openai_logs_and_rejects_unknown_ones(tmp_path, capsys):
+    from memdiag.cli import main
+    out = tmp_path / "r.json"
+    assert main(["diagnose", str(FIX / "openai_messages.jsonl"), "--json", str(out), "--no-color"]) == 0
+    assert "STALE_FACT" in out.read_text()
+    bad = tmp_path / "bad.jsonl"
+    bad.write_text('{"foo": 1}\n')
+    assert main(["diagnose", str(bad)]) == 2
+    assert "Unrecognized log format" in capsys.readouterr().err

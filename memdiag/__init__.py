@@ -66,5 +66,7 @@ def run(events: list[Event], docs=None) -> dict:
     }
 
 
-def run_files(traces: str, docs: str | None = None) -> dict:
-    return run(load_events(traces), load_jsonl(docs) if docs else None)
+def run_files(traces: str, docs: str | None = None, fmt: str = "auto") -> dict:
+    """Diagnose a log file in any format memdiag.adapters reads (auto-detected by default)."""
+    from .adapters import load
+    return run(load(traces, fmt), load_jsonl(docs) if docs else None)
