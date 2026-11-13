@@ -20,3 +20,13 @@ def test_cli_run_writes_findings_and_report_and_gates(tmp_path, capsys):
     assert main(["run", str(log), "--html", str(html_path), "--findings", str(jsonl),
                  "--fail-under", "fact_currency=0.9"]) == 1
     assert main(["run", str(tmp_path / "missing.jsonl")]) == 2
+
+
+def test_findings_jsonl_holds_only_failures(tmp_path):
+    rows = STALE + [["maya", "user", "I already told you, we moved!"]]
+    log = tmp_path / "log.jsonl"
+    log.write_text("".join(json.dumps({"user_id": u, "session_id": "s", "ts": f"2026-03-01T10:0{i}:00", "role": r,
+                                       "content": c}) + "\n" for i, (u, r, c) in enumerate(rows)))
+    out = tmp_path / "f.jsonl"
+    assert main(["run", str(log), "--html", str(tmp_path / "r.html"), "--findings", str(out)]) == 0
+    assert [json.loads(line)["type"] for line in out.read_text().splitlines()] == ["STALE_FACT"]

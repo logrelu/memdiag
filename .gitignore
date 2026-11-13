@@ -12,3 +12,5 @@ dist/
 # Experiment data (downloaded datasets, caches)
 experiments/data/
 .memdiag_cache/
+/report.html
+/findings.jsonl
