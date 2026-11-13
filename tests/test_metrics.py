@@ -38,7 +38,23 @@ def test_not_applicable_is_none_not_perfect():
     m = _run(MIXED)["metrics"]
     assert m["deletion_compliance"]["opportunities"] == 0
     assert m["deletion_compliance"]["score"] is None
+    # nobody has given a fact yet, so there was nothing to re-ask
+    m = _run([_t("dev", 0, "assistant", "Where do you live?")])["metrics"]
+    assert m["recall_continuity"]["opportunities"] == 0
     assert m["recall_continuity"]["score"] is None
+
+
+def test_recall_continuity_counts_turns_that_could_reask():
+    # Regression: the denominator used to count only the re-asks, so the score was always 0.
+    rows = [
+        _t("maya", 0, "user", "I live in Seattle."),
+        _t("maya", 1, "assistant", "Where do you live? I want to suggest a bank."),
+        _t("maya", 2, "assistant", "Since you live in Seattle, try BECU."),
+        _t("maya", 3, "assistant", "Happy to help with anything else."),
+        _t("maya", 4, "assistant", "Where do you live? Where are you located?"),  # two re-asks, one turn
+    ]
+    m = _run(rows)["metrics"]["recall_continuity"]
+    assert (m["failures"], m["opportunities"], m["score"]) == (2, 4, 0.5)
 
 
 def test_scores_bounded():

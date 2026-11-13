@@ -40,6 +40,9 @@ def compute_metrics(findings: list[dict], opportunities: dict) -> dict[str, Metr
     # A fact the user asked to forget counts once, however many times the agent repeated it.
     leaked = len({(f["user_id"], f["attribute"]) for f in findings if f["category"] == "failed_deletion"})
     asserted = opportunities.get("fact_assertions", 0)
+    # A turn that re-asks for several known facts is one failure, matching the per-turn denominator.
+    reask_turns = len({(f["user_id"], f["session_id"], f["ts"]) for f in findings
+                       if f["category"] == "forgotten_memory"})
 
     metrics = [
         _metric("memory_faithfulness",
@@ -58,8 +61,8 @@ def compute_metrics(findings: list[dict], opportunities: dict) -> dict[str, Metr
                 "Share of assertions the user actually stated (not invented)",
                 count.get("hallucinated_memory", 0), asserted),
         _metric("recall_continuity",
-                "Share of times the agent did not re-ask for a fact the user already gave",
-                count.get("forgotten_memory", 0), opportunities.get("known_fact_questions", 0)),
+                "Share of turns, after the user gave a fact, where the agent did not re-ask for it",
+                reask_turns, opportunities.get("known_fact_turns", 0)),
     ]
     return {m.name: m for m in metrics}
 
