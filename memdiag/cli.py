@@ -109,11 +109,10 @@ def _run(args) -> int:
     except (OSError, ValueError, JudgeUnavailable) as exc:
         print(f"memdiag: {exc}", file=sys.stderr)
         return 2
-    findings = [f for f in res["findings"] if f["class"] != "context"]
+    findings = [f for f in res["findings"] if f["class"] in ("memory", "retrieval")]  # signals stay in the report
     Path(args.findings).write_text("".join(json.dumps(f, default=str) + "\n" for f in findings))
     Path(args.html).write_text(findings_html(res, events))
-    real = [f for f in findings if f["class"] in ("memory", "retrieval")]
-    print(f"{res['stats']['assistant_turns']} agent turns, {len(real)} findings, {res['repair_count']} user repairs "
+    print(f"{res['stats']['assistant_turns']} agent turns, {len(findings)} findings, {res['repair_count']} user repairs "
           f"(mode: {res['mode']}{', ' + res['judge_model'] if res['judge_model'] else ''})")
     for name, m in res["metrics"].items():
         score = "n/a" if m["score"] is None else f"{m['score']:.2f}"
