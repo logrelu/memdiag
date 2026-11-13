@@ -14,3 +14,6 @@ experiments/data/
 .memdiag_cache/
 /report.html
 /findings.jsonl
+
+# Goal 1 suite (regenerated from the pinned LongMemEval file)
+validation/data/
