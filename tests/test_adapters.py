@@ -51,3 +51,28 @@ def test_cli_reads_openai_logs_and_rejects_unknown_ones(tmp_path, capsys):
     bad.write_text('{"foo": 1}\n')
     assert main(["diagnose", str(bad)]) == 2
     assert "Unrecognized log format" in capsys.readouterr().err
+
+
+def test_openai_mixed_timezones_and_undated_conversations(tmp_path):
+    p = tmp_path / "c.jsonl"
+    p.write_text(
+        '{"user_id": "u", "ts": "2024-01-05T00:00:00+02:00", "messages": [{"role": "user", "content": "I live in Seattle."}]}\n'
+        '{"user_id": "u", "messages": [{"role": "user", "content": "We just moved to Portland."}]}\n'
+        '{"user_id": "u", "ts": "2024-01-06T00:00:00", "messages": [{"role": "assistant", "content": "Since you live in Seattle, try BECU."}]}\n')
+    events = load(p)
+    assert events[0].ts.isoformat() == "2024-01-04T22:00:00"  # converted to UTC, comparable with naive
+    assert events[0].ts < events[1].ts < events[2].ts  # the undated conversation stays in file order
+    assert [f["type"] for f in run(events)["findings"]] == ["STALE_FACT"]
+
+
+def test_longmemeval_date_variants_and_bad_items():
+    from memdiag.adapters import _lme_date, from_longmemeval
+    assert _lme_date("2023/05/30").isoformat() == "2023-05-30T00:00:00"
+    assert _lme_date("2023/05/30 (Tue) 23:51:07").second == 7
+    with pytest.raises(ValueError, match="Unrecognized LongMemEval date"):
+        _lme_date("May 30")
+    item = read_records(FIX / "longmemeval_mini.json")[0] | {"haystack_dates": ["2023/05/01 (Mon) 09:00"]}
+    with pytest.raises(ValueError, match="haystack lists differ"):
+        from_longmemeval([item])
+    with pytest.raises(ValueError, match="must be a JSON object"):
+        detect_format([1, 2])
