@@ -14,7 +14,7 @@ import json
 import re
 from datetime import datetime, timedelta
 
-from .schema import Event
+from .schema import Event, parse_ts
 
 FORMATS = ("auto", "events", "openai", "longmemeval")
 _EPOCH = datetime(2000, 1, 1)
@@ -31,7 +31,9 @@ def read_records(path) -> list[dict]:
         return [json.loads(line) for line in text.splitlines() if line.strip()]
 
 
-def detect_format(record: dict) -> str:
+def detect_format(record) -> str:
+    if not isinstance(record, dict):
+        raise ValueError(f"Unrecognized log format: each record must be a JSON object, got {type(record).__name__}")
     if "haystack_sessions" in record:
         return "longmemeval"
     if "messages" in record:
@@ -51,7 +53,7 @@ def _text(content) -> str:
 
 
 def _ts(value, fallback: datetime) -> datetime:
-    return datetime.fromisoformat(value) if value else fallback
+    return parse_ts(value) if value else fallback
 
 
 def from_events(records: list[dict]) -> list[Event]:
@@ -60,10 +62,12 @@ def from_events(records: list[dict]) -> list[Event]:
 
 def from_openai(records: list[dict]) -> list[Event]:
     events: list[Event] = []
+    last = _EPOCH
     for c, conv in enumerate(records):
         session = str(conv.get("session_id") or conv.get("id") or f"conv{c}")
         user = str(conv.get("user_id") or session)
-        start = _ts(conv.get("ts"), _EPOCH + timedelta(days=c))
+        # An undated conversation goes right after the one before it in the file.
+        start = _ts(conv.get("ts"), last + timedelta(seconds=1))
         for j, m in enumerate(conv["messages"]):
             if m.get("role") not in ("user", "assistant"):
                 continue  # system and tool messages carry no user facts or assistant claims
@@ -71,12 +75,19 @@ def from_openai(records: list[dict]) -> list[Event]:
                 user_id=user, session_id=session, ts=_ts(m.get("ts"), start + timedelta(seconds=j)),
                 role=m["role"], content=_text(m.get("content")), retrieved=m.get("retrieved") or [],
                 context_tokens=m.get("context_tokens"), index=len(events), memory=m.get("memory") or []))
+            last = max(last, events[-1].ts)
     return events
 
 
 def _lme_date(s: str) -> datetime:
-    """LongMemEval dates look like '2023/05/30 (Tue) 23:51'."""
-    return datetime.strptime(re.sub(r"\s*\(\w+\)", "", s).strip(), "%Y/%m/%d %H:%M")
+    """LongMemEval dates look like '2023/05/30 (Tue) 23:51'; the weekday, time and seconds are optional."""
+    plain = re.sub(r"\s*\(\w+\)", "", s).strip()
+    for fmt in ("%Y/%m/%d %H:%M", "%Y/%m/%d %H:%M:%S", "%Y/%m/%d"):
+        try:
+            return datetime.strptime(plain, fmt)
+        except ValueError:
+            pass
+    raise ValueError(f"Unrecognized LongMemEval date {s!r} (expected like '2023/05/30 (Tue) 23:51')")
 
 
 def from_longmemeval(records: list[dict]) -> list[Event]:
@@ -84,6 +95,9 @@ def from_longmemeval(records: list[dict]) -> list[Event]:
     events: list[Event] = []
     for item in records:
         user = str(item["question_id"])
+        lengths = {k: len(item[k]) for k in ("haystack_session_ids", "haystack_dates", "haystack_sessions")}
+        if len(set(lengths.values())) != 1:
+            raise ValueError(f"LongMemEval item {user}: haystack lists differ in length {lengths}")
         sessions = zip(item["haystack_session_ids"], item["haystack_dates"], item["haystack_sessions"], strict=True)
         for sid, date, turns in sessions:
             start = _lme_date(date)

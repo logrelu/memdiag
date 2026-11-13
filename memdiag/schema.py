@@ -13,8 +13,14 @@ Other log formats are converted to this one by memdiag.adapters.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
+
+
+def parse_ts(value: str) -> datetime:
+    """ISO timestamp as naive UTC, so logs that mix offset and plain timestamps still sort."""
+    ts = datetime.fromisoformat(value)
+    return ts.astimezone(timezone.utc).replace(tzinfo=None) if ts.tzinfo else ts
 
 # Failure categories. Each belongs to one class: memory, retrieval or context.
 CATEGORIES = {
@@ -61,7 +67,7 @@ class Event:
         return cls(
             user_id=str(d["user_id"]),
             session_id=str(d.get("session_id", "")),
-            ts=datetime.fromisoformat(d["ts"]),
+            ts=parse_ts(d["ts"]),
             role=d["role"],
             content=d.get("content", ""),
             retrieved=d.get("retrieved") or [],
