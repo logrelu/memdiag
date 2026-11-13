@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Goal 1 validation harness (`python -m validation.goal1`): a deterministic mutation suite from LongMemEval-S (pinned sha256), with paired controls and dev/held-out splits, scored with Wilson intervals into `docs/validation.md`. First results, held-out: rules mode recall 0.60 with 0/100 false positives; local LLM mode (qwen2.5:7b, 64 cases) recall 0.88 with 0/32 false positives. Stale-fact recall (0.62) misses its target. Goal 1 is not met yet.
 - New `CONSTRAINT_DROP` findings and `constraint_retention` metric: instructions about replies (word or sentence limits, reply language, bullets or no bullets, JSON only, banned words, no emojis, lowercase) checked against later replies in the same session, honoring revocations, replacements and one-turn overrides. Rule-based, no model.
 - New `memdiag run LOG [--model M]`: writes `findings.jsonl` and an HTML report with each failing turn next to its evidence turn (quotes highlighted), location, confidence, signals, the ledger, and a "what this report can't see" section. Demo output: `examples/findings_report.html`.
 - Judge quotes wrapped in quotation marks are accepted (a live run lost a confirmed stale fact to this).
