@@ -127,3 +127,18 @@ def test_failures_never_exceed_opportunities():
                    [Event.from_dict(t, i) for i, t in enumerate(TRACES)]):
         for m in run(events, DOCS)["metrics"].values():
             assert m["failures"] <= m["opportunities"], m
+
+
+def test_cli_diagnose_with_unreachable_model_exits_2(tmp_path, capsys):
+    import socket
+
+    from memdiag.cli import main
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        port = s.getsockname()[1]
+    log = tmp_path / "log.jsonl"
+    log.write_text(json.dumps({"user_id": "u", "session_id": "s", "ts": "2026-01-01T00:00:00", "role": "user",
+                               "content": "I live in Seattle and I love it."}) + "\n")
+    code = main(["diagnose", str(log), "--model", "qwen2.5:7b", "--base-url", f"http://127.0.0.1:{port}/v1",
+                 "--cache", str(tmp_path / "c")])
+    assert code == 2 and "ollama serve" in capsys.readouterr().err
