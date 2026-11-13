@@ -28,7 +28,15 @@ def read_records(path) -> list[dict]:
         data = json.loads(text)
         return data if isinstance(data, list) else [data]
     except json.JSONDecodeError:
-        return [json.loads(line) for line in text.splitlines() if line.strip()]
+        pass
+    records = []
+    for n, line in enumerate(text.splitlines(), 1):
+        if line.strip():
+            try:
+                records.append(json.loads(line))
+            except json.JSONDecodeError as exc:
+                raise ValueError(f"{path}: line {n} is not valid JSON ({exc.msg})") from None
+    return records
 
 
 def detect_format(record) -> str:

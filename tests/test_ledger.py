@@ -86,3 +86,18 @@ def test_cli_ledger_rules_only(tmp_path, capsys):
     printed = capsys.readouterr().out
     assert "user.city" in printed and "Seattle -> Portland" in printed and "1 updates" in printed
     assert [json.loads(line)["value"] for line in out.read_text().splitlines()] == ["Seattle", "Portland"]
+
+
+def test_unknown_turn_is_a_clear_error():
+    ledger = build_ledger(_events([["maya", "user", "I live in Seattle."]]))
+    with pytest.raises(ValueError, match="turn 99 is not in this log"):
+        ledger.current("maya", "user.city", before_turn=99)
+
+
+def test_cli_ledger_bad_inputs_exit_2(tmp_path, capsys):
+    from memdiag.cli import main
+    assert main(["ledger", str(tmp_path / "missing.jsonl")]) == 2
+    bad = tmp_path / "bad.jsonl"
+    bad.write_text('{"user_id": "u", "role": "user", "content": "x", "ts": "2026-01-01T00:00:00"}\nnot json\n')
+    assert main(["ledger", str(bad)]) == 2
+    assert "line 2 is not valid JSON" in capsys.readouterr().err

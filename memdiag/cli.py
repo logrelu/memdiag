@@ -59,7 +59,7 @@ def main(argv=None):
     if args.cmd == "diagnose":
         try:
             res = run_files(args.traces, args.docs, args.format)
-        except ValueError as exc:
+        except (OSError, ValueError) as exc:
             print(f"memdiag: {exc}", file=sys.stderr)
             return 2
     else:
@@ -85,7 +85,7 @@ def _ledger(args) -> int:
         judge = OpenAICompatJudge(args.model, base_url=args.base_url, cache=DiskCache(args.cache))
     try:
         ledger = build_ledger(load(args.traces, args.format), judge=judge)
-    except (ValueError, JudgeUnavailable) as exc:
+    except (OSError, ValueError, JudgeUnavailable) as exc:
         print(f"memdiag: {exc}", file=sys.stderr)
         return 2
     by_id = {i.item_id: i for i in ledger.items}
