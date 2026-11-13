@@ -38,6 +38,18 @@ def main(argv=None):
     d.add_argument("--base-url", help="Model endpoint, e.g. http://localhost:11434/v1 (or MEMDIAG_BASE_URL)")
     d.add_argument("--cache", default=".memdiag_cache", help="Judge cache directory (default: .memdiag_cache)")
 
+    rn = sub.add_parser("run", help="Find memory failures in a log; write findings JSONL and an HTML report")
+    rn.add_argument("traces", help="Log file: memdiag events JSONL, OpenAI-style conversations, or LongMemEval items")
+    rn.add_argument("--format", default="auto", choices=FORMATS)
+    rn.add_argument("--model", help="Use this model as extractor and judge via an OpenAI-compatible endpoint "
+                                    "(default endpoint: local Ollama). Without it, rules only.")
+    rn.add_argument("--base-url", help="Model endpoint, e.g. http://localhost:11434/v1 (or MEMDIAG_BASE_URL)")
+    rn.add_argument("--cache", default=".memdiag_cache", help="Judge cache directory (default: .memdiag_cache)")
+    rn.add_argument("--html", default="report.html", help="HTML report path (default: report.html)")
+    rn.add_argument("--findings", default="findings.jsonl", help="Findings JSONL path (default: findings.jsonl)")
+    rn.add_argument("--fail-under", action="append", default=[], metavar="METRIC=MIN",
+                    help="Exit 1 if a metric score is below MIN (repeatable)")
+
     lg = sub.add_parser("ledger", help="Show the facts each user stated, with updates and deletions")
     lg.add_argument("traces", help="Log file in any supported format")
     lg.add_argument("--format", default="auto", choices=FORMATS)
@@ -60,6 +72,8 @@ def main(argv=None):
     args = p.parse_args(argv)
     if args.cmd == "ledger":
         return _ledger(args)
+    if args.cmd == "run":
+        return _run(args)
     if args.cmd == "diagnose":
         from .judge import DiskCache, JudgeUnavailable, OpenAICompatJudge
         judge = OpenAICompatJudge(args.model, base_url=args.base_url, cache=DiskCache(args.cache)) if args.model else None
@@ -80,6 +94,33 @@ def main(argv=None):
     _emit(res, args)
     if args.cmd == "diagnose" and judge is not None:
         print(f"Judge: {judge.model} at {judge.base_url}\n{judge.usage.summary()}")
+    return _gate(res, args.fail_under)
+
+
+def _run(args) -> int:
+    from .adapters import load
+    from .findings_report import findings_html
+    from .judge import DiskCache, JudgeUnavailable, OpenAICompatJudge
+
+    judge = OpenAICompatJudge(args.model, base_url=args.base_url, cache=DiskCache(args.cache)) if args.model else None
+    try:
+        events = load(args.traces, args.format)
+        res = run(events, judge=judge)
+    except (OSError, ValueError, JudgeUnavailable) as exc:
+        print(f"memdiag: {exc}", file=sys.stderr)
+        return 2
+    findings = [f for f in res["findings"] if f["class"] != "context"]
+    Path(args.findings).write_text("".join(json.dumps(f, default=str) + "\n" for f in findings))
+    Path(args.html).write_text(findings_html(res, events))
+    real = [f for f in findings if f["class"] in ("memory", "retrieval")]
+    print(f"{res['stats']['assistant_turns']} agent turns, {len(real)} findings, {res['repair_count']} user repairs "
+          f"(mode: {res['mode']}{', ' + res['judge_model'] if res['judge_model'] else ''})")
+    for name, m in res["metrics"].items():
+        score = "n/a" if m["score"] is None else f"{m['score']:.2f}"
+        print(f"  {name:22s} {score:>5}  ({m['failures']} of {m['opportunities']})")
+    print(f"Findings: {args.findings}\nReport:   {args.html}")
+    if judge is not None:
+        print(judge.usage.summary())
     return _gate(res, args.fail_under)
 
 
