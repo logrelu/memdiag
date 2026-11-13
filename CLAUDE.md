@@ -9,13 +9,13 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 ## Commands
 - `pip install -e ".[dev]"` into `.venv` (Python >= 3.10). Verify with an editable install; a non-editable one tests stale code.
 - `ruff check .` and `pytest -q` must both pass before any commit.
-- `memdiag demo` is the end-to-end smoke test.
+- `memdiag demo` is the end-to-end smoke test; `memdiag run LOG` is the primary command.
 - Local judge: `ollama serve`, model `qwen2.5:7b` (16 GB Mac reference). Experiments live in `experiments/`; their data goes in `experiments/data/` (git-ignored).
 
 ## Layout
 - `memdiag/extract.py` rule-based extraction (`RuleExtractor`); `timeline.py` per-user fact timeline
 - `memdiag/detect.py` detectors -> `Finding`s and opportunity counts; `metrics.py` scores from findings
-- `memdiag/strategies.py` memory-strategy replay; `report.py` text/HTML/JSON; `cli.py`, `mcp_server.py`
+- `memdiag/strategies.py` memory-strategy replay; `report.py` text/HTML/JSON for `diagnose`; `findings_report.py` the `run` report; `cli.py`, `mcp_server.py`
 - `memdiag/adapters.py` log formats -> `Event`s (events, openai, longmemeval)
 - `memdiag/detectors.py` ledger detectors (stale mentions, re-ask patterns + judge, user repair, retrieve/use); merged with `detect.py` in `run()`
 - `memdiag/ledger.py` the fact ledger: rules + LLM extraction, verbatim quotes, normalized keys, updates/deletions; `text.py` quote helpers
@@ -53,4 +53,5 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 - 7B judges answer open questions badly: they misread queries and claim a response used the context when it didn't. Ask one specific question per check.
 - Benchmark gold judges are wrong in both directions. Hand-check gold before trusting it.
 - `gh pr checks --watch` right after a push can report "no checks" before CI registers. Wait until the checks exist and pass before merging.
+- Models wrap quotes in quotation marks; verify quotes with `ledger.quote_span`, never with `in`.
 - `pip download --no-binary` runs the package's build backend; treat it as running untrusted code.
