@@ -7,13 +7,16 @@ https://github.com/user-attachments/assets/9e0d56b5-6cf2-44fc-9ecf-4d43a656f8b7
 **Find where your agent's memory fails, in the logs you already have.**
 
 memdiag reads an agent's conversation logs and reports each memory failure at the turn it happened,
-next to the earlier turn it contradicts, quoted word for word (from the `experiments/` walkthrough, `--model` mode):
+next to the earlier turn it contradicts, quoted word for word:
 
 ```
 STALE_FACT · retrieve · confidence 1.00 · u1 · user.city
-  user, turn 4    "Update: we relocated to Austin for my new job."
+  user, turn 4    "we relocated to Austin"
   agent, turn 7   "Try Mount Falcon Park, about 30 minutes from Denver."
 ```
+
+This is real output: `memdiag run examples/walkthrough.jsonl --model qwen2.5:7b`. The log is a synthetic
+4-call example. The memory the agent got said "Denver", so the fact was never retrieved.
 
 - **No ground truth needed.** The reference is what each user actually said, rebuilt from the log.
 - **Works with any memory setup.** Built-in context, Mem0, Zep, a vector store: memdiag only needs the

@@ -1,0 +1,16 @@
+{"user_id": "u1", "session_id": "s1", "ts": "2025-01-05T10:00:00", "role": "user", "content": "We just moved to Denver with my daughter Maya."}
+{"user_id": "u1", "session_id": "s1", "ts": "2025-01-05T10:00:01", "role": "assistant", "content": "Welcome to Denver! How can I help you settle in?"}
+{"user_id": "u1", "session_id": "s2", "ts": "2025-02-10T09:00:00", "role": "user", "content": "Maya turns 7 next month and she's obsessed with dinosaurs."}
+{"user_id": "u1", "session_id": "s2", "ts": "2025-02-10T09:00:01", "role": "assistant", "content": "Seven is a great age for dinosaurs!"}
+{"user_id": "u1", "session_id": "s3", "ts": "2025-03-01T18:00:00", "role": "user", "content": "Update: we relocated to Austin for my new job."}
+{"user_id": "u1", "session_id": "s3", "ts": "2025-03-01T18:00:01", "role": "assistant", "content": "Congrats on the new job!"}
+{"user_id": "u1", "session_id": "s4", "ts": "2025-03-05T08:00:00", "role": "user", "content": "Recommend a weekend hike near me."}
+{"user_id": "u1", "session_id": "s4", "ts": "2025-03-05T08:00:01", "role": "assistant", "content": "Try Mount Falcon Park, about 30 minutes from Denver.", "memory": [{"id": "m1", "text": "User lives in Denver."}]}
+{"user_id": "u1", "session_id": "s4", "ts": "2025-03-05T08:01:00", "role": "user", "content": "We moved to Austin, remember?"}
+{"user_id": "u1", "session_id": "s5", "ts": "2025-03-06T12:00:00", "role": "user", "content": "Any gift ideas for Maya's birthday?"}
+{"user_id": "u1", "session_id": "s5", "ts": "2025-03-06T12:00:01", "role": "assistant", "content": "Happy to help! How old is Maya, and what is she into?", "memory": [{"id": "m2", "text": "User's daughter Maya is turning 7 and loves dinosaurs."}]}
+{"user_id": "u1", "session_id": "s5", "ts": "2025-03-06T12:01:00", "role": "user", "content": "I already told you!"}
+{"user_id": "u1", "session_id": "s6", "ts": "2025-03-07T15:00:00", "role": "user", "content": "What's my daughter's name again?"}
+{"user_id": "u1", "session_id": "s6", "ts": "2025-03-07T15:00:01", "role": "assistant", "content": "Your daughter's name is Maya.", "memory": [{"id": "m2", "text": "User's daughter Maya is turning 7 and loves dinosaurs."}]}
+{"user_id": "u1", "session_id": "s7", "ts": "2025-03-08T19:00:00", "role": "user", "content": "Where can I get good BBQ in town?"}
+{"user_id": "u1", "session_id": "s7", "ts": "2025-03-08T19:00:01", "role": "assistant", "content": "Franklin Barbecue in Austin is a classic.", "memory": [{"id": "m3", "text": "User lives in Austin."}, {"id": "m1", "text": "User lives in Denver."}]}
