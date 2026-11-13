@@ -89,12 +89,14 @@ class LedgerItem:
         return d
 
 
-FIRST_PERSON = re.compile(r"\b(i|i'm|im|i've|i'd|my|me|mine|we|we're|we've|our|us)\b", re.I)
+# Personal statements are in the first person, or about people in the user's life ("she's 7 now").
+PERSONAL = re.compile(r"\b(i|i'm|im|i've|i'd|my|me|mine|we|we're|we've|our|us|"
+                      r"he|she|he's|she's|his|her|they|they're|their)\b", re.I)
 
 
 def worth_extracting(text: str) -> bool:
-    """Cheap filter before any LLM call: a first-person message that isn't only questions."""
-    if not FIRST_PERSON.search(text):
+    """Cheap filter before any LLM call: a personal statement that isn't only questions."""
+    if not PERSONAL.search(text):
         return False
     parts = [p for p in re.split(r"(?<=[.!?])\s+", text.strip()) if p.strip()]
     return any(not p.rstrip().endswith("?") for p in parts)
