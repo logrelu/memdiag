@@ -18,6 +18,7 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 - `memdiag/strategies.py` memory-strategy replay; `report.py` text/HTML/JSON for `diagnose`; `findings_report.py` the `run` report; `cli.py`, `mcp_server.py`
 - `memdiag/adapters.py` log formats -> `Event`s (events, openai, longmemeval)
 - `memdiag/detectors.py` ledger detectors (stale mentions, re-ask patterns + judge, user repair, retrieve/use); merged with `detect.py` in `run()`
+- `memdiag/constraints.py` reply instructions and `CONSTRAINT_DROP` (rule-checkable kinds, session-scoped)
 - `memdiag/ledger.py` the fact ledger: rules + LLM extraction, verbatim quotes, normalized keys, updates/deletions; `text.py` quote helpers
 - `memdiag/judge.py` every model call: `Judge.ask` (cache, JSON retry, usage), `OpenAICompatJudge`, `FakeJudge` for tests
 - `memdiag/prompt.py` + `memdiag/prompts/*.txt` versioned prompts (id/version header, `$field` placeholders)
