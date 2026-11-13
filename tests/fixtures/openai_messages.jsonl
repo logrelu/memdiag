@@ -1,0 +1,3 @@
+{"user_id": "maya", "session_id": "c1", "ts": "2026-03-01T09:00:00", "messages": [{"role": "system", "content": "You are a banking assistant."}, {"role": "user", "content": "I live in Seattle."}, {"role": "assistant", "content": [{"type": "text", "text": "Thanks, noted."}]}]}
+{"user_id": "maya", "session_id": "c2", "ts": "2026-03-05T09:00:00", "messages": [{"role": "user", "content": "We just moved to Portland."}, {"role": "assistant", "content": "Congrats on the move!"}]}
+{"user_id": "maya", "session_id": "c3", "messages": [{"role": "user", "content": "Any bank near me?", "ts": "2026-03-09T09:00:00"}, {"role": "assistant", "content": "Since you live in Seattle, try BECU.", "ts": "2026-03-09T09:00:05", "memory": [{"id": "m1", "text": "User lives in Seattle."}]}]}
