@@ -81,7 +81,7 @@ not finding types.
 | M0 | Metrics, CI gate, release workflow | Done: PRs #1, #2 |
 | M1 | Instruction files: this roadmap, `CLAUDE.md`, `STABILITY.md`, reviewer agent (a test-running Stop hook is left to the owner to add) | Done: PR #3 |
 | M1b | `experiments/`: LongMemEval toy and black-box walkthrough notebooks | Done: PR #5 |
-| M2 | Schema (`Turn`, `Session`, `Call`, `LedgerItem`, `Finding`) and adapters: OpenAI messages, generic JSONL, LongMemEval | Done: PR #6 |
+| M2 | Localized `Finding` fields on the existing `Event`/`Finding` types, `Event.memory`, and adapters: OpenAI messages, events JSONL, LongMemEval (`LedgerItem` moves to M4) | Done: PR #6 |
 | M3 | Judge layer: OpenAI-compatible client, disk cache, versioned prompts in `memdiag/prompts/`, FakeJudge, time and token accounting | A cached rerun makes zero calls; tests make no network calls |
 | M4 | Ledger: rule plus LLM extraction, verbatim-quote check, deterministic key normalization, replacements and revocations | 20 hand-written fixtures pass (updates, revocations, scope) |
 | M5 | Detectors `RECALL_MISS`, `STALE_FACT`, `CONSTRAINT_DROP`, `USER_REPAIR`; retrieve/use location at L2; metrics; HTML report with failing and evidence turns side by side | `memdiag run log.jsonl` writes findings JSONL and `report.html` |
