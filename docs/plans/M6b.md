@@ -63,3 +63,26 @@ for every policy go in this file. Held-out is run once, with the chosen policy.
 - Policy C: `past` with a verifiable quote drops the candidate, `current` confirms it at 0.9, and a missing or
   unverifiable quote keeps it at 0.5.
 - The flip rate counts a case as flipped when any run differs; the result file name carries the run name.
+
+## Dev results (first 12 positives per type on dev, with their 12 controls and 12 history controls)
+`STALE_FACT` only, `qwen2.5:7b`, run 2026-11-16.
+
+| Policy | Recall | Exact turn | FP, paired controls | FP, history controls | FP, all |
+|---|---|---|---|---|---|
+| A. veto (`check_stale` v1) | 12/12 | 12/12 | 0/12 | **6/12** | 6/24 (0.25) |
+| B. no judge | 12/12 | 12/12 | 1/12 | 12/12 | 13/24 (0.54) |
+| C. specific question (`check_stale` v2) | 12/12 | 12/12 | 1/12 | 1/12 | 2/24 (0.08) |
+| C + value fix (below) | 12/12 | 12/12 | 0/12 | 0/12 | 0/24 (0.00) |
+
+- **A's veto doesn't buy precision.** The v1 judge accepted half of the history controls ("Back when you lived
+  in X") as stale. On dev it also never rejected a true positive. Its held-out misses (M6) were the opposite
+  error, so v1 is unreliable in both directions.
+- **C's two false positives were one background finding,** on turn 5 of the same base session (it appears in
+  both the control and the history control). The extractor ledgered `caffeine_intake: coffee -> around 200mg`,
+  and the reply "Medium coffee (200mg of caffeine)" states both. Two value bugs hid the current value:
+  - the hedge "around" was read as part of the unit;
+  - "200mg" didn't parse as a number.
+
+  Both were fixed in general form, with tests. This is the only change made after looking at dev results.
+- **Choice: C with the value fix.** It is the only policy with dev false positives ≤ 0.05 (0/24), and its
+  recall equals the others. A sample of 12 per kind is small. The held-out run is the test.
