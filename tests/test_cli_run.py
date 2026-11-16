@@ -51,3 +51,28 @@ def test_cli_run_says_silence_is_not_proof(tmp_path, capsys):
     main(["run", str(tmp_path / "log.jsonl"), "--html", str(tmp_path / "r.html"), "--findings", str(tmp_path / "f.jsonl")])
     out = capsys.readouterr().out
     assert "not proof of good memory" in out and "--model" in out
+
+
+def _card(**kw):
+    from memdiag import Event
+    from memdiag.cli import finding_card
+    f = {"type": "STALE_FACT", "location": None, "confidence": 1.0, "user_id": "b", "attribute": "city",
+         "evidence_turns": [0], "evidence_quote": "I live in Denver.", "failing_turn": 2, "failing_quote": "x",
+         "expected": "", "got": "", **kw}
+    events = [Event.from_dict({"user_id": u, "session_id": "s", "ts": f"2026-03-01T10:0{i}:00", "role": r, "content": c}, i)
+              for i, (u, r, c) in enumerate([["a", "user", "I live in Denver."], ["b", "user", "I live in Austin."],
+                                             ["b", "assistant", "x"]])]
+    return finding_card(f, {e.index: e for e in events})
+
+
+def test_card_names_another_users_turn_and_shows_turnless_evidence():
+    assert '  user a, turn 0  "I live in Denver."' in _card(type="CROSS_USER_LEAK")
+    assert '  evidence        "The Platinum card has no annual fee."' in _card(
+        type="IGNORED_CONTEXT", evidence_turns=[], evidence_quote="The Platinum card has no annual fee.")
+
+
+def test_card_clips_long_quotes_around_the_failing_value():
+    quote = "Here is a long and friendly answer about parks, trails, opening hours and parking options, " * 2 + \
+        "all close to Seattle."
+    line = _card(failing_quote=quote, got="Seattle").splitlines()[-1]
+    assert "Seattle" in line and line.startswith('  agent, turn 2   "...') and len(line) < 120
