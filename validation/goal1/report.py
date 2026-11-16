@@ -60,7 +60,7 @@ def write_report(results_dir: Path, out: Path) -> None:
     for r in runs:
         meta = r["meta"]
         mode = meta["mode"] + (f" ({meta['judge_model']})" if meta.get("judge_model") else "")
-        lines += [f"### Mode: {mode}", "",
+        lines += [f"### Mode: {mode}" + (f", run `{meta['run']}`" if meta.get("run") else ""), "",
                   f"Run {meta['date']} · memdiag {meta['memdiag_version']} · commit {meta['commit']} · data sha256 "
                   f"`{meta['data_sha256'][:12]}…` · {meta['cases']} cases"
                   + (f" (limited to {meta['limit']} per type and split)" if meta.get("limit") else "")
@@ -73,8 +73,18 @@ def write_report(results_dir: Path, out: Path) -> None:
         lines += _table(r["aggregate"], "heldout", True) + [""]
         if r.get("flip"):
             f = r["flip"]
-            lines += [f"Flip rate over {f['reruns']} uncached reruns: {f['flipped']}/{f['cases']} cases "
-                      f"({f['rate']:.2%}) {'✅' if f['rate'] <= 0.05 else '❌'} (target <= 5%).", ""]
+            lines += [f"Flip rate over the first run and {f['reruns']} uncached reruns (temperature 0, seed 0): "
+                      f"{f['flipped']}/{f['cases']} cases ({f['rate']:.2%}) {'✅' if f['rate'] <= 0.05 else '❌'} "
+                      f"(target <= 5%)" + (f"; flipped: {', '.join(f'`{c}`' for c in f['flipped_ids'])}."
+                                           if f.get("flipped_ids") else "."), ""]
+        cost = meta.get("cost") or {}
+        if cost.get("calls_per_100_sessions") is not None:
+            est = cost.get("est_seconds_per_100_sessions")
+            lines += [f"Cost: {cost['calls_per_100_sessions']} model calls per 100 sessions"
+                      + (f", about {est / 60:.0f} minutes per 100 sessions uncached on the reference Mac (16 GB, Intel CPU, no GPU) "
+                         "(estimated from the mean time of uncached calls)" if est else "")
+                      + f". This run: {cost['sessions']} sessions, {cost['calls']} calls "
+                      f"({cost['uncached_calls']} uncached), {cost['wall_seconds'] / 60:.0f} minutes wall time.", ""]
         if any(k.startswith("dev|") for k in r["aggregate"]):
             lines += ["**Dev** (what detectors may be tuned on):", ""] + _table(r["aggregate"], "dev", False) + [""]
         lines += ["By attribute or instruction kind (held-out):", ""] + _attr_table(r["aggregate"], "heldout") + [""]
