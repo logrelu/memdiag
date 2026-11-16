@@ -203,13 +203,17 @@ class OpenAICompatJudge(Judge):
     """
 
     def __init__(self, model: str = "qwen2.5:7b", base_url: Optional[str] = None, api_key: Optional[str] = None,
-                 timeout: float = 600, cache: Optional[DiskCache] = None, seed: Optional[int] = 0):
+                 timeout: float = 600, cache: Optional[DiskCache] = None, seed: Optional[int] = 0,
+                 max_tokens: Optional[int] = 1024):
         super().__init__(cache)
         self.model = model
         self.seed = seed  # some servers reject `seed`; pass None to omit it
         self.base_url = (base_url or os.environ.get("MEMDIAG_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
         self._api_key = api_key or os.environ.get("MEMDIAG_API_KEY") or os.environ.get("OPENAI_API_KEY")
         self.timeout = timeout
+        # Every prompt answers in short JSON. The cap stops a small model that falls into a repetition loop from
+        # generating until the timeout (seen on CPU). It is not in the cache identity: only runaway answers change.
+        self.max_tokens = max_tokens
 
     @property
     def cache_identity(self) -> str:
@@ -225,6 +229,8 @@ class OpenAICompatJudge(Judge):
         body = {"model": self.model, "temperature": 0, "messages": [{"role": "user", "content": text}]}
         if self.seed is not None:
             body["seed"] = self.seed
+        if self.max_tokens:
+            body["max_tokens"] = self.max_tokens
         if as_json:
             body["response_format"] = {"type": "json_object"}
         headers = {"Content-Type": "application/json"}
@@ -239,6 +245,9 @@ class OpenAICompatJudge(Judge):
             detail = exc.read().decode(errors="replace")[:300]
             raise JudgeUnavailable(f"{url} returned HTTP {exc.code}: {detail}") from None
         except (urllib.error.URLError, OSError) as exc:
+            if isinstance(exc, TimeoutError) or isinstance(getattr(exc, "reason", None), TimeoutError):
+                raise JudgeUnavailable(f"{url} did not answer within {self.timeout:g}s. A slow local model can need a "
+                                       "larger timeout.") from None
             raise JudgeUnavailable(
                 f"Could not reach a model at {url} ({getattr(exc, 'reason', exc)}). For a local model run "
                 f"`ollama serve` and `ollama pull {self.model}`, or set MEMDIAG_BASE_URL.") from None
