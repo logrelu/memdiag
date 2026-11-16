@@ -13,7 +13,7 @@ from memdiag import Event, run
 
 from .mutate import PINNED_SHA256, build_suite, sha256, to_events, write_suite
 from .report import write_report
-from .score import aggregate, score_case
+from .score import aggregate, base_id, score_case
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -64,9 +64,8 @@ def main(argv=None) -> int:
     cases = [json.loads(line) for line in suite_path.read_text().splitlines()]
     background = json.loads(meta_path.read_text())["background"]
     if args.limit:
-        keep = {c["case_id"].removesuffix("-ctl") for c in cases if not c["control"]
-                and int(c["case_id"].rsplit("-", 1)[1]) < args.limit}
-        cases = [c for c in cases if c["case_id"].removesuffix("-ctl") in keep]
+        keep = {c["case_id"] for c in cases if not c["control"] and int(c["case_id"].rsplit("-", 1)[1]) < args.limit}
+        cases = [c for c in cases if base_id(c["case_id"]) in keep]
 
     if args.split:
         cases = [c for c in cases if c["split"] == args.split]
