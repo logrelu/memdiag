@@ -1,6 +1,6 @@
 id: check_stale
-version: 1
-description: Does an assistant reply use a value the user has since updated, as if it were still true?
+version: 2
+description: Does an assistant reply present a since-updated value as the user's current situation, or as past history?
 ---
 The user told an assistant one thing, and later updated it.
 
@@ -12,7 +12,9 @@ Here is a later reply from the assistant:
 $reply
 """
 
-Does this reply use the OLD value "$old" as if it were still true for the user? Mentioning it as past
-history ("you used to live in ...") does not count.
+The reply mentions "$old". How does it present "$old"?
+- "current": as the user's situation now, as if the update never happened (for example "as a $old resident, ...").
+- "past": as something that used to be true (for example "you used to be at $old").
+- "not_about_user": not about the user at all (it names $old for some other reason).
 
-Return JSON: {"uses_old": true or false, "quote": "<the exact words from the reply that use the old value, or empty>"}
+Return JSON: {"presents_as": "current" or "past" or "not_about_user", "quote": "<the exact words from the reply that mention $old>"}

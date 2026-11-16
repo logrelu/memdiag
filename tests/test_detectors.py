@@ -52,17 +52,21 @@ def test_mentioning_both_values_is_not_stale_but_is_an_opportunity():
     assert res["metrics"]["fact_currency"]["opportunities"] == 1
 
 
-def test_judge_confirms_or_rejects_stale_candidates():
+def _judged(rows, answer):
+    return _stale(run(_ev(rows), judge=FakeJudge({"extract_facts": '{"facts": []}', "check_stale": answer})))
+
+
+def test_judge_confirms_stale_candidates_and_vetoes_only_with_evidence():
     rows = MOVED + [["maya", "assistant", "Seattle weather is rainy, so pack a coat."]]
-    no = FakeJudge({"extract_facts": '{"facts": []}', "check_stale": '{"uses_old": false, "quote": ""}'})
-    assert _stale(run(_ev(rows), judge=no)) == []
-    invented = FakeJudge({"extract_facts": '{"facts": []}',
-                          "check_stale": '{"uses_old": true, "quote": "you live in Seattle"}'})
-    assert _stale(run(_ev(rows), judge=invented)) == []  # quote not in the reply
-    yes = FakeJudge({"extract_facts": '{"facts": []}',
-                     "check_stale": '{"uses_old": true, "quote": "Seattle weather is rainy"}'})
-    (f,) = _stale(run(_ev(rows), judge=yes))
-    assert f["detector"] == "llm.check_stale" and f["failing_quote"] == "Seattle weather is rainy"
+    (f,) = _judged(rows, '{"presents_as": "current", "quote": "Seattle weather is rainy"}')
+    assert (f["detector"], f["confidence"], f["failing_quote"]) == ("llm.check_stale", 0.9, "Seattle weather is rainy")
+    assert _judged(rows, '{"presents_as": "past", "quote": "Seattle weather is rainy"}') == []
+    assert _judged(rows, '{"presents_as": "not_about_user", "quote": "Seattle weather"}') == []
+    # No verifiable quote, a quote without the old value, or an unknown answer: the rule candidate stands at 0.5.
+    for answer in ('{"presents_as": "past", "quote": ""}', '{"presents_as": "past", "quote": "you live in Seattle"}',
+                   '{"presents_as": "past", "quote": "pack a coat"}', '{"uses_old": false}', "not json"):
+        (f,) = _judged(rows, answer)
+        assert (f["detector"], f["confidence"]) == ("ledger.stale_mention", 0.5), answer
 
 
 def test_legacy_and_ledger_stale_findings_merge():
@@ -161,7 +165,7 @@ def test_rule_reask_over_ledger_facts_and_judge_cannot_veto():
     def extract(text):
         return json.dumps({"facts": next((v for k, v in facts.items() if text.endswith(k)), [])})
 
-    judge = FakeJudge({"extract_facts": extract, "check_stale": '{"uses_old": false}',
+    judge = FakeJudge({"extract_facts": extract, "check_stale": '{"presents_as": "past", "quote": ""}',
                        "check_reask": '{"asks_again": []}'})  # the 7B judge's real answer on this case
     res = run(_ev(rows), judge=judge)
     (f,) = [f for f in res["findings"] if f["type"] == "RECALL_MISS"]
@@ -249,6 +253,6 @@ def test_a_reply_that_states_the_refined_value_is_not_stale():
 
     def extract(text):
         return json.dumps({"facts": next((v for k, v in facts.items() if text.endswith(k)), [])})
-    judge = FakeJudge({"extract_facts": extract, "check_stale": '{"uses_old": true, "quote": "Medium coffee"}',
+    judge = FakeJudge({"extract_facts": extract, "check_stale": '{"presents_as": "current", "quote": "Medium coffee"}',
                        "check_reask": '{"asks_again": []}'})
     assert _stale(run(_ev(rows), judge=judge)) == []

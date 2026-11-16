@@ -153,10 +153,14 @@ def detect_with_ledger(events: list[Event], ledger: Ledger, judge=None) -> tuple
             if judge is not None:
                 r = judge.ask(stale_prompt, role="judge_stale", as_json=True, key=key, old=prev.value,
                               old_quote=prev.quote, new=cur.value, new_quote=cur.quote, reply=a.content)
+                verdict = str((r.data or {}).get("presents_as") or "")
                 span = quote_span(str((r.data or {}).get("quote") or ""), a.content)
-                if (r.data or {}).get("uses_old") is not True or span is None:
-                    continue  # the judge said no, or couldn't point at the words
-                quote, detector, confidence = span, "llm.check_stale", 0.9
+                if span is not None and mentions(span, prev.value, attr):
+                    if verdict in ("past", "not_about_user"):
+                        continue  # the judge pointed at the words that make the old value history
+                    if verdict == "current":
+                        quote, detector, confidence = span, "llm.check_stale", 0.9
+                # Any other answer leaves the rule candidate standing: the judge vetoes only with evidence.
             findings.append(_finding(
                 "stale_memory", a, detector, key, expected=cur.value, got=prev.value, failing_quote=quote,
                 evidence_turns=[cur.source_turn, prev.source_turn], evidence_quote=cur.quote, confidence=confidence,
