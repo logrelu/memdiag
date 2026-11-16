@@ -18,7 +18,7 @@ from typing import Optional
 from .extract import RuleExtractor
 from .prompt import load_prompt
 from .schema import Event
-from .text import numbers, sentence
+from .text import numbers, sentence, unglue
 
 SELF = {"user", "i", "me", "myself", "self", "speaker", "mine", "im"}
 FILLER = {"my", "our", "the", "a", "an", "of"}
@@ -66,16 +66,17 @@ def normalize_key(subject: str, attribute: str) -> str:
 
 
 _NUMBER = r"(\d[\d,]*(?:\.\d+)?)\s*[kKmM]?\b"
+HEDGES = {"about", "around", "approximately", "approx", "roughly", "circa"}  # "about 5 years" is "5 years"
 
 
 def number_and_unit(value) -> tuple[Optional[float], str]:
     """'-$1.5k' -> (-1500.0, ''); '4.10%' -> (4.1, ''); '7 years' -> (7.0, 'years'); 'Denver' -> (None, 'denver')."""
-    text = str(value or "")
+    text = unglue(str(value or ""))
     nums = numbers(text)
     if len(nums) != 1:
         return None, " ".join(tokens(text))
     sign = -1 if re.search(r"(?<![\w.])-\s*[$€£]?\s*\d", text) else 1
-    unit = " ".join(tokens(re.sub(_NUMBER + r"|[$€£%,\-]", " ", text)))
+    unit = " ".join(t for t in tokens(re.sub(_NUMBER + r"|[$€£%,\-]", " ", text)) if t not in HEDGES)
     return sign * nums[0], unit
 
 

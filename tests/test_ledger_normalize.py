@@ -28,7 +28,8 @@ def test_walkthrough_keys_now_collide():
 
 
 @pytest.mark.parametrize("a,b", [("$140k", "140000"), ("140,000", "140000"), ("Denver.", "denver"),
-                                 ("New  York", "new york"), ("7", "7")])
+                                 ("New  York", "new york"), ("7", "7"), ("about 5 years", "5 years"),
+                                 ("around 200mg", "200 mg"), ("roughly $140k", "140000")])
 def test_equal_values(a, b):
     assert normalize_value(a) == normalize_value(b)
 

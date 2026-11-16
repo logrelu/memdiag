@@ -14,7 +14,7 @@ from .timeline import Timeline
 
 CONTEXT_OVERLOAD_TOKENS = 32000
 REASKABLE = set(FORGOTTEN_QUESTIONS)  # attributes the rule extractor can spot a re-ask for
-DETECTOR_VERSION = "1"  # bump when a rule changes what it flags
+DETECTOR_VERSION = "2"  # bump when a rule changes what it flags
 
 
 class BM25:
