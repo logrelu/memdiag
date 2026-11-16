@@ -10,6 +10,7 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 - `pip install -e ".[dev]"` into `.venv` (Python >= 3.10). Verify with an editable install; a non-editable one tests stale code.
 - `ruff check .` and `pytest -q` must both pass before any commit.
 - `memdiag demo` is the end-to-end smoke test; `memdiag run LOG` is the primary command.
+- `python scripts/make_demo_svg.py --cache DIR` regenerates the README's `docs/demo.svg` from real output. Rerun it when `run` or `ledger` output, or a prompt, changes.
 - Local judge: `ollama serve`, model `qwen2.5:7b` (16 GB Mac reference). Experiments live in `experiments/`; their data goes in `experiments/data/` (git-ignored).
 
 ## Layout
