@@ -228,3 +228,27 @@ def test_repair_boost_only_for_the_repeated_fact():
             ["maya", "user", "I already told you, we moved to Portland!"]]
     by_key = {f["attribute"]: f["confidence"] for f in run(_ev(rows))["findings"] if f["type"] == "STALE_FACT"}
     assert by_key == {"user.city": 0.75, "user.income": 0.5}
+
+
+def test_mentions_reads_glued_units_and_hedged_values():
+    reply = "* 8:45 am: Medium coffee (200mg of caffeine)"
+    assert mentions(reply, "around 200mg") and mentions(reply, "200 mg")
+    assert not mentions(reply, "300mg") and not mentions("Walk 5 km a day", "5 miles")
+    assert not mentions("Back in 2 hours", "2 inches")
+
+
+def test_a_reply_that_states_the_refined_value_is_not_stale():
+    """Found on dev: 'coffee' then 'around 200mg' was ledgered as an update; the reply states both, so it is not
+    stale, and the judge should never see it."""
+    rows = [["u", "user", "I grabbed a coffee on Monday."], ["u", "user", "I think it was around 200mg of caffeine."],
+            ["u", "assistant", "Got it! Monday: Medium coffee (200mg of caffeine)."]]
+    facts = {"I grabbed a coffee on Monday.": [{"subject": "user", "attribute": "caffeine_intake", "value": "coffee",
+                                                 "quote": "a coffee"}],
+             "I think it was around 200mg of caffeine.": [{"subject": "user", "attribute": "caffeine_intake",
+                                                            "value": "around 200mg", "quote": "around 200mg"}]}
+
+    def extract(text):
+        return json.dumps({"facts": next((v for k, v in facts.items() if text.endswith(k)), [])})
+    judge = FakeJudge({"extract_facts": extract, "check_stale": '{"uses_old": true, "quote": "Medium coffee"}',
+                       "check_reask": '{"asks_again": []}'})
+    assert _stale(run(_ev(rows), judge=judge)) == []
