@@ -15,7 +15,7 @@ from .detect import DETECTOR_VERSION, _next_user_msg
 from .ledger import Ledger, number_and_unit, quote_span, tokens, values_equal
 from .prompt import load_prompt
 from .schema import Event, Finding
-from .text import numbers, sentence
+from .text import MEASURES, numbers, sentence, unglue
 
 REPAIR = re.compile(
     r"\b(?:as i (?:said|mentioned|told you)|like i (?:said|mentioned|told you)|"
@@ -72,7 +72,7 @@ def rule_reasks(reply: str, live: dict, ledger: Ledger, user: str, before_turn: 
 
 
 UNITS = {"year", "years", "yr", "yrs", "month", "months", "week", "weeks", "day", "days", "percent", "pct",
-         "kg", "lb", "lbs", "mile", "miles", "km", "dollar", "dollars", "usd", "k"}
+         "mile", "miles", "dollar", "dollars", "usd", "k", *MEASURES}
 # A bare number only counts as a mention of an attribute when its sentence is about that attribute, so a
 # "$85,000 down payment" is not a mention of an $85,000 income.
 CUES = {
@@ -100,7 +100,7 @@ def mentions(text: str, value: str, attribute: str = "") -> bool:
         return _has_sequence(tokens(text), tokens(value))
     cues = CUES.get(attribute, set())
     for part in re.split(r"(?<=[.!?;])\s+", text):
-        clean = re.sub(r"\d+:\d+", " ", part)  # 7:30 is a time, not a 7
+        clean = unglue(re.sub(r"\d+:\d+", " ", part))  # 7:30 is a time, not a 7
         if not any(abs(x - abs(n)) < 1e-9 for x in numbers(clean)):
             continue
         words = tokens(clean)
