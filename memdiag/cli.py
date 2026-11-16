@@ -97,6 +97,29 @@ def main(argv=None):
     return _gate(res, args.fail_under)
 
 
+SHOW_CARDS = 5
+
+
+def _clip(text: str, n: int = 90) -> str:
+    text = " ".join(str(text).split())
+    return text if len(text) <= n else text[:n - 3] + "..."
+
+
+def finding_card(f: dict, by_index: dict) -> str:
+    """One finding as plain text: the header, then the evidence turn above the failing turn, both quoted."""
+    head = " · ".join(x for x in (f["type"], f.get("location"), f"confidence {f['confidence']:.2f}", f["user_id"],
+                                  f.get("attribute")) if x)
+    lines = [head]
+    rows = [(f["evidence_turns"][0] if f["evidence_turns"] else None, f["evidence_quote"]),
+            (f["failing_turn"], f["failing_quote"])]
+    for turn, quote in rows:
+        if turn is None or not quote:
+            continue
+        who = "user" if getattr(by_index.get(turn), "role", "") == "user" else "agent"
+        lines.append(f"  {who + ', turn ' + str(turn):15s} \"{_clip(quote)}\"")
+    return "\n".join(lines)
+
+
 def _run(args) -> int:
     from .adapters import load
     from .findings_report import findings_html
@@ -114,10 +137,19 @@ def _run(args) -> int:
     Path(args.html).write_text(findings_html(res, events))
     print(f"{res['stats']['assistant_turns']} agent turns, {len(findings)} findings, {res['repair_count']} user repairs "
           f"(mode: {res['mode']}{', ' + res['judge_model'] if res['judge_model'] else ''})")
+    by_index = {e.index: e for e in events}
+    for f in findings[:SHOW_CARDS]:
+        print("\n" + finding_card(f, by_index))
+    if not findings:
+        print("\nNo memory failures found. That is not proof of good memory: see \"What this report can't see\" "
+              "in the report." + ("" if judge else " Rules mode reads only a few facts; try --model."))
+    if len(findings) > SHOW_CARDS:
+        print(f"\n... and {len(findings) - SHOW_CARDS} more in {args.findings}")
+    print("\nScores (1 - failures / opportunities):")
     for name, m in res["metrics"].items():
         score = "n/a" if m["score"] is None else f"{m['score']:.2f}"
         print(f"  {name:22s} {score:>5}  ({m['failures']} of {m['opportunities']})")
-    print(f"Findings: {args.findings}\nReport:   {args.html}")
+    print(f"\nFindings: {args.findings}\nReport:   {args.html}")
     if judge is not None:
         print(judge.usage.summary())
     return _gate(res, args.fail_under)
