@@ -23,6 +23,7 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 - `memdiag/ledger.py` the fact ledger: rules + LLM extraction, verbatim quotes, normalized keys, updates/deletions; `text.py` quote helpers
 - `memdiag/judge.py` every model call: `Judge.ask` (cache, JSON retry, usage), `OpenAICompatJudge`, `FakeJudge` for tests
 - `memdiag/prompt.py` + `memdiag/prompts/*.txt` versioned prompts (id/version header, `$field` placeholders)
+- `validation/goal1/` Goal 1 mutation suite (`python -m validation.goal1`); results in `validation/results/`, report `docs/validation.md`
 - `docs/ROADMAP.md` plan; `docs/STABILITY.md` public names; `docs/metrics.md` metric definitions; `docs/RELEASING.md`
 - `docs/plans/M<n>.md` the plan for each milestone from M2 on, written before its code
 
