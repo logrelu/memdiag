@@ -15,6 +15,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from memdiag.schema import TYPES  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 MODEL = "qwen2.5:7b"
 LOG = "examples/walkthrough.jsonl"
@@ -45,8 +48,7 @@ def scenes(cache: str, out_dir: str) -> list[tuple[str, list[str]]]:
 
 
 def colour(line: str) -> str:
-    if line.split(" · ")[0] in {"STALE_FACT", "RECALL_MISS", "CONSTRAINT_DROP", "DELETION_VIOLATION", "CROSS_USER_LEAK",
-                                "INVENTED_MEMORY", "CONTEXT_IGNORED", "RETRIEVAL_MISS"}:
+    if line.split(" · ")[0] in set(TYPES.values()):
         return HEAD
     if line.startswith("  user,"):
         return OK

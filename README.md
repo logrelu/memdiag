@@ -117,7 +117,7 @@ memdiag diagnose traces.jsonl --fail-under deletion_compliance=1.0 --fail-under 
 | Memory | Cross-user leak | Agent asserts a value that belongs to a different user |
 | Memory | Invented memory | Agent asserts a user fact nobody ever stated |
 | Memory | Forgotten memory | Agent asks again for a fact the user already gave |
-| Memory | Dropped instruction | Agent breaks a standing instruction the user gave earlier (word limit, language, no bullets, banned word, no emoji) |
+| Memory | Dropped instruction | Agent breaks a standing instruction the user gave earlier in the same session (word limit, language, no bullets, banned word, no emoji) |
 | Retrieval | Ignored context | Agent's answer contradicts a document it retrieved |
 | Retrieval | Retrieval miss | Agent was unsure or the user pushed back, and a better document existed but wasn't retrieved |
 | Context | Context overload | A failure happened with a very large context window (tagged) |
@@ -131,7 +131,7 @@ signals: they point at the agent turn before them, but aren't scored on their ow
 - **LLM-judge memory metrics** score a conversation: AWS's UAEF `context_retention` asks a judge for one
   0-1 rating, and DeepEval's KnowledgeRetention counts the assistant turns a judge flags for forgetting.
   memdiag reports each failure at its turn, with the earlier turn it contradicts quoted verbatim. It also
-  tracks facts the user later updated or asked to forget, works across sessions and users, and separates
+  tracks facts the user later updated or asked to forget across sessions and users, and separates
   retrieve from use failures.
 - **Memory benchmarks** (LongMemEval, LoCoMo) need gold questions and answers. memdiag needs only your
   production logs, and rebuilds the reference from what each user actually said.
