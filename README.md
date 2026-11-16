@@ -1,10 +1,8 @@
-
-
-https://github.com/user-attachments/assets/9e0d56b5-6cf2-44fc-9ecf-4d43a656f8b7
-
 # memdiag
 
 **Find where your agent's memory fails, in the logs you already have.**
+
+![memdiag reading a sample agent log: what the user said, then each memory failure next to the turn it contradicts](docs/demo.svg)
 
 memdiag reads an agent's conversation logs and reports each memory failure at the turn it happened,
 next to the earlier turn it contradicts, quoted word for word:
@@ -15,8 +13,9 @@ STALE_FACT · retrieve · confidence 1.00 · u1 · user.city
   agent, turn 7   "Try Mount Falcon Park, about 30 minutes from Denver."
 ```
 
-This is real output: `memdiag run examples/walkthrough.jsonl --model qwen2.5:7b`. The log is a synthetic
-4-call example. The memory the agent got said "Denver", so the fact was never retrieved.
+This is real output from `memdiag run examples/walkthrough.jsonl --model qwen2.5:7b` (the demo above is
+regenerated from the same commands by `scripts/make_demo_svg.py`). The log is a synthetic 4-call example.
+The memory the agent got said "Denver", so the fact was never retrieved.
 
 - **No ground truth needed.** The reference is what each user actually said, rebuilt from the log.
 - **Works with any memory setup.** Built-in context, Mem0, Zep, a vector store: memdiag only needs the
@@ -52,7 +51,9 @@ misses: [docs/validation.md](docs/validation.md).
 | False positives | 0 / 100 | 0 / 32 | ≤ 0.05 |
 
 **Goal 1 is not met yet.** Stale-fact recall misses in LLM mode: the 7B judge rejected correct candidates.
-The LLM sample is small, and agreement with real labels and humans (Goal 2) hasn't been measured. The
+The LLM sample is small, and agreement with real labels and humans (Goal 2) hasn't been measured.
+**In progress (M6b):** a stale-fact judge policy chosen on dev data only, new decoy controls the judge must
+reject, then the full held-out LLM run and rerun stability, published next to these numbers. The
 injected failures are explicit, so treat these numbers as an upper bound for real logs. Read the quotes, not
 just the scores.
 
@@ -98,7 +99,8 @@ context injected into each call (`"memory": [{"id": ..., "text": ...}]`), each f
 ## Scores
 
 Alongside the findings, every run produces normalized memory metrics (`memory_faithfulness`,
-`fact_currency`, `deletion_compliance`, `user_isolation`, `groundedness`, `recall_continuity`).
+`fact_currency`, `deletion_compliance`, `user_isolation`, `groundedness`, `recall_continuity`,
+`constraint_retention`).
 Each is `1 - failures / opportunities`, reported with its counts, and `n/a` when the agent never
 had a chance to fail. Definitions: [docs/metrics.md](docs/metrics.md). Use them as a CI gate:
 
@@ -115,12 +117,26 @@ memdiag diagnose traces.jsonl --fail-under deletion_compliance=1.0 --fail-under 
 | Memory | Cross-user leak | Agent asserts a value that belongs to a different user |
 | Memory | Invented memory | Agent asserts a user fact nobody ever stated |
 | Memory | Forgotten memory | Agent asks again for a fact the user already gave |
+| Memory | Dropped instruction | Agent breaks a standing instruction the user gave earlier (word limit, language, no bullets, banned word, no emoji) |
 | Retrieval | Ignored context | Agent's answer contradicts a document it retrieved |
 | Retrieval | Retrieval miss | Agent was unsure or the user pushed back, and a better document existed but wasn't retrieved |
 | Context | Context overload | A failure happened with a very large context window (tagged) |
 | Unknown | Unattributed | User pushed back and no rule explains it |
 
-User pushback ("that's wrong", "I asked you to forget") is used as a failure signal.
+User pushback ("that's wrong", "I asked you to forget") and repairs ("I already told you") are reported as
+signals: they point at the agent turn before them, but aren't scored on their own.
+
+## How it differs
+
+- **LLM-judge memory metrics** score a conversation: AWS's UAEF `context_retention` asks a judge for one
+  0-1 rating, and DeepEval's KnowledgeRetention counts the assistant turns a judge flags for forgetting.
+  memdiag reports each failure at its turn, with the earlier turn it contradicts quoted verbatim. It also
+  tracks facts the user later updated or asked to forget, works across sessions and users, and separates
+  retrieve from use failures.
+- **Memory benchmarks** (LongMemEval, LoCoMo) need gold questions and answers. memdiag needs only your
+  production logs, and rebuilds the reference from what each user actually said.
+- **Validation first.** Detectors are scored against pre-registered targets on held-out data, and misses are
+  published. See [docs/validation.md](docs/validation.md).
 
 ## Strategy replay (`memdiag diagnose`)
 
@@ -143,6 +159,14 @@ memdiag-mcp            # stdio server with tools diagnose_traces and diagnose_re
   section, so silence isn't mistaken for good memory.
 - The demo data is synthetic, and the experiment samples are tiny. Neither is a benchmark.
 - Vendor adapters (Zep, Mem0, graph stores) are not built yet. Log the injected memory as `memory` on each call instead.
+- memdiag tracks what the *user* said. An agent contradicting its own earlier answer isn't detected yet.
+
+## Status and roadmap
+
+memdiag is pre-release (no PyPI package yet; install from source). Done: localized findings, the fact
+ledger, a local judge, `memdiag run`, and the Goal 1 harness. Next: the M6b stale-fact fix, agreement with
+real labels and human audit (Goal 2), then integrations (OpenTelemetry, Langfuse, a pytest assertion) and
+v0.2.0. Plan and success criteria: [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ### Known failure on unseen phrasing
 
