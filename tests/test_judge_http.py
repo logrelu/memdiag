@@ -2,6 +2,7 @@
 import json
 import socket
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
@@ -20,6 +21,8 @@ def server():
         def do_POST(self):
             body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
             seen.append({"path": self.path, "auth": self.headers.get("Authorization"), "body": body})
+            if body["model"] == "slow":
+                time.sleep(1)
             if body["model"] == "broken":
                 self.send_response(500)
                 self.end_headers()
@@ -52,7 +55,7 @@ def test_request_shape_auth_and_usage(server):
     assert r.data == {"facts": []} and (r.prompt_tokens, r.completion_tokens) == (12, 5)
     (req,) = seen
     assert req["path"] == "/v1/chat/completions" and req["auth"] == "Bearer secret-key"
-    assert req["body"]["temperature"] == 0 and req["body"]["seed"] == 0
+    assert req["body"]["temperature"] == 0 and req["body"]["seed"] == 0 and req["body"]["max_tokens"] == 1024
     assert req["body"]["response_format"] == {"type": "json_object"}
     assert req["body"]["messages"] == [{"role": "user", "content": "Extract from: We moved."}]
     assert "secret-key" not in repr(judge)
@@ -97,3 +100,9 @@ def test_seed_can_be_omitted_and_endpoint_is_in_cache_identity(server):
     OpenAICompatJudge(base_url=url, seed=None).ask(P, message="m")
     assert "seed" not in seen[0]["body"]
     assert OpenAICompatJudge(base_url="http://a/v1").cache_identity != OpenAICompatJudge(base_url="http://b/v1").cache_identity
+
+
+def test_a_timeout_says_so(server):
+    url, _ = server
+    with pytest.raises(JudgeUnavailable, match="did not answer within 0.2s"):
+        OpenAICompatJudge("slow", base_url=url, timeout=0.2).ask(P, message="m")
