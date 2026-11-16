@@ -86,6 +86,7 @@ not finding types.
 | M4 | Ledger: rule plus LLM extraction, verbatim-quote check, deterministic key normalization, replacements and revocations (constraints move to M5) | Done: PR #8 |
 | M5 | `extract_facts` v2; ledger detectors (`STALE_FACT`, `RECALL_MISS`, `USER_REPAIR`), retrieve/use location; `memdiag run` + findings report; rule-checkable `CONSTRAINT_DROP` | Done: PRs #9, #10, and M5c |
 | M6 | **Goal 1 harness:** mutation suite built from MIT/CC-BY conversations, with negative controls and a held-out split | Harness done; Goal 1 not yet met (see `docs/validation.md`, `docs/plans/M6.md`) |
+| M6b | Stale-fact judge policy chosen on dev (with history controls the judge must reject), the full held-out LLM run, the flip rate and the cost per 100 sessions | A new run in `docs/validation.md`, reported next to the first; plan `docs/plans/M6b.md` |
 | M7 | External validity: MultiChallenge (per-axis kappa), LongMemEval (location against evidence sessions), 50-item hand audit | Goal 2 numbers in `docs/validation.md` |
 | M8 | Integrations: OTel GenAI ingest and export, Langfuse score write-back, pytest `assert_memory` | One offline example per integration |
 | M9 | Release v0.2.0 | Release 1 criteria met |
