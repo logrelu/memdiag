@@ -100,9 +100,16 @@ def main(argv=None):
 SHOW_CARDS = 5
 
 
-def _clip(text: str, n: int = 90) -> str:
+def _clip(text: str, n: int = 90, focus: str = "") -> str:
+    """Shorten to n characters, keeping `focus` (the value that shows the failure) in view."""
     text = " ".join(str(text).split())
-    return text if len(text) <= n else text[:n - 3] + "..."
+    if len(text) <= n:
+        return text
+    i = text.find(focus) if focus else -1
+    if i < 0 or i + len(focus) <= n - 3:
+        return text[:n - 3] + "..."
+    start = max(0, min(i - n // 3, len(text) - (n - 6)))
+    return "..." + text[start:start + n - 6] + ("..." if start + n - 6 < len(text) else "")
 
 
 def finding_card(f: dict, by_index: dict) -> str:
@@ -110,13 +117,19 @@ def finding_card(f: dict, by_index: dict) -> str:
     head = " · ".join(x for x in (f["type"], f.get("location"), f"confidence {f['confidence']:.2f}", f["user_id"],
                                   f.get("attribute")) if x)
     lines = [head]
-    rows = [(f["evidence_turns"][0] if f["evidence_turns"] else None, f["evidence_quote"]),
-            (f["failing_turn"], f["failing_quote"])]
-    for turn, quote in rows:
-        if turn is None or not quote:
+    rows = [(f["evidence_turns"][0] if f["evidence_turns"] else None, f["evidence_quote"], f.get("expected") or ""),
+            (f["failing_turn"], f["failing_quote"], f.get("got") or "")]
+    for turn, quote, focus in rows:
+        if not quote:
             continue
-        who = "user" if getattr(by_index.get(turn), "role", "") == "user" else "agent"
-        lines.append(f"  {who + ', turn ' + str(turn):15s} \"{_clip(quote)}\"")
+        e = by_index.get(turn)
+        if e is None:
+            who = "evidence"  # e.g. a retrieved document, which has no turn
+        elif e.role == "user":
+            who = f"user, turn {turn}" if e.user_id == f["user_id"] else f"user {e.user_id}, turn {turn}"
+        else:
+            who = f"agent, turn {turn}"
+        lines.append(f"  {who:15s} \"{_clip(quote, focus=focus)}\"")
     return "\n".join(lines)
 
 
