@@ -41,11 +41,15 @@ for every policy go in this file. Held-out is run once, with the chosen policy.
 
 ## 3. The full held-out LLM run, the flip rate and the cost
 - All held-out cases (25 positives and 25 controls per type, plus 25 history controls), `qwen2.5:7b`.
-- Flip rate: 3 uncached reruns on the held-out cases, with the shipped settings (temperature 0, seed 0).
+- Flip rate: 3 uncached reruns, with the shipped settings (temperature 0, seed 0).
+  - The reruns cover the first 8 positives per type on held-out, with their controls and history controls
+    (72 cases). That is the same positives and controls as the first LLM run.
+  - Rerunning all ~225 held-out cases 3 times would take over 12 hours on the reference Mac (Intel CPU, no
+    GPU). This sample was chosen before any rerun.
   - At those settings the flip rate measures the nondeterminism users actually get (server batching,
     floating point), not sampling variance. The report says so.
   - A case flips if its verdict differs between the original run and any rerun.
-- Runtime, judge calls and tokens per 100 sessions are recorded in the run metadata (Goal 1, criterion 5).
+- Runtime and judge calls per 100 sessions are recorded in the run metadata and the report (Goal 1, criterion 5). Cached calls are charged at the mean time of uncached ones, since a new user pays for every call.
 
 ## Reporting
 - Results get a run name: `validation/results/goal1_<mode>[_<run>].json`. The first LLM run stays as it is,

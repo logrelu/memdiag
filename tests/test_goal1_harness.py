@@ -131,3 +131,20 @@ def test_history_controls_count_as_false_positives_and_get_their_own_row():
     assert agg["dev|STALE_FACT|all"]["false_positive"] == {**agg["dev|STALE_FACT|all"]["false_positive"], "k": 1, "n": 2}
     assert agg["dev|STALE_FACT|history_control"]["false_positive"]["n"] == 1
     assert base_id("x-dev-000-hist") == base_id("x-dev-000-ctl") == "x-dev-000"
+
+
+def test_limit_keeps_history_controls_and_cost_charges_cached_calls():
+    from types import SimpleNamespace
+
+    from validation.goal1.__main__ import _cost, _first
+    ids = ["stale_fact-heldout-000", "stale_fact-heldout-000-ctl", "stale_fact-heldout-000-hist",
+           "stale_fact-heldout-001", "stale_fact-heldout-001-ctl"]
+    cases = [{"case_id": i, "control": i.endswith(("-ctl", "-hist")),
+              "events": [{"session_id": f"{i}:a"}, {"session_id": f"{i}:b"}]} for i in ids]
+    assert [c["case_id"] for c in _first(cases, 1)] == ids[:3]
+    usage = SimpleNamespace(by_role={"extractor": {"calls": 10, "cached": 6, "seconds": 8.0, "prompt_tokens": 0,
+                                                    "completion_tokens": 0}})
+    cost = _cost(cases, 60.0, SimpleNamespace(usage=usage))
+    assert cost["sessions"] == 10 and cost["calls_per_100_sessions"] == 100.0
+    assert cost["est_seconds_per_100_sessions"] == 200  # 10 calls at 2 s each (the uncached mean), per 10 sessions
+    assert _cost(cases, 1.0, None) == {"sessions": 10, "wall_seconds": 1.0}
