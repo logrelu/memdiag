@@ -92,7 +92,14 @@ def stale_case(rng, split, bases, attr):
     ids = [f["id"], u["id"]]
     sessions = lambda last: [(bases[0][0], s1), (bases[1][0], s2), (bases[2][0], last)]  # noqa: E731
     gold = _offset(sessions(pos), 2, target)
-    return (sessions(pos), gold, ids + [s["id"]]), (sessions(ctl), None, ids + [c["id"]])
+
+    def history(hrng):
+        """The history control (M6b), from its own RNG so building it never changes the other cases."""
+        h = T.pick(T.STALE_HISTORY[attr], split, hrng)
+        last = [list(t) for t in b3]
+        last[target][1] = h["text"].format(old=old) + " " + last[target][1]
+        return sessions(last), None, ids + [h["id"]]
+    return (sessions(pos), gold, ids + [s["id"]]), (sessions(ctl), None, ids + [c["id"]]), history
 
 
 def reask_case(rng, split, bases, attr):
@@ -199,9 +206,13 @@ def build_suite(data_path: Path, seed: int = 7, is_clean=None) -> list[dict]:
         for split, count in COUNTS.items():
             for i in range(count):
                 attr = attrs[i % len(attrs)]
-                pos, ctl = builder(rng, split, take(split, n_bases), attr)
-                for (sessions, gold, tids), control in ((pos, False), (ctl, True)):
-                    case_id = f"{typ.lower()}-{split}-{i:03d}{'-ctl' if control else ''}"
+                pos, ctl, *extra = builder(rng, split, take(split, n_bases), attr)
+                base_id = f"{typ.lower()}-{split}-{i:03d}"
+                variants = [(pos, False, ""), (ctl, True, "-ctl")]
+                if extra:
+                    variants.append((extra[0](random.Random(f"{seed}:{base_id}:hist")), True, "-hist"))
+                for (sessions, gold, tids), control, suffix in variants:
+                    case_id = base_id + suffix
                     cases.append({"case_id": case_id, "type": typ, "split": split, "attr": attr, "control": control,
                                   "template_ids": tids, "gold_turn": gold, "events": to_events(case_id, sessions)})
     return cases

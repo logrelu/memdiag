@@ -38,6 +38,11 @@ def _rate(k: int, n: int) -> dict:
     return {"k": k, "n": n, "rate": (k / n) if n else None, "ci95": [round(lo, 3), round(hi, 3)]}
 
 
+def base_id(case_id: str) -> str:
+    """The positive case a control belongs to: `stale_fact-dev-003-ctl` and `-hist` -> `stale_fact-dev-003`."""
+    return case_id.removesuffix("-ctl").removesuffix("-hist")
+
+
 def net_detected(rows: list[dict]) -> dict[str, bool]:
     """Recall without background: a positive counts only if it has a finding its paired control (same sessions,
     no failure injected) does not have on the same turn. Background findings show up on both and cancel out."""
@@ -54,6 +59,8 @@ def aggregate(rows: list[dict]) -> dict:
     for r in rows:
         groups[(r["split"], r["type"], "all")].append(r)
         groups[(r["split"], r["type"], r["attr"])].append(r)
+        if r["case_id"].endswith("-hist"):  # history controls also get their own row (M6b)
+            groups[(r["split"], r["type"], "history_control")].append(r)
         groups[(r["split"], "ALL", "all")].append(r)
     out = {}
     for (split, typ, attr), rs in sorted(groups.items()):
