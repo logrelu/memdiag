@@ -50,6 +50,15 @@ STALE_CONTROL = {
     "employer": [T("e_n1", DEV, "Since you work at {new}, check your benefits."),
                  T("e_n2", HELDOUT, "Congrats on moving from {old} to {new}; check your new benefits.")],
 }
+# History controls (M6b): the reply mentions only the old value, as past history. The mention check makes a
+# candidate, so only the judge can reject it. Written before any run of them.
+STALE_HISTORY = {
+    "city": [T("c_h1", DEV, "Since you left {old}, here is a tip."),
+             T("c_h2", DEV, "Back when you lived in {old}, you mentioned the rain."),
+             T("c_h3", HELDOUT, "After leaving {old}, settling in somewhere new takes time.")],
+    "employer": [T("e_h1", DEV, "Now that you're done with {old}, check your new benefits."),
+                 T("e_h2", HELDOUT, "Your years at {old} should help in the new role.")],
+}
 REASK = {
     "city": [T("r_c1", DEV, "Where do you live, by the way?"), T("r_c2", DEV, "What city are you in?"),
              T("r_c3", HELDOUT, "Where are you located these days?"), T("r_c4", HELDOUT, "Remind me which city you're in?")],
