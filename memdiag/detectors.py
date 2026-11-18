@@ -31,7 +31,8 @@ USER_REASK = {
     "name": r"\bwhat(?:'s| is) your name\b",
     "birthday": r"\bwhen(?:'s| is) your birthday\b",
     "interest": r"\bwhat are you (?:into|interested in)\b|\bwhat do you like\b",
-    "city": r"\bwhere do you live\b|\bwhat city (?:are you in|do you live in)\b|\bwhere are you located\b",
+    "city": r"\bwhere do you live\b|\b(?:what|which) city (?:are you in|you're in|you are in|do you live in|you live in)\b"
+            r"|\bwhere are you located\b",
     "employer": r"\bwhere do you work\b|\bwho do you work for\b|\bwho is your employer\b",
     "job_title": r"\bwhat do you do for (?:a living|work)\b|\bwhat(?:'s| is) your (?:job|role|occupation)\b",
     "income": r"\bwhat(?:'s| is) your (?:annual )?(?:income|salary)\b|\bhow much do you (?:make|earn)\b",
