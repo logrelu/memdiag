@@ -122,12 +122,12 @@ Full tables: `docs/validation.md`. 225 held-out cases: 100 injected, 100 paired 
   selection sample was too small to expose a judge that keys on phrasing.
 
 ### Decision
-- **v2 is not shipped.** The default stays `check_stale` v1 (commit 4801730). v2 also vetoes the README
+- **v2 is not shipped.** The default stays `check_stale` v1 (the commit "Keep stale judge v1 as the default"). v2 also vetoes the README
   walkthrough's Denver finding.
 - **The general fixes stay:** value matching, the answer cap, the history controls, named runs, the flip rate
   and the cost reporting.
-- **Run `m6b` is published as measured,** next to the first LLM run. Commit 59c8416 is kept on the remote
-  branch `m6b-stale-judge` for provenance.
+- **Run `m6b` is published as measured,** next to the first LLM run. The run's commit, 59c8416 (before the
+  rebase-merge), is kept on the remote branch `m6b-run-provenance`.
 
 ## Next (M6c)
 **Rules decide stale findings; the judge may only confirm.** A mention of the old value without the current
