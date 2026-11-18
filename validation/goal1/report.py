@@ -73,7 +73,9 @@ def write_report(results_dir: Path, out: Path) -> None:
         lines += _table(r["aggregate"], "heldout", True) + [""]
         if r.get("flip"):
             f = r["flip"]
-            lines += [f"Flip rate over the first run and {f['reruns']} uncached reruns (temperature 0, seed 0): "
+            lines += [f"Flip rate over the first run and {f['reruns']} uncached reruns (temperature 0, seed 0)"
+                      + (f", counting {f['verdict']}" if f.get("verdict") else
+                         ", counting a change in exact-turn hit (positives) or false positive (controls)") + ": "
                       f"{f['flipped']}/{f['cases']} cases ({f['rate']:.2%}) {'✅' if f['rate'] <= 0.05 else '❌'} "
                       f"(target <= 5%)" + (f"; flipped: {', '.join(f'`{c}`' for c in f['flipped_ids'])}."
                                            if f.get("flipped_ids") else "."), ""]
@@ -81,9 +83,10 @@ def write_report(results_dir: Path, out: Path) -> None:
         if cost.get("calls_per_100_sessions") is not None:
             est = cost.get("est_seconds_per_100_sessions")
             lines += [f"Cost: {cost['calls_per_100_sessions']} model calls per 100 sessions"
-                      + (f", about {est / 60:.0f} minutes per 100 sessions uncached on the reference Mac (16 GB, Intel CPU, no GPU) "
-                         "(estimated from the mean time of uncached calls)" if est else "")
-                      + f". This run: {cost['sessions']} sessions, {cost['calls']} calls "
+                      + (f", about {est / 60:.0f} minutes per 100 sessions uncached on the machine that ran it"
+                         + (f" ({cost['machine']})" if cost.get("machine") else "")
+                         + " (estimated from the mean time of uncached calls)" if est else "")
+                      + f". This run's main pass (reruns excluded): {cost['sessions']} sessions, {cost['calls']} calls "
                       f"({cost['uncached_calls']} uncached), {cost['wall_seconds'] / 60:.0f} minutes wall time.", ""]
         if any(k.startswith("dev|") for k in r["aggregate"]):
             lines += ["**Dev** (what detectors may be tuned on):", ""] + _table(r["aggregate"], "dev", False) + [""]

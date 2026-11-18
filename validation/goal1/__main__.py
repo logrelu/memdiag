@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import platform
 import subprocess
 import sys
 import time
@@ -40,7 +42,8 @@ def _cost(cases: list[dict], seconds: float, judge) -> dict:
     """Goal 1 criterion 5: wall time and model calls per 100 sessions. Cached calls cost nothing here but would for
     a new user, so the estimate charges every call at the mean time of the uncached ones."""
     sessions = sum(len({e["session_id"] for e in c["events"]}) for c in cases)
-    out = {"sessions": sessions, "wall_seconds": round(seconds, 1)}
+    out = {"sessions": sessions, "wall_seconds": round(seconds, 1),
+           "machine": f"{platform.system()} {platform.machine()}, {os.cpu_count()} CPUs"}
     if judge is not None:
         roles = judge.usage.by_role
         calls = sum(u["calls"] for u in roles.values())
@@ -112,15 +115,16 @@ def main(argv=None) -> int:
         sample = [c for c in cases if c["split"] == "heldout"]
         if args.rerun_limit:
             sample = _first(sample, args.rerun_limit)
-        first = {r["case_id"]: r.get("false_positive", r.get("exact_turn")) for r in rows}
+        first = {r["case_id"]: tuple(r["found_turns"]) for r in rows}  # any change in findings counts as a flip
         verdicts = {c["case_id"]: [first[c["case_id"]]] for c in sample}  # the original run counts too
         for _ in range(args.reruns):
             fresh = OpenAICompatJudge(args.model, base_url=args.base_url)  # no cache: a real rerun
             for c in sample:
                 r = score_case(c, fresh)
-                verdicts[c["case_id"]].append(r.get("false_positive", r.get("exact_turn")))
+                verdicts[c["case_id"]].append(tuple(r["found_turns"]))
         flipped = sum(len(set(v)) > 1 for v in verdicts.values())
         flip = {"reruns": args.reruns, "cases": len(sample), "flipped": flipped, "rate": flipped / max(1, len(sample)),
+                "verdict": "any change in the turns with a finding of the case's type",
                 "flipped_ids": sorted(k for k, v in verdicts.items() if len(set(v)) > 1)}
 
     commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, cwd=ROOT).stdout.strip()
