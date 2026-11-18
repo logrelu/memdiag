@@ -53,6 +53,7 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 - LLM-extracted fact keys vary (`user|myself.city` vs `user.city`). Always go through `ledger.normalize_key`, or stale detection silently fails.
 - The extractor links names to relations only through the known people passed in (`extract_facts` v2); a person never named with a relation stays under their name.
 - A 7B judge misses easy re-asks. Rules decide where they fire; the judge may add or confirm, never veto.
+- That holds for every detector, including stale facts (M6b). A judge "veto with evidence" is still a veto: a verbatim quote that contains the value proves nothing about the verdict. 12 dev cases didn't catch it; held-out did.
 - 7B judges answer open questions badly: they misread queries and claim a response used the context when it didn't. Ask one specific question per check.
 - Benchmark gold judges are wrong in both directions. Hand-check gold before trusting it.
 - `gh pr checks --watch` right after a push can report "no checks" before CI registers. Wait until the checks exist and pass before merging.
