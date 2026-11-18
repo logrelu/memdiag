@@ -55,13 +55,17 @@ STALE_CONTROL = {
 STALE_HISTORY = {
     "city": [T("c_h1", DEV, "Since you left {old}, here is a tip."),
              T("c_h2", DEV, "Back when you lived in {old}, you mentioned the rain."),
-             T("c_h3", HELDOUT, "After leaving {old}, settling in somewhere new takes time.")],
+             # c_h3 and e_h2 informed the M6c history cues, so they are retired from held-out; their replacements
+             # were written blind by a subagent and committed unedited (docs/plans/M6c.md).
+             T("c_h4", HELDOUT, "Back when you were living in {old}, you mentioned enjoying the local food scene a lot."),
+             T("c_h5", HELDOUT, "Since you've moved away from {old}, some of these local recommendations may no longer apply.")],
     "employer": [T("e_h1", DEV, "Now that you're done with {old}, check your new benefits."),
-                 T("e_h2", HELDOUT, "Your years at {old} should help in the new role.")],
+                 T("e_h3", HELDOUT, "When you were still working at {old}, you said the team ran on two-week sprints."),
+                 T("e_h4", HELDOUT, "Now that you've left {old}, you might want to update that part of your resume summary.")],
 }
 REASK = {
     "city": [T("r_c1", DEV, "Where do you live, by the way?"), T("r_c2", DEV, "What city are you in?"),
-             T("r_c3", HELDOUT, "Where are you located these days?"), T("r_c4", HELDOUT, "Remind me which city you're in?")],
+             T("r_c3", HELDOUT, "Where are you located these days?"), T("r_c5", HELDOUT, "Remind me, which city do you call home right now?")],  # r_c4's slot (M6c),
     "employer": [T("r_e1", DEV, "Where do you work, by the way?"), T("r_e2", HELDOUT, "Who do you work for these days?")],
     "child_age": [T("r_a1", DEV, "How old is {name}?"), T("r_a2", HELDOUT, "How old is your daughter now?")],
 }
