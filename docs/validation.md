@@ -40,6 +40,44 @@ By attribute or instruction kind (held-out):
 
 Controls that fired: none.
 
+### Mode: llm (qwen2.5:7b), run `m6b`
+
+Run 2026-11-17 · memdiag 0.1.0 · commit 59c8416 · data sha256 `d6f21ea9d60a…` · 225 cases (heldout split only)
+
+Background (rules mode, single sessions, checked when the suite was built): 1 of 456 base sessions had a finding before any injection and were excluded. Cross-session and LLM-only background is not screened; the paired controls absorb it (see Recall).
+
+**Held-out** (held-out templates and sessions; the headline numbers):
+
+| Type | Recall | Exact turn | False positives |
+|---|---|---|---|
+| STALE_FACT | 0.04 (1/25, CI 0.01-0.20) ❌ | 0.04 (1/25, CI 0.01-0.20) ❌ | 0.04 (2/50, CI 0.01-0.14) ✅ |
+| RECALL_MISS | 0.80 (20/25, CI 0.61-0.91) ❌ | 0.80 (20/25, CI 0.61-0.91) ✅ | 0.00 (0/25, CI 0.00-0.13) ✅ |
+| CONSTRAINT_DROP | 1.00 (25/25, CI 0.87-1.00) ✅ | 1.00 (25/25, CI 0.87-1.00) ✅ | 0.00 (0/25, CI 0.00-0.13) ✅ |
+| USER_REPAIR | 1.00 (25/25, CI 0.87-1.00) ✅ | 1.00 (25/25, CI 0.87-1.00) ✅ | 0.00 (0/25, CI 0.00-0.13) ✅ |
+| ALL | 0.71 (71/100, CI 0.61-0.79) ❌ | 0.71 (71/100, CI 0.61-0.79) ❌ | 0.02 (2/125, CI 0.00-0.06) ✅ |
+
+Flip rate over the first run and 3 uncached reruns (temperature 0, seed 0): 0/72 cases (0.00%) ✅ (target <= 5%).
+
+Cost: 389.6 model calls per 100 sessions, about 119 minutes per 100 sessions uncached on the reference Mac (16 GB, Intel CPU, no GPU) (estimated from the mean time of uncached calls). This run: 425 sessions, 1656 calls (474 uncached), 145 minutes wall time.
+
+By attribute or instruction kind (held-out):
+
+| Type | Group | Recall | Exact turn | False positives |
+|---|---|---|---|---|
+| CONSTRAINT_DROP | banned_word | 1.00 (6/6, CI 0.61-1.00) | 1.00 (6/6, CI 0.61-1.00) | 0.00 (0/6, CI 0.00-0.39) |
+| CONSTRAINT_DROP | max_words | 1.00 (7/7, CI 0.65-1.00) | 1.00 (7/7, CI 0.65-1.00) | 0.00 (0/7, CI 0.00-0.35) |
+| CONSTRAINT_DROP | no_bullets | 1.00 (6/6, CI 0.61-1.00) | 1.00 (6/6, CI 0.61-1.00) | 0.00 (0/6, CI 0.00-0.39) |
+| CONSTRAINT_DROP | no_emoji | 1.00 (6/6, CI 0.61-1.00) | 1.00 (6/6, CI 0.61-1.00) | 0.00 (0/6, CI 0.00-0.39) |
+| RECALL_MISS | child_age | 1.00 (8/8, CI 0.68-1.00) | 1.00 (8/8, CI 0.68-1.00) | 0.00 (0/8, CI 0.00-0.32) |
+| RECALL_MISS | city | 0.44 (4/9, CI 0.19-0.73) | 0.44 (4/9, CI 0.19-0.73) | 0.00 (0/9, CI 0.00-0.30) |
+| RECALL_MISS | employer | 1.00 (8/8, CI 0.68-1.00) | 1.00 (8/8, CI 0.68-1.00) | 0.00 (0/8, CI 0.00-0.32) |
+| STALE_FACT | city | 0.08 (1/13, CI 0.01-0.33) | 0.08 (1/13, CI 0.01-0.33) | 0.00 (0/26, CI 0.00-0.13) |
+| STALE_FACT | employer | 0.00 (0/12, CI 0.00-0.24) | 0.00 (0/12, CI 0.00-0.24) | 0.08 (2/24, CI 0.02-0.26) |
+| STALE_FACT | history_control | n/a | n/a | 0.04 (1/25, CI 0.01-0.20) |
+| USER_REPAIR | repair | 1.00 (25/25, CI 0.87-1.00) | 1.00 (25/25, CI 0.87-1.00) | 0.00 (0/25, CI 0.00-0.13) |
+
+Controls that fired: `stale_fact-heldout-001-ctl`, `stale_fact-heldout-001-hist`.
+
 ### Mode: rules
 
 Run 2026-11-13 · memdiag 0.1.0 · commit 6e7c076 · data sha256 `d6f21ea9d60a…` · 520 cases
