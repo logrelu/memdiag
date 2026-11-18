@@ -116,6 +116,21 @@ def mentions(text: str, value: str, attribute: str = "") -> bool:
     return False
 
 
+# Words that put a value in the past ("since you left Seattle"). Only a rule may drop a stale candidate, and
+# only when the sentence that mentions the old value carries one of these (docs/plans/M6c.md).
+HISTORY_CUE = re.compile(
+    r"\b(?:used to|back (?:when|in)|before you (?:moved|left|switched|changed)|you left|left|leaving|"
+    r"moved (?:away )?from|relocated from|former|formerly|previous|previously|no longer|any ?more|done with|"
+    r"in the past|old (?:job|city|town|place|home|employer|company|role|team|neighbou?rhood)|"
+    r"(?:years|time|days) (?:at|in|with)|you were|you lived|you worked)\b", re.I)
+
+
+def as_history(text: str, value: str, attribute: str = "") -> bool:
+    """Does every sentence of `text` that mentions `value` talk about it as the past?"""
+    parts = [p for p in re.split(r"(?<=[.!?])\s+", text) if mentions(p, value, attribute)]
+    return bool(parts) and all(HISTORY_CUE.search(p) for p in parts)
+
+
 def _finding(category: str, a: Event, detector: str, key: str, **kw) -> Finding:
     return Finding(category, a.user_id, a.session_id, a.ts, a.content, failing_turn=a.index, attribute=key,
                    detector=detector, detector_version=DETECTOR_VERSION, **kw)
@@ -153,14 +168,16 @@ def detect_with_ledger(events: list[Event], ledger: Ledger, judge=None) -> tuple
             if not said_old or said_cur:
                 continue
             prev = said_old[-1]
+            if as_history(a.content, prev.value, attr):
+                continue  # "since you left Seattle": the old value as past history
             quote, detector, confidence = sentence(a.content, hint=prev.value), "ledger.stale_mention", 0.5
             if judge is not None:
                 r = judge.ask(stale_prompt, role="judge_stale", as_json=True, key=key, old=prev.value,
                               old_quote=prev.quote, new=cur.value, new_quote=cur.quote, reply=a.content)
                 span = quote_span(str((r.data or {}).get("quote") or ""), a.content)
-                if (r.data or {}).get("uses_old") is not True or span is None:
-                    continue  # the judge said no, or couldn't point at the words
-                quote, detector, confidence = span, "llm.check_stale", 0.9
+                # The judge can confirm a rule hit; it can't veto one (M6b: a 7B veto dropped true positives).
+                if (r.data or {}).get("uses_old") is True and span is not None:
+                    detector, confidence = "ledger.stale_mention+llm", 0.9
             findings.append(_finding(
                 "stale_memory", a, detector, key, expected=cur.value, got=prev.value, failing_quote=quote,
                 evidence_turns=[cur.source_turn, prev.source_turn], evidence_quote=cur.quote, confidence=confidence,

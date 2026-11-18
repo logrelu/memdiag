@@ -52,17 +52,25 @@ def test_mentioning_both_values_is_not_stale_but_is_an_opportunity():
     assert res["metrics"]["fact_currency"]["opportunities"] == 1
 
 
-def test_judge_confirms_or_rejects_stale_candidates():
+def test_judge_confirms_stale_candidates_but_never_vetoes():
     rows = MOVED + [["maya", "assistant", "Seattle weather is rainy, so pack a coat."]]
-    no = FakeJudge({"extract_facts": '{"facts": []}', "check_stale": '{"uses_old": false, "quote": ""}'})
-    assert _stale(run(_ev(rows), judge=no)) == []
-    invented = FakeJudge({"extract_facts": '{"facts": []}',
-                          "check_stale": '{"uses_old": true, "quote": "you live in Seattle"}'})
-    assert _stale(run(_ev(rows), judge=invented)) == []  # quote not in the reply
-    yes = FakeJudge({"extract_facts": '{"facts": []}',
-                     "check_stale": '{"uses_old": true, "quote": "Seattle weather is rainy"}'})
-    (f,) = _stale(run(_ev(rows), judge=yes))
-    assert f["detector"] == "llm.check_stale" and f["failing_quote"] == "Seattle weather is rainy"
+
+    def detected(answer):
+        (f,) = _stale(run(_ev(rows), judge=FakeJudge({"extract_facts": '{"facts": []}', "check_stale": answer})))
+        return f["detector"], f["confidence"]
+    assert detected('{"uses_old": false, "quote": ""}') == ("ledger.stale_mention", 0.5)  # M6b: no veto
+    assert detected('{"uses_old": true, "quote": "you live in Seattle"}') == ("ledger.stale_mention", 0.5)  # not in reply
+    assert detected("not json") == ("ledger.stale_mention", 0.5)
+    assert detected('{"uses_old": true, "quote": "Seattle weather is rainy"}') == ("ledger.stale_mention+llm", 0.9)
+
+
+def test_history_cue_in_the_old_values_sentence_drops_the_candidate():
+    for reply in ["Since you left Seattle, here is a tip.", "Back when you lived in Seattle, you liked rain.",
+                  "You used to love Seattle. Portland has good coffee too."]:
+        assert _stale(run(_ev(MOVED + [["maya", "assistant", reply]]))) == [], reply
+    # a cue in another sentence doesn't excuse the stale one
+    reply = "You used to bike a lot. Near you in Seattle, there are good trails."
+    assert len(_stale(run(_ev(MOVED + [["maya", "assistant", reply]])))) == 1
 
 
 def test_legacy_and_ledger_stale_findings_merge():
