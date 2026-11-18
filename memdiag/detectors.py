@@ -106,6 +106,10 @@ def mentions(text: str, value: str, attribute: str = "") -> bool:
         words = tokens(clean)
         if unit_words and not set(unit_words) & set(words):
             continue
+        # A short measure must sit right after a number: "3 min" is not "give me a min, here are 3 options".
+        short = [u for u in unit_words if u in MEASURES]
+        if short and not re.search(r"\d\s*(?:" + "|".join(short) + r")\b", clean, re.I):
+            continue
         if not unit_words and cues and not cues & set(words):
             continue
         return True

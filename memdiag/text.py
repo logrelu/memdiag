@@ -23,8 +23,7 @@ def sentence(text: str, hint: str = "", pattern: str = "") -> str:
     return text.strip()
 
 
-MEASURES = ("mg", "g", "kg", "lb", "lbs", "oz", "ml", "cm", "mm", "km", "mi", "ft", "h", "hr", "hrs",
-            "min", "mins")
+MEASURES = ("mg", "kg", "lb", "lbs", "oz", "ml", "cm", "mm", "km", "mi", "ft", "hr", "hrs", "min", "mins")
 _GLUED = re.compile(r"(\d)(" + "|".join(MEASURES) + r")\b", re.I)
 
 

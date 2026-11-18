@@ -235,6 +235,9 @@ def test_mentions_reads_glued_units_and_hedged_values():
     assert mentions(reply, "around 200mg") and mentions(reply, "200 mg")
     assert not mentions(reply, "300mg") and not mentions("Walk 5 km a day", "5 miles")
     assert not mentions("Back in 2 hours", "2 inches")
+    # A short unit must follow the number, not appear anywhere in the sentence (review of M6b).
+    assert not mentions("Give me a min, here are 3 options.", "3 min") and mentions("Walk 3 min daily.", "3 min")
+    assert not mentions("Take 5 supplements, e.g. fish oil.", "5g") and not mentions("A 5G phone helps.", "5 g")
 
 
 def test_a_reply_that_states_the_refined_value_is_not_stale():
