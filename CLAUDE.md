@@ -39,6 +39,7 @@ Read `docs/ROADMAP.md` before any task. It holds the goals, design decisions D1-
 - Known extractor misses are `xfail` in `tests/test_known_limits.py`. Don't delete them to get a green suite.
 - Demo and experiment data are synthetic or small. Never present them as benchmark results.
 - Targets in the roadmap are pre-registered. Report a miss with its number; never move the target or tune on the held-out split.
+- A held-out template that informed a fix is retired from held-out. Its replacement is written blind, by a subagent that hasn't read `memdiag/` or any results, and committed unedited after the fix.
 - Never commit raw WildChat or other PII-bearing transcripts, or API keys.
 
 ## Workflow
