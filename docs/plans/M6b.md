@@ -61,7 +61,7 @@ for every policy go in this file. Held-out is run once, with the chosen policy.
 - History controls are built with the old value present and the new value absent, and they don't change
   existing cases.
 - Policy C: `past` with a verifiable quote drops the candidate, `current` confirms it at 0.9, and a missing or
-  unverifiable quote keeps it at 0.5.
+  unverifiable quote keeps it at 0.5. These tests were removed with the revert to v1 (see Decision).
 - The flip rate counts a case as flipped when any run differs; the result file name carries the run name.
 
 ## Dev results (first 12 positives per type on dev, with their 12 controls and 12 history controls)
@@ -102,6 +102,16 @@ Full tables: `docs/validation.md`. 225 held-out cases: 100 injected, 100 paired 
 - **Flip rate:** 0/72 over the first run and 3 uncached reruns (met).
 - **Cost:** about 390 model calls and 2 hours of CPU per 100 sessions on the reference Mac (Intel CPU, no GPU).
 - **Goal 1 is not met.**
+- **Run history.** The first attempt died on case ~21, when one extraction call ran past the 600 s timeout.
+  The judge then got `max_tokens=1024`, and the run was restarted from the cache. Later the Mac slept once,
+  and the stuck process was restarted the same way. No detector changed, and nothing was scored between
+  attempts.
+- **Machine.** The reference Mac: 16 GB, Intel i7-9750H, CPU only. The 145-minute wall time covers the main
+  pass only; the reruns took about 8 more hours.
+- **The flip verdict for this run** was a change in exact-turn hit (positives) or false positive (controls).
+  Review found that it misses a positive whose non-gold findings change. From now on a flip is any change in
+  the turns with a finding of the case's type. The m6b reruns weren't saved per case, so 0/72 stands under the
+  old definition.
 
 ### Diagnosis (read from cached outputs; nothing tuned)
 - **`STALE_FACT`: the v2 judge vetoed true positives.** The ledger and the mention check were right in every

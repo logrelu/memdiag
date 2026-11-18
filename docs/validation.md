@@ -56,9 +56,9 @@ Background (rules mode, single sessions, checked when the suite was built): 1 of
 | USER_REPAIR | 1.00 (25/25, CI 0.87-1.00) ✅ | 1.00 (25/25, CI 0.87-1.00) ✅ | 0.00 (0/25, CI 0.00-0.13) ✅ |
 | ALL | 0.71 (71/100, CI 0.61-0.79) ❌ | 0.71 (71/100, CI 0.61-0.79) ❌ | 0.02 (2/125, CI 0.00-0.06) ✅ |
 
-Flip rate over the first run and 3 uncached reruns (temperature 0, seed 0): 0/72 cases (0.00%) ✅ (target <= 5%).
+Flip rate over the first run and 3 uncached reruns (temperature 0, seed 0), counting a change in exact-turn hit (positives) or false positive (controls): 0/72 cases (0.00%) ✅ (target <= 5%).
 
-Cost: 389.6 model calls per 100 sessions, about 119 minutes per 100 sessions uncached on the reference Mac (16 GB, Intel CPU, no GPU) (estimated from the mean time of uncached calls). This run: 425 sessions, 1656 calls (474 uncached), 145 minutes wall time.
+Cost: 389.6 model calls per 100 sessions, about 119 minutes per 100 sessions uncached on the machine that ran it (estimated from the mean time of uncached calls). This run's main pass (reruns excluded): 425 sessions, 1656 calls (474 uncached), 145 minutes wall time.
 
 By attribute or instruction kind (held-out):
 

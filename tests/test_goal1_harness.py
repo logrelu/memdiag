@@ -147,4 +147,4 @@ def test_limit_keeps_history_controls_and_cost_charges_cached_calls():
     cost = _cost(cases, 60.0, SimpleNamespace(usage=usage))
     assert cost["sessions"] == 10 and cost["calls_per_100_sessions"] == 100.0
     assert cost["est_seconds_per_100_sessions"] == 200  # 10 calls at 2 s each (the uncached mean), per 10 sessions
-    assert _cost(cases, 1.0, None) == {"sessions": 10, "wall_seconds": 1.0}
+    assert {k: v for k, v in _cost(cases, 1.0, None).items() if k != "machine"} == {"sessions": 10, "wall_seconds": 1.0}
