@@ -1,9 +1,10 @@
 """Ledger detectors: STALE_FACT, RECALL_MISS (judge mode), USER_REPAIR, and retrieve/use location."""
 import json
+import re
 
 from memdiag import Event, run
 from memdiag.demo_data import DOCS, TRACES
-from memdiag.detectors import mentions
+from memdiag.detectors import USER_REASK, mentions
 from memdiag.judge import FakeJudge
 
 
@@ -183,6 +184,13 @@ def test_reask_pattern_needs_the_right_subject():
                                      "quote": "My daughter Maya is 7"}]})
     judge = FakeJudge({"extract_facts": extract, "check_reask": '{"asks_again": []}'})
     assert [f for f in run(_ev(rows), judge=judge)["findings"] if f["type"] == "RECALL_MISS"] == []
+
+
+def test_city_reask_pattern():
+    for q in ["Which city are you in?", "Remind me what city you're in?", "What city do you live in?"]:
+        assert re.search(USER_REASK["city"], q, re.I), q
+    for q in ["Which city are you visiting?", "What city should you try next?"]:
+        assert not re.search(USER_REASK["city"], q, re.I), q
 
 
 def _metrics_ok(res):
