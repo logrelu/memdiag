@@ -86,3 +86,53 @@ for every policy go in this file. Held-out is run once, with the chosen policy.
   Both were fixed in general form, with tests. This is the only change made after looking at dev results.
 - **Choice: C with the value fix.** It is the only policy with dev false positives ≤ 0.05 (0/24), and its
   recall equals the others. A sample of 12 per kind is small. The held-out run is the test.
+
+## Held-out results, run `m6b` (2026-11-17, commit 59c8416)
+Full tables: `docs/validation.md`. 225 held-out cases: 100 injected, 100 paired controls, 25 history controls.
+
+| Type | Recall | Target |
+|---|---|---|
+| `STALE_FACT` | 0.04 (1/25) | miss |
+| `RECALL_MISS` | 0.80 (20/25) | miss |
+| `CONSTRAINT_DROP` | 1.00 (25/25) | met |
+| `USER_REPAIR` | 1.00 (25/25) | met |
+| All | 0.71 (71/100) | |
+
+- **False positives:** 2/125 (met).
+- **Flip rate:** 0/72 over the first run and 3 uncached reruns (met).
+- **Cost:** about 390 model calls and 2 hours of CPU per 100 sessions on the reference Mac (Intel CPU, no GPU).
+- **Goal 1 is not met.**
+
+### Diagnosis (read from cached outputs; nothing tuned)
+- **`STALE_FACT`: the v2 judge vetoed true positives.** The ledger and the mention check were right in every
+  case read. The judge then answered `presents_as: "past"` for explicit stale uses: "Near you in Prague, there
+  are good options" and "Your benefits through Target might cover this". It quoted the reply verbatim, so the
+  quote check passed.
+  - The 7B judge seems to answer whether the fact is still true (the user moved, so Prague is past), not how
+    the reply presents it.
+  - **A verbatim quote that contains the old value is not evidence of pastness.** Policy C's safeguard checked
+    the wrong thing.
+  - Once, the judge returned the prompt's own example ("as a Target resident") as its quote.
+- **`RECALL_MISS`: all 5 misses are one held-out phrasing,** "Remind me which city you're in?" (`r_c4`).
+  Neither the rules nor the judge read it as a re-ask. Every other held-out re-ask phrasing was caught.
+- **False positives: both are one background finding.** At turn 13 of a base session, the reply mentions
+  Target the store after the user left Target the employer. It appears in the control and the history control
+  alike, and on the positive too, so net recall is unaffected.
+- **Dev didn't predict held-out.** 12 dev cases per kind scored 12/12, but they used other phrasings. The
+  selection sample was too small to expose a judge that keys on phrasing.
+
+### Decision
+- **v2 is not shipped.** The default stays `check_stale` v1 (commit 4801730). v2 also vetoes the README
+  walkthrough's Denver finding.
+- **The general fixes stay:** value matching, the answer cap, the history controls, named runs, the flip rate
+  and the cost reporting.
+- **Run `m6b` is published as measured,** next to the first LLM run. Commit 59c8416 is kept on the remote
+  branch `m6b-stale-judge` for provenance.
+
+## Next (M6c)
+**Rules decide stale findings; the judge may only confirm.** A mention of the old value without the current
+one fires unless its sentence carries a history cue. The judge raises confidence and can't drop a candidate.
+This follows the existing CLAUDE.md rule for re-asks, which policies A and C both broke.
+- **New held-out history templates, written before the run.** The cue list is written after seeing this run's
+  held-out decoys (`c_h3`, `e_h2`), so those two are retired from held-out and the report says so.
+- **A larger dev sample** (all 40 per type) before choosing.
