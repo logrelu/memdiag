@@ -47,7 +47,8 @@
    "est_seconds_per_100_sessions": null,
    "unmeasured_roles": [
     "extractor"
-   ]
+   ],
+   "recomputed": "The cost fields were recomputed after the run from the recorded per-role usage; the run's code wrote 9299 s per 100 sessions, charging cached extractions at the judge's uncached time."
   }
  },
  "aggregate": {

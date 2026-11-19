@@ -68,9 +68,11 @@ def write_report(results_dir: Path, out: Path) -> None:
                   f"Background (rules mode, single sessions, checked when the suite was built): "
                   f"{meta['background']['rejected']} of {meta['background']['checked']} base sessions had a finding "
                   "before any injection and were excluded. Cross-session and LLM-only background is not screened; the "
-                  "paired controls absorb it (see Recall).", "",
-                  "**Held-out** (held-out templates and sessions; the headline numbers):", ""]
-        lines += _table(r["aggregate"], "heldout", True) + [""]
+                  "paired controls absorb it (see Recall).", ""]
+        held = any(k.startswith("heldout|") for k in r["aggregate"])
+        if held:
+            lines += ["**Held-out** (held-out templates and sessions; the headline numbers):", ""]
+            lines += _table(r["aggregate"], "heldout", True) + [""]
         if r.get("flip"):
             f = r["flip"]
             lines += [f"Flip rate over the first run and {f['reruns']} uncached reruns (temperature 0, seed 0)"
@@ -89,10 +91,13 @@ def write_report(results_dir: Path, out: Path) -> None:
                       + (f"; time not estimated, since no {', '.join(cost['unmeasured_roles'])} call ran uncached"
                          if not est and cost.get("unmeasured_roles") else "")
                       + f". This run's main pass (reruns excluded): {cost['sessions']} sessions, {cost['calls']} calls "
-                      f"({cost['uncached_calls']} uncached), {cost['wall_seconds'] / 60:.0f} minutes wall time.", ""]
+                      f"({cost['uncached_calls']} uncached), {cost['wall_seconds'] / 60:.0f} minutes wall time."
+                      + (f" {cost['recomputed']}" if cost.get("recomputed") else ""), ""]
         if any(k.startswith("dev|") for k in r["aggregate"]):
             lines += ["**Dev** (what detectors may be tuned on):", ""] + _table(r["aggregate"], "dev", False) + [""]
-        lines += ["By attribute or instruction kind (held-out):", ""] + _attr_table(r["aggregate"], "heldout") + [""]
+        split = "heldout" if held else "dev"
+        lines += [f"By attribute or instruction kind ({'held-out' if held else 'dev'}):", ""]
+        lines += _attr_table(r["aggregate"], split) + [""]
         fired = [x["case_id"] for x in r["rows"] if x["control"] and x["false_positive"]]
         lines += [f"Controls that fired: {', '.join(f'`{c}`' for c in fired) if fired else 'none'}.", ""]
     lines += ["## Threats to validity", "",
