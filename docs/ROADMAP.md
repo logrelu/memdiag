@@ -87,7 +87,7 @@ not finding types.
 | M5 | `extract_facts` v2; ledger detectors (`STALE_FACT`, `RECALL_MISS`, `USER_REPAIR`), retrieve/use location; `memdiag run` + findings report; rule-checkable `CONSTRAINT_DROP` | Done: PRs #9, #10, and M5c |
 | M6 | **Goal 1 harness:** mutation suite built from MIT/CC-BY conversations, with negative controls and a held-out split | Harness done; Goal 1 not yet met (see `docs/validation.md`, `docs/plans/M6.md`) |
 | M6b | Stale-fact judge policy chosen on dev (with history controls the judge must reject), the full held-out LLM run, the flip rate and the cost per 100 sessions | Done: run `m6b` published. Stale facts 0.04 with judge v2, which was not shipped; flip rate 0/72; cost reported. See `docs/plans/M6b.md` |
-| M6c | Rule-first stale detection (the judge only confirms), blind-written held-out templates for retired ones, a full dev sample | Done: run `m6c` published. Stale facts 0.92; re-asks 0.80 and stale false positives 0.06 miss; flip rate 0/72. See `docs/plans/M6c.md` |
+| M6c | Rule-first stale detection (the judge only confirms), blind-written held-out templates for retired ones, a full dev sample | Done: run `m6c` published. Stale facts 0.92; re-asks 0.80 and stale false positives 0.06 miss; flip rate 0/72 (measured with detector v3; v4 tightens the history cues after review). See `docs/plans/M6c.md` |
 | M7 | External validity: MultiChallenge (per-axis kappa), LongMemEval (location against evidence sessions), 50-item hand audit | Goal 2 numbers in `docs/validation.md` |
 | M8 | Integrations: OTel GenAI ingest and export, Langfuse score write-back, pytest `assert_memory` | One offline example per integration |
 | M9 | Release v0.2.0 | Release 1 criteria met |

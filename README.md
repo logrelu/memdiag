@@ -51,13 +51,18 @@ misses: [docs/validation.md](docs/validation.md).
 | False positives, all controls | 0 / 125 | 2 / 125 | **3 / 125** | ≤ 0.05 |
 | False positives, stale controls | 0 / 50 | 2 / 50 | **3 / 50 (0.06)** | ≤ 0.05 |
 
-Both LLM runs use qwen2.5:7b. In run 2, the judge was allowed to veto stale-fact findings, and it vetoed
-explicit stale replies ("Near you in Prague…" after the user moved). In run 3 (the shipped default), rules
-decide stale findings: a mention of an old value counts unless its sentence talks about the past ("since you
-left Seattle"), and the judge can only raise confidence. Held-out decoys that informed a fix were retired and
-replaced by ones a separate agent wrote without seeing the code. Stability: 0 of 72 cases changed findings
-across 3 uncached reruns. Cost: about 385 model calls and 2 hours of CPU time per 100 sessions, on a CPU-only
-laptop. An earlier run on 64 cases is in [docs/validation.md](docs/validation.md).
+Both LLM runs use qwen2.5:7b. Until run 3, the judge could veto stale-fact findings. In run 2 (a new judge
+prompt, not shipped) it vetoed explicit stale replies ("Near you in Prague…" after the user moved). In run 3,
+rules decide stale findings: a mention of an old value counts unless a history cue comes before it ("since you
+left Seattle"), and the judge can only raise confidence. Held-out templates that informed a fix were retired
+and replaced by ones a separate agent wrote without seeing the code. Stability: 0 of 72 cases changed findings
+across 3 uncached reruns. Cost: about 385 model calls and 2 hours of model time per 100 sessions, on a
+CPU-only laptop (timed in run 2; run 3's extraction was all cached). An earlier run on 64 cases is in
+[docs/validation.md](docs/validation.md).
+
+After run 3, review found the cue list too loose ("spend some *time in* Seattle" excused a stale mention), so
+the shipped detector ties each cue to the old value. It keeps every finding run 3 made and can only add more:
+held-out recall can't fall, but its held-out false positives are unmeasured. Dev results are unchanged.
 
 **Goal 1 is not met yet,** on two numbers:
 - Re-asks: 0.80. All 5 misses are one phrasing, "Remind me, which city do you call home right now?".
