@@ -80,7 +80,7 @@ Controls that fired: `stale_fact-heldout-001-ctl`, `stale_fact-heldout-001-hist`
 
 ### Mode: llm (qwen2.5:7b), run `m6c-dev-v4`
 
-Run 2026-11-19 · memdiag 0.1.0 · commit 8ac6dd8 · data sha256 `d6f21ea9d60a…` · 360 cases (dev split only)
+Run 2026-11-19 · memdiag 0.1.0 · commit 7d31dba · data sha256 `d6f21ea9d60a…` · 360 cases (dev split only)
 
 Background (rules mode, single sessions, checked when the suite was built): 1 of 456 base sessions had a finding before any injection and were excluded. Cross-session and LLM-only background is not screened; the paired controls absorb it (see Recall).
 

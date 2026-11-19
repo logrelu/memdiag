@@ -4,7 +4,7 @@
   "judge_model": "qwen2.5:7b",
   "date": "2026-11-19",
   "memdiag_version": "0.1.0",
-  "commit": "8ac6dd8",
+  "commit": "7d31dba",
   "data_sha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
   "cases": 360,
   "limit": null,
@@ -16,7 +16,7 @@
   "run": "m6c-dev-v4",
   "cost": {
    "sessions": 680,
-   "wall_seconds": 2.9,
+   "wall_seconds": 3.0,
    "machine": "Darwin x86_64, 12 CPUs",
    "calls": 2729,
    "uncached_calls": 0,
