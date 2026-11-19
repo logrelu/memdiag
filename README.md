@@ -42,24 +42,31 @@ at the right turn. Each injection has a look-alike control. The targets were pre
 below are held-out (templates and conversations the detectors were never tuned on). Full method, intervals and
 misses: [docs/validation.md](docs/validation.md).
 
-| Held-out | Rules only (200 cases) | Local LLM, run 1 (64 cases) | Local LLM, run 2 (225 cases) | Target |
+| Held-out | Rules only (225 cases) | Local LLM, run 2 (225) | **Local LLM, run 3 (225)** | Target |
 |---|---|---|---|---|
-| Stale facts | 0.16 | 0.62 | 0.04 | ≥ 0.85 |
-| Re-asked facts | 0.24 | 0.88 | 0.80 | ≥ 0.85 |
-| Dropped instructions | 1.00 | 1.00 | 1.00 | ≥ 0.85 |
-| User repairs | 1.00 | 1.00 | 1.00 | ≥ 0.85 |
-| False positives | 0 / 100 | 0 / 32 | 2 / 125 | ≤ 0.05 |
+| Stale facts | 0.16 | 0.04 | **0.92** | ≥ 0.85 |
+| Re-asked facts | 0.24 | 0.80 | **0.80** | ≥ 0.85 |
+| Dropped instructions | 1.00 | 1.00 | **1.00** | ≥ 0.85 |
+| User repairs | 1.00 | 1.00 | **1.00** | ≥ 0.85 |
+| False positives, all controls | 0 / 125 | 2 / 125 | **3 / 125** | ≤ 0.05 |
+| False positives, stale controls | 0 / 50 | 2 / 50 | **3 / 50 (0.06)** | ≤ 0.05 |
 
-Both LLM runs use qwen2.5:7b. Run 2 tested a new stale-fact judge prompt that had looked perfect on 12 dev
-cases. On held-out it vetoed explicit stale replies ("Near you in Prague…" after the user moved), so it was
-**not shipped**, and the default is still run 1's judge. Run 2 also added decoys the judge must reject, and it
-measured stability: 0 of 72 cases changed verdict across 3 uncached reruns. Cost is about 390 model calls and
-2 hours of CPU time per 100 sessions, on a CPU-only laptop.
+Both LLM runs use qwen2.5:7b. In run 2, the judge was allowed to veto stale-fact findings, and it vetoed
+explicit stale replies ("Near you in Prague…" after the user moved). In run 3 (the shipped default), rules
+decide stale findings: a mention of an old value counts unless its sentence talks about the past ("since you
+left Seattle"), and the judge can only raise confidence. Held-out decoys that informed a fix were retired and
+replaced by ones a separate agent wrote without seeing the code. Stability: 0 of 72 cases changed findings
+across 3 uncached reruns. Cost: about 385 model calls and 2 hours of CPU time per 100 sessions, on a CPU-only
+laptop. An earlier run on 64 cases is in [docs/validation.md](docs/validation.md).
 
-**Goal 1 is not met yet.** Stale-fact detection is the open problem. Next (M6c): rules decide stale
-findings, and the judge may only confirm them. Agreement with real labels and humans (Goal 2) hasn't been
-measured. The injected failures are explicit, so treat these numbers as an upper bound for real logs. Read the
-quotes, not just the scores.
+**Goal 1 is not met yet,** on two numbers:
+- Re-asks: 0.80. All 5 misses are one phrasing, "Remind me, which city do you call home right now?".
+- Stale-fact false positives: 0.06. All 3 come from the base conversations, not the injections: the
+  extractor took a hotel for the user's employer (1), and a reply mentions Target the store after the user
+  left Target the employer (2).
+
+Agreement with real labels and humans (Goal 2) hasn't been measured. The injected failures are explicit, so
+treat these numbers as an upper bound for real logs. Read the quotes, not just the scores.
 
 ## Input
 
@@ -168,7 +175,7 @@ memdiag-mcp            # stdio server with tools diagnose_traces and diagnose_re
 ## Status and roadmap
 
 memdiag is pre-release (no PyPI package yet; install from source). Done: localized findings, the fact
-ledger, a local judge, `memdiag run`, and the Goal 1 harness with two held-out runs. Next: the M6c stale-fact fix, agreement with
+ledger, a local judge, `memdiag run`, and the Goal 1 harness with three held-out runs. Next: extraction precision and "remind me" re-asks, agreement with
 real labels and human audit (Goal 2), then integrations (OpenTelemetry, Langfuse, a pytest assertion) and
 v0.2.0. Plan and success criteria: [docs/ROADMAP.md](docs/ROADMAP.md).
 
