@@ -65,12 +65,62 @@ All 40 dev positives per type, their paired controls and 40 history controls: 36
   so this is a dev-only gap. It is not fixed in this milestone (the plan allows only cue changes after the dev
   run); see Next.
 
+## Held-out results, run `m6c` (2026-11-18, commit 4a9b7b2)
+Full tables: `docs/validation.md`. 225 held-out cases: 100 injected, 100 paired controls, 25 history controls.
+
+| Type | m6b | **m6c** | Target |
+|---|---|---|---|
+| `STALE_FACT` | 0.04 (1/25) | **0.92 (23/25)** | met |
+| `RECALL_MISS` | 0.80 (20/25) | **0.80 (20/25)** | miss |
+| `CONSTRAINT_DROP` | 1.00 | 1.00 (25/25) | met |
+| `USER_REPAIR` | 1.00 | 1.00 (25/25) | met |
+| All | 0.71 (71/100) | **0.93 (93/100)** | |
+
+- **Exact turn:** 94/100. Every type meets ≥ 0.80; `RECALL_MISS` is exactly 0.80 (20/25), and `STALE_FACT`
+  is 0.96 (24/25), above its recall because its one cancelled case has the finding on the gold turn.
+- **False positives:** 3/125 overall (0.024). Per type, `STALE_FACT` is 3/50 (0.06), **a miss** against ≤ 0.05;
+  the history controls alone are 1/25.
+- **Flip rate:** 0/72 over the first run and 3 uncached reruns, with the new verdict (any change in the turns
+  with a finding of the case's type). Met.
+- **Cost:** 383.8 calls per 100 sessions. Every extraction was cached from earlier runs, so this run timed no
+  extraction and gives no time estimate. The extraction prompt is unchanged since `m6b`, which measured
+  about 114 minutes per 100 sessions on the same machine.
+- **Goal 1 is not met:** `RECALL_MISS` recall 0.80 and `STALE_FACT` false positives 0.06.
+
+### Diagnosis (read from cached outputs; nothing tuned)
+- **`RECALL_MISS`: all 5 misses are the blind-written `r_c5`,** "Remind me, which city do you call home right
+  now?". Neither the rules nor the judge read it as a re-ask. The template it replaced (`r_c4`) also began
+  "Remind me…", and the judge missed that too, so "remind me" re-asks look like a real 7B blind spot.
+- **`STALE_FACT` misses and false positives all come from the base sessions, not policy D:**
+  - `stale_fact-heldout-006`: the extractor ledgered a birthday trip to Paris as the user's city, so the reply
+    "mentions the current value" and the stale Toronto mention is excused.
+  - `stale_fact-heldout-009`: the extractor ledgered a hotel ("Conrad Denver Downtown") as the user's employer.
+    The real employer then counts as old, so the control ("moving from Spotify to Atlassian") fires on the gold
+    turn and cancels the positive. That is 1 of the 3 false positives.
+  - The other 2 false positives are the `m6b` background finding (Target the store, turn 13 of
+    `stale_fact-heldout-001`), on its paired and history controls.
+- **The blind history decoys produced no false positive of their own.** The cue list held on phrasings it was
+  not written for.
+- **The cost estimate was wrong at first.** The old method charged every call at the mean uncached time; here
+  only 27 judge calls (~24 s each) were uncached, and 1476 cached extractions were charged at that rate. Fixed
+  (per-role means, none when unmeasured), and the `m6b` and `m6c-dev` estimates were recomputed from their
+  recorded usage: 119 -> 114 and 127 -> 123 minutes per 100 sessions.
+
+### Decision
+- **Policy D ships** (rules decide stale findings, the judge only confirms). It is the default.
+- **Run `m6c` is published as measured,** next to `m6b`. No second held-out attempt.
+
 ## Tests (no dataset, no model)
 - A judge `uses_old: false` no longer drops a stale finding; `true` with a verbatim quote confirms it at 0.9.
 - A history cue in the old value's sentence drops the candidate; a cue in another sentence does not.
 - The new city re-ask pattern fires on "Which city are you in?" and not on "Which city are you visiting?".
-- New templates leave every non-history case byte-identical except the `r_c4` slot.
+- The template change was checked on the rebuilt suite, not in a unit test (it needs the dataset): 30 cases
+  changed, the 25 held-out history controls and the 5 held-out re-asks in `r_c4`'s slot.
+- Cost: each role is charged at its own mean uncached time, and a role with no uncached calls gives no estimate.
 
 ## Next
+- **Background stale errors:** trips and hotels ledgered as the user's city or employer, and a store that
+  shares the old employer's name. Measure extraction precision on dev first.
+- **"Remind me" re-asks:** a held-out miss twice. Any fix retires `r_c5` from held-out, with a blind replacement.
 - Link a name to its relation from the fact's own quote ("My daughter Ava is 10" -> `daughter` is Ava), so
   a re-ask by name fires on dev child_age. Dev only; held-out phrasings stay untouched.
