@@ -45,15 +45,19 @@ def _cost(cases: list[dict], seconds: float, judge) -> dict:
     out = {"sessions": sessions, "wall_seconds": round(seconds, 1),
            "machine": f"{platform.system()} {platform.machine()}, {os.cpu_count()} CPUs"}
     if judge is not None:
-        roles = judge.usage.by_role
-        calls = sum(u["calls"] for u in roles.values())
-        fresh = sum(u["calls"] - u["cached"] for u in roles.values())
-        fresh_s = sum(u["seconds"] for u in roles.values())
-        out.update({"calls": calls, "uncached_calls": fresh, "by_role": {k: dict(v) for k, v in roles.items()},
-                    "calls_per_100_sessions": round(100 * calls / max(1, sessions), 1),
-                    "est_seconds_per_100_sessions": round(100 * calls * fresh_s / max(1, fresh) / max(1, sessions))
-                    if fresh else None})
+        out.update(_estimate({k: dict(v) for k, v in judge.usage.by_role.items()}, sessions))
     return out
+
+
+def _estimate(roles: dict, sessions: int) -> dict:
+    """Charge each role's calls at that role's mean uncached time: extraction and judge calls cost differently.
+    A role with no uncached calls has no time to charge at, so the estimate is None and the role is named."""
+    calls = sum(u["calls"] for u in roles.values())
+    unmeasured = sorted(k for k, u in roles.items() if u["calls"] and u["calls"] == u["cached"])
+    est = sum(u["calls"] * u["seconds"] / (u["calls"] - u["cached"]) for u in roles.values() if u["calls"] > u["cached"])
+    return {"calls": calls, "uncached_calls": sum(u["calls"] - u["cached"] for u in roles.values()), "by_role": roles,
+            "calls_per_100_sessions": round(100 * calls / max(1, sessions), 1), "unmeasured_roles": unmeasured,
+            "est_seconds_per_100_sessions": None if unmeasured or not calls else round(100 * est / max(1, sessions))}
 
 
 def main(argv=None) -> int:

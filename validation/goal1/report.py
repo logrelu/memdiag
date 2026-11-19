@@ -85,7 +85,9 @@ def write_report(results_dir: Path, out: Path) -> None:
             lines += [f"Cost: {cost['calls_per_100_sessions']} model calls per 100 sessions"
                       + (f", about {est / 60:.0f} minutes per 100 sessions uncached on the machine that ran it"
                          + (f" ({cost['machine']})" if cost.get("machine") else "")
-                         + " (estimated from the mean time of uncached calls)" if est else "")
+                         + " (each role's calls charged at its mean uncached time)" if est else "")
+                      + (f"; time not estimated, since no {', '.join(cost['unmeasured_roles'])} call ran uncached"
+                         if not est and cost.get("unmeasured_roles") else "")
                       + f". This run's main pass (reruns excluded): {cost['sessions']} sessions, {cost['calls']} calls "
                       f"({cost['uncached_calls']} uncached), {cost['wall_seconds'] / 60:.0f} minutes wall time.", ""]
         if any(k.startswith("dev|") for k in r["aggregate"]):
