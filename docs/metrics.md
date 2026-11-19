@@ -15,7 +15,7 @@ Seattle"), found by the extractor. Scores are only as complete as the extractor;
 | Metric | Failures | Opportunities |
 |---|---|---|
 | `memory_faithfulness` | stale + deleted-fact + cross-user + invented assertions | all asserted facts |
-| `fact_currency` | (reply, fact) pairs where the reply uses an old value of a fact the user updated: a stale rule assertion, or a mention of the old value without the current one (confirmed by the judge in `--model` mode) | (reply, fact) pairs where the reply mentions any value, old or current, of a fact the user had updated |
+| `fact_currency` | (reply, fact) pairs where the reply uses an old value of a fact the user updated: a stale rule assertion, or a mention of the old value without the current one, unless a history cue comes before it in its clause ("since you left Seattle"); in `--model` mode the judge can raise its confidence but never removes it | (reply, fact) pairs where the reply mentions any value, old or current, of a fact the user had updated |
 | `deletion_compliance` | forget requests the agent later violated (counted once per user and fact) | forget requests |
 | `user_isolation` | assertions using another user's value | assertions about attributes another user also has |
 | `groundedness` | assertions of a fact nobody stated | all asserted facts |

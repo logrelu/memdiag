@@ -106,8 +106,23 @@ Full tables: `docs/validation.md`. 225 held-out cases: 100 injected, 100 paired 
   (per-role means, none when unmeasured), and the `m6b` and `m6c-dev` estimates were recomputed from their
   recorded usage: 119 -> 114 and 127 -> 123 minutes per 100 sessions.
 
+### Review after the run (detector version 4)
+The reviewer found three bugs in the v3 history check, each with a concrete reply:
+- **The cue list was too loose.** A cue anywhere in the sentence counted, so "Spend some time in Seattle parks"
+  and "Turn left on Pike St … Seattle coffee" were excused.
+- **A cue on one old value excused another.** Only the last old value mentioned was checked.
+- **A cue across a semicolon counted.** The history check split sentences differently from `mentions`.
+
+v4 requires a cue before the old value in the same clause (or "anymore" after it), checks every old value,
+and splits like `mentions`. Bare "left", "leaving", "time/days in" and "any more" are gone. Every v4 cue
+also counted in v3, so v4 drops a subset of what v3 dropped: it keeps every v3 finding and may add more.
+- **Dev (`m6c-dev-v4`):** every one of the 360 cases has the same findings as under v3.
+- **Held-out is not rerun.** This milestone allows one held-out attempt, and the v4 tests were written after
+  the held-out templates had been read. Run `m6c` stands as measured with v3. For v4, held-out recall is at
+  least 0.92 by construction; its held-out false-positive rate is unmeasured until the next held-out run.
+
 ### Decision
-- **Policy D ships** (rules decide stale findings, the judge only confirms). It is the default.
+- **Policy D ships** (rules decide stale findings, the judge only confirms), with the v4 history check. It is the default.
 - **Run `m6c` is published as measured,** next to `m6b`. No second held-out attempt.
 
 ## Tests (no dataset, no model)
