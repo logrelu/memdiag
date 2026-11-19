@@ -132,7 +132,13 @@ CLAUSES = re.compile(r"(?<=[.!?;])\s+|[,:]\s+|\s+[-–—]\s+")  # sentences as 
 
 def as_history(text: str, value: str, attribute: str = "") -> bool:
     """Does every clause of `text` that mentions `value` talk about it as the past?"""
-    clauses = [c for c in CLAUSES.split(text) if c and mentions(c, value, attribute)]
+    sentences = [p for p in re.split(r"(?<=[.!?;])\s+", text) if mentions(p, value, attribute)]
+    clauses = []
+    for p in sentences:
+        found = [c for c in CLAUSES.split(p) if c and mentions(c, value, attribute)]
+        if not found:
+            return False  # only the whole sentence mentions it ("Portland, Oregon"): no clause to excuse it
+        clauses += found
     if not clauses:
         return False
     for c in clauses:
