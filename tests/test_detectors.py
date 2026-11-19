@@ -84,6 +84,15 @@ def test_a_cue_elsewhere_excuses_nothing():
         assert len(_stale(run(_ev(MOVED + [["maya", "assistant", reply]])))) == 1, reply
 
 
+def test_a_mention_only_the_whole_sentence_makes_is_never_excused():
+    from memdiag.detectors import as_history
+    # Review case: "Portland, Oregon" mentions the value only across a comma, so no clause can carry a cue.
+    assert not as_history("You used to love Portland Oregon. Try Portland, Oregon food.", "Portland Oregon", "city")
+    assert as_history("You used to love Portland Oregon.", "Portland Oregon", "city")
+    assert not as_history("Your previous salary was $85,000. For your salary, $85,000 still sounds right.",
+                          "$85,000", "income")
+
+
 def test_a_cue_on_one_old_value_doesnt_excuse_another():
     rows = MOVED + [["maya", "user", "Now we just moved to Denver."],
                     ["maya", "assistant", "Since you left Portland, things changed. Seattle weather is rainy."]]
