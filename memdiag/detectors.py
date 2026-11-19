@@ -117,19 +117,31 @@ def mentions(text: str, value: str, attribute: str = "") -> bool:
     return False
 
 
-# Words that put a value in the past ("since you left Seattle"). Only a rule may drop a stale candidate, and
-# only when the sentence that mentions the old value carries one of these (docs/plans/M6c.md).
-HISTORY_CUE = re.compile(
-    r"\b(?:used to|back (?:when|in)|before you (?:moved|left|switched|changed)|you left|left|leaving|"
-    r"moved (?:away )?from|relocated from|former|formerly|previous|previously|no longer|any ?more|done with|"
-    r"in the past|old (?:job|city|town|place|home|employer|company|role|team|neighbou?rhood)|"
-    r"(?:years|time|days) (?:at|in|with)|you were|you lived|you worked)\b", re.I)
+# Words that put a value in the past ("since you left Seattle"). Only a rule may drop a stale candidate, and only
+# when a cue comes before the old value in the same clause, or "anymore" after it (docs/plans/M6c.md). A cue
+# elsewhere in the sentence ("turn left on Pike St for Seattle coffee") excuses nothing.
+HISTORY_BEFORE = re.compile(
+    r"\b(?:used to|back (?:when|in)|before you (?:moved|left|switched|changed)|"
+    r"(?:you|you've|you have|you'd|you had) (?:left|moved (?:away )?from|relocated from)|"
+    r"(?:after|since) leaving|moved (?:away )?from|relocated from|former|formerly|previous|previously|"
+    r"no longer|done with|years (?:at|in|with)|you were|you lived|you worked|"
+    r"old (?:job|city|town|place|home|employer|company|role|team|neighbou?rhood))\b", re.I)
+HISTORY_AFTER = re.compile(r"\banymore\b", re.I)
+CLAUSES = re.compile(r"(?<=[.!?;])\s+|[,:]\s+|\s+[-–—]\s+")  # sentences as `mentions` splits them, then clauses
 
 
 def as_history(text: str, value: str, attribute: str = "") -> bool:
-    """Does every sentence of `text` that mentions `value` talk about it as the past?"""
-    parts = [p for p in re.split(r"(?<=[.!?])\s+", text) if mentions(p, value, attribute)]
-    return bool(parts) and all(HISTORY_CUE.search(p) for p in parts)
+    """Does every clause of `text` that mentions `value` talk about it as the past?"""
+    clauses = [c for c in CLAUSES.split(text) if c and mentions(c, value, attribute)]
+    if not clauses:
+        return False
+    for c in clauses:
+        words = c.split()
+        end = next(n for n in range(1, len(words) + 1) if mentions(" ".join(words[:n]), value, attribute))
+        before, after = " ".join(words[:end]), " ".join(words[end:])
+        if not (HISTORY_BEFORE.search(before) or HISTORY_AFTER.search(after)):
+            return False
+    return True
 
 
 def _finding(category: str, a: Event, detector: str, key: str, **kw) -> Finding:
@@ -168,9 +180,11 @@ def detect_with_ledger(events: list[Event], ledger: Ledger, judge=None) -> tuple
             opp["updated_pairs"].add((a.index, key))
             if not said_old or said_cur:
                 continue
-            prev = said_old[-1]
-            if as_history(a.content, prev.value, attr):
-                continue  # "since you left Seattle": the old value as past history
+            # "since you left Seattle": an old value as past history doesn't count; every other mention does.
+            stale = [h for h in said_old if not as_history(a.content, h.value, attr)]
+            if not stale:
+                continue
+            prev = stale[-1]
             quote, detector, confidence = sentence(a.content, hint=prev.value), "ledger.stale_mention", 0.5
             if judge is not None:
                 r = judge.ask(stale_prompt, role="judge_stale", as_json=True, key=key, old=prev.value,
