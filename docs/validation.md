@@ -58,7 +58,7 @@ Background (rules mode, single sessions, checked when the suite was built): 1 of
 
 Flip rate over the first run and 3 uncached reruns (temperature 0, seed 0), counting a change in exact-turn hit (positives) or false positive (controls): 0/72 cases (0.00%) ✅ (target <= 5%).
 
-Cost: 389.6 model calls per 100 sessions, about 119 minutes per 100 sessions uncached on the machine that ran it (estimated from the mean time of uncached calls). This run's main pass (reruns excluded): 425 sessions, 1656 calls (474 uncached), 145 minutes wall time.
+Cost: 389.6 model calls per 100 sessions, about 114 minutes per 100 sessions uncached on the machine that ran it (each role's calls charged at its mean uncached time). This run's main pass (reruns excluded): 425 sessions, 1656 calls (474 uncached), 145 minutes wall time.
 
 By attribute or instruction kind (held-out):
 
@@ -89,7 +89,7 @@ Background (rules mode, single sessions, checked when the suite was built): 1 of
 | Type | Recall | Exact turn | False positives |
 |---|---|---|---|
 
-Cost: 401.3 model calls per 100 sessions, about 127 minutes per 100 sessions uncached on the machine that ran it (Darwin x86_64, 12 CPUs) (estimated from the mean time of uncached calls). This run's main pass (reruns excluded): 680 sessions, 2729 calls (990 uncached), 315 minutes wall time.
+Cost: 401.3 model calls per 100 sessions, about 123 minutes per 100 sessions uncached on the machine that ran it (Darwin x86_64, 12 CPUs) (each role's calls charged at its mean uncached time). This run's main pass (reruns excluded): 680 sessions, 2729 calls (990 uncached), 315 minutes wall time.
 
 **Dev** (what detectors may be tuned on):
 
@@ -107,6 +107,44 @@ By attribute or instruction kind (held-out):
 |---|---|---|---|---|
 
 Controls that fired: `stale_fact-dev-015-ctl`, `stale_fact-dev-015-hist`.
+
+### Mode: llm (qwen2.5:7b), run `m6c`
+
+Run 2026-11-18 · memdiag 0.1.0 · commit 4a9b7b2 · data sha256 `d6f21ea9d60a…` · 225 cases (heldout split only)
+
+Background (rules mode, single sessions, checked when the suite was built): 1 of 456 base sessions had a finding before any injection and were excluded. Cross-session and LLM-only background is not screened; the paired controls absorb it (see Recall).
+
+**Held-out** (held-out templates and sessions; the headline numbers):
+
+| Type | Recall | Exact turn | False positives |
+|---|---|---|---|
+| STALE_FACT | 0.92 (23/25, CI 0.75-0.98) ✅ | 0.96 (24/25, CI 0.81-0.99) ✅ | 0.06 (3/50, CI 0.02-0.16) ❌ |
+| RECALL_MISS | 0.80 (20/25, CI 0.61-0.91) ❌ | 0.80 (20/25, CI 0.61-0.91) ✅ | 0.00 (0/25, CI 0.00-0.13) ✅ |
+| CONSTRAINT_DROP | 1.00 (25/25, CI 0.87-1.00) ✅ | 1.00 (25/25, CI 0.87-1.00) ✅ | 0.00 (0/25, CI 0.00-0.13) ✅ |
+| USER_REPAIR | 1.00 (25/25, CI 0.87-1.00) ✅ | 1.00 (25/25, CI 0.87-1.00) ✅ | 0.00 (0/25, CI 0.00-0.13) ✅ |
+| ALL | 0.93 (93/100, CI 0.86-0.97) ✅ | 0.94 (94/100, CI 0.88-0.97) ✅ | 0.02 (3/125, CI 0.01-0.07) ✅ |
+
+Flip rate over the first run and 3 uncached reruns (temperature 0, seed 0), counting any change in the turns with a finding of the case's type: 0/72 cases (0.00%) ✅ (target <= 5%).
+
+Cost: 383.8 model calls per 100 sessions; time not estimated, since no extractor call ran uncached. This run's main pass (reruns excluded): 425 sessions, 1631 calls (27 uncached), 11 minutes wall time.
+
+By attribute or instruction kind (held-out):
+
+| Type | Group | Recall | Exact turn | False positives |
+|---|---|---|---|---|
+| CONSTRAINT_DROP | banned_word | 1.00 (6/6, CI 0.61-1.00) | 1.00 (6/6, CI 0.61-1.00) | 0.00 (0/6, CI 0.00-0.39) |
+| CONSTRAINT_DROP | max_words | 1.00 (7/7, CI 0.65-1.00) | 1.00 (7/7, CI 0.65-1.00) | 0.00 (0/7, CI 0.00-0.35) |
+| CONSTRAINT_DROP | no_bullets | 1.00 (6/6, CI 0.61-1.00) | 1.00 (6/6, CI 0.61-1.00) | 0.00 (0/6, CI 0.00-0.39) |
+| CONSTRAINT_DROP | no_emoji | 1.00 (6/6, CI 0.61-1.00) | 1.00 (6/6, CI 0.61-1.00) | 0.00 (0/6, CI 0.00-0.39) |
+| RECALL_MISS | child_age | 1.00 (8/8, CI 0.68-1.00) | 1.00 (8/8, CI 0.68-1.00) | 0.00 (0/8, CI 0.00-0.32) |
+| RECALL_MISS | city | 0.44 (4/9, CI 0.19-0.73) | 0.44 (4/9, CI 0.19-0.73) | 0.00 (0/9, CI 0.00-0.30) |
+| RECALL_MISS | employer | 1.00 (8/8, CI 0.68-1.00) | 1.00 (8/8, CI 0.68-1.00) | 0.00 (0/8, CI 0.00-0.32) |
+| STALE_FACT | city | 0.92 (12/13, CI 0.67-0.99) | 0.92 (12/13, CI 0.67-0.99) | 0.00 (0/26, CI 0.00-0.13) |
+| STALE_FACT | employer | 0.92 (11/12, CI 0.65-0.98) | 1.00 (12/12, CI 0.76-1.00) | 0.12 (3/24, CI 0.04-0.31) |
+| STALE_FACT | history_control | n/a | n/a | 0.04 (1/25, CI 0.01-0.20) |
+| USER_REPAIR | repair | 1.00 (25/25, CI 0.87-1.00) | 1.00 (25/25, CI 0.87-1.00) | 0.00 (0/25, CI 0.00-0.13) |
+
+Controls that fired: `stale_fact-heldout-001-ctl`, `stale_fact-heldout-001-hist`, `stale_fact-heldout-009-ctl`.
 
 ### Mode: rules
 
