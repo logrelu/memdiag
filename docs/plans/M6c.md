@@ -44,8 +44,33 @@ seeing them) and `r_c4` (the pattern above).
   (any change in the turns with a finding of the case's type). The rules-mode run is redone too.
 - A miss is published with its number. There is no second held-out attempt in this milestone.
 
+## Dev results, run `m6c-dev` (2026-11-18)
+All 40 dev positives per type, their paired controls and 40 history controls: 360 cases, `qwen2.5:7b`.
+
+| Type | Recall | FP |
+|---|---|---|
+| `STALE_FACT` | 40/40 | 2/80 (paired 1/40, history 1/40) |
+| `RECALL_MISS` | 28/40 | 0/40 |
+| `CONSTRAINT_DROP` | 40/40 | 0/40 |
+| `USER_REPAIR` | 40/40 | 0/40 |
+
+- **D meets the selection rule** (recall 1.00 ≥ 0.85, FP 0.025 ≤ 0.05) on its first attempt. The cue list was
+  not changed. Held-out runs next.
+- **Both stale false positives are one background finding:** turn 15 of `stale_fact-dev-015`, where the
+  extractor ledgered `user.city` as "parents' place", then "Virginia", and a later reply mentions Virginia. It
+  appears on the positive too, so net recall is unaffected.
+- **`RECALL_MISS` child_age is 1/13 on dev.** In "My daughter Ava is 10." the extractor records
+  `daughter.age` but not the name, so "How old is Ava?" doesn't name a known person and the rule can't fire;
+  the judge misses it too. The held-out child_age re-ask ("How old is your daughter now?") names the relation,
+  so this is a dev-only gap. It is not fixed in this milestone (the plan allows only cue changes after the dev
+  run); see Next.
+
 ## Tests (no dataset, no model)
 - A judge `uses_old: false` no longer drops a stale finding; `true` with a verbatim quote confirms it at 0.9.
 - A history cue in the old value's sentence drops the candidate; a cue in another sentence does not.
 - The new city re-ask pattern fires on "Which city are you in?" and not on "Which city are you visiting?".
 - New templates leave every non-history case byte-identical except the `r_c4` slot.
+
+## Next
+- Link a name to its relation from the fact's own quote ("My daughter Ava is 10" -> `daughter` is Ava), so
+  a re-ask by name fires on dev child_age. Dev only; held-out phrasings stay untouched.

@@ -78,6 +78,36 @@ By attribute or instruction kind (held-out):
 
 Controls that fired: `stale_fact-heldout-001-ctl`, `stale_fact-heldout-001-hist`.
 
+### Mode: llm (qwen2.5:7b), run `m6c-dev`
+
+Run 2026-11-18 · memdiag 0.1.0 · commit 85a371f · data sha256 `d6f21ea9d60a…` · 360 cases (dev split only)
+
+Background (rules mode, single sessions, checked when the suite was built): 1 of 456 base sessions had a finding before any injection and were excluded. Cross-session and LLM-only background is not screened; the paired controls absorb it (see Recall).
+
+**Held-out** (held-out templates and sessions; the headline numbers):
+
+| Type | Recall | Exact turn | False positives |
+|---|---|---|---|
+
+Cost: 401.3 model calls per 100 sessions, about 127 minutes per 100 sessions uncached on the machine that ran it (Darwin x86_64, 12 CPUs) (estimated from the mean time of uncached calls). This run's main pass (reruns excluded): 680 sessions, 2729 calls (990 uncached), 315 minutes wall time.
+
+**Dev** (what detectors may be tuned on):
+
+| Type | Recall | Exact turn | False positives |
+|---|---|---|---|
+| STALE_FACT | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.03 (2/80, CI 0.01-0.09) |
+| RECALL_MISS | 0.70 (28/40, CI 0.55-0.82) | 0.70 (28/40, CI 0.55-0.82) | 0.00 (0/40, CI 0.00-0.09) |
+| CONSTRAINT_DROP | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/40, CI 0.00-0.09) |
+| USER_REPAIR | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/40, CI 0.00-0.09) |
+| ALL | 0.93 (148/160, CI 0.87-0.96) | 0.93 (148/160, CI 0.87-0.96) | 0.01 (2/200, CI 0.00-0.04) |
+
+By attribute or instruction kind (held-out):
+
+| Type | Group | Recall | Exact turn | False positives |
+|---|---|---|---|---|
+
+Controls that fired: `stale_fact-dev-015-ctl`, `stale_fact-dev-015-hist`.
+
 ### Mode: rules
 
 Run 2026-11-13 · memdiag 0.1.0 · commit 6e7c076 · data sha256 `d6f21ea9d60a…` · 520 cases
@@ -117,6 +147,50 @@ By attribute or instruction kind (held-out):
 | RECALL_MISS | employer | 0.50 (4/8, CI 0.21-0.79) | 0.50 (4/8, CI 0.21-0.79) | 0.00 (0/8, CI 0.00-0.32) |
 | STALE_FACT | city | 0.31 (4/13, CI 0.13-0.58) | 0.31 (4/13, CI 0.13-0.58) | 0.00 (0/13, CI 0.00-0.23) |
 | STALE_FACT | employer | 0.00 (0/12, CI 0.00-0.24) | 0.00 (0/12, CI 0.00-0.24) | 0.00 (0/12, CI 0.00-0.24) |
+| USER_REPAIR | repair | 1.00 (25/25, CI 0.87-1.00) | 1.00 (25/25, CI 0.87-1.00) | 0.00 (0/25, CI 0.00-0.13) |
+
+Controls that fired: none.
+
+### Mode: rules, run `m6c`
+
+Run 2026-11-18 · memdiag 0.1.0 · commit 85a371f · data sha256 `d6f21ea9d60a…` · 585 cases
+
+Background (rules mode, single sessions, checked when the suite was built): 1 of 456 base sessions had a finding before any injection and were excluded. Cross-session and LLM-only background is not screened; the paired controls absorb it (see Recall).
+
+**Held-out** (held-out templates and sessions; the headline numbers):
+
+| Type | Recall | Exact turn | False positives |
+|---|---|---|---|
+| STALE_FACT | 0.16 (4/25, CI 0.06-0.35) ❌ | 0.16 (4/25, CI 0.06-0.35) ❌ | 0.00 (0/50, CI 0.00-0.07) ✅ |
+| RECALL_MISS | 0.24 (6/25, CI 0.12-0.43) ❌ | 0.24 (6/25, CI 0.12-0.43) ❌ | 0.00 (0/25, CI 0.00-0.13) ✅ |
+| CONSTRAINT_DROP | 1.00 (25/25, CI 0.87-1.00) ✅ | 1.00 (25/25, CI 0.87-1.00) ✅ | 0.00 (0/25, CI 0.00-0.13) ✅ |
+| USER_REPAIR | 1.00 (25/25, CI 0.87-1.00) ✅ | 1.00 (25/25, CI 0.87-1.00) ✅ | 0.00 (0/25, CI 0.00-0.13) ✅ |
+| ALL | 0.60 (60/100, CI 0.50-0.69) ❌ | 0.60 (60/100, CI 0.50-0.69) ❌ | 0.00 (0/125, CI 0.00-0.03) ✅ |
+
+**Dev** (what detectors may be tuned on):
+
+| Type | Recall | Exact turn | False positives |
+|---|---|---|---|
+| STALE_FACT | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/80, CI 0.00-0.05) |
+| RECALL_MISS | 0.68 (27/40, CI 0.52-0.80) | 0.68 (27/40, CI 0.52-0.80) | 0.00 (0/40, CI 0.00-0.09) |
+| CONSTRAINT_DROP | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/40, CI 0.00-0.09) |
+| USER_REPAIR | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/40, CI 0.00-0.09) |
+| ALL | 0.92 (147/160, CI 0.87-0.95) | 0.92 (147/160, CI 0.87-0.95) | 0.00 (0/200, CI 0.00-0.02) |
+
+By attribute or instruction kind (held-out):
+
+| Type | Group | Recall | Exact turn | False positives |
+|---|---|---|---|---|
+| CONSTRAINT_DROP | banned_word | 1.00 (6/6, CI 0.61-1.00) | 1.00 (6/6, CI 0.61-1.00) | 0.00 (0/6, CI 0.00-0.39) |
+| CONSTRAINT_DROP | max_words | 1.00 (7/7, CI 0.65-1.00) | 1.00 (7/7, CI 0.65-1.00) | 0.00 (0/7, CI 0.00-0.35) |
+| CONSTRAINT_DROP | no_bullets | 1.00 (6/6, CI 0.61-1.00) | 1.00 (6/6, CI 0.61-1.00) | 0.00 (0/6, CI 0.00-0.39) |
+| CONSTRAINT_DROP | no_emoji | 1.00 (6/6, CI 0.61-1.00) | 1.00 (6/6, CI 0.61-1.00) | 0.00 (0/6, CI 0.00-0.39) |
+| RECALL_MISS | child_age | 0.00 (0/8, CI 0.00-0.32) | 0.00 (0/8, CI 0.00-0.32) | 0.00 (0/8, CI 0.00-0.32) |
+| RECALL_MISS | city | 0.22 (2/9, CI 0.06-0.55) | 0.22 (2/9, CI 0.06-0.55) | 0.00 (0/9, CI 0.00-0.30) |
+| RECALL_MISS | employer | 0.50 (4/8, CI 0.21-0.79) | 0.50 (4/8, CI 0.21-0.79) | 0.00 (0/8, CI 0.00-0.32) |
+| STALE_FACT | city | 0.31 (4/13, CI 0.13-0.58) | 0.31 (4/13, CI 0.13-0.58) | 0.00 (0/26, CI 0.00-0.13) |
+| STALE_FACT | employer | 0.00 (0/12, CI 0.00-0.24) | 0.00 (0/12, CI 0.00-0.24) | 0.00 (0/24, CI 0.00-0.14) |
+| STALE_FACT | history_control | n/a | n/a | 0.00 (0/25, CI 0.00-0.13) |
 | USER_REPAIR | repair | 1.00 (25/25, CI 0.87-1.00) | 1.00 (25/25, CI 0.87-1.00) | 0.00 (0/25, CI 0.00-0.13) |
 
 Controls that fired: none.
