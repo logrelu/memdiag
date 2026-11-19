@@ -45,7 +45,8 @@
    },
    "calls_per_100_sessions": 401.3,
    "est_seconds_per_100_sessions": 7372,
-   "unmeasured_roles": []
+   "unmeasured_roles": [],
+   "recomputed": "The time estimate was recomputed after the run from the recorded per-role usage (per-role means; the run's code wrote 7645 s per 100 sessions)."
   }
  },
  "aggregate": {

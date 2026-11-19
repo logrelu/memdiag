@@ -58,7 +58,7 @@ Background (rules mode, single sessions, checked when the suite was built): 1 of
 
 Flip rate over the first run and 3 uncached reruns (temperature 0, seed 0), counting a change in exact-turn hit (positives) or false positive (controls): 0/72 cases (0.00%) ✅ (target <= 5%).
 
-Cost: 389.6 model calls per 100 sessions, about 114 minutes per 100 sessions uncached on the machine that ran it (each role's calls charged at its mean uncached time). This run's main pass (reruns excluded): 425 sessions, 1656 calls (474 uncached), 145 minutes wall time.
+Cost: 389.6 model calls per 100 sessions, about 114 minutes per 100 sessions uncached on the machine that ran it (each role's calls charged at its mean uncached time). This run's main pass (reruns excluded): 425 sessions, 1656 calls (474 uncached), 145 minutes wall time. The time estimate was recomputed after the run from the recorded per-role usage (per-role means; the run's code wrote 7149 s per 100 sessions).
 
 By attribute or instruction kind (held-out):
 
@@ -78,18 +78,13 @@ By attribute or instruction kind (held-out):
 
 Controls that fired: `stale_fact-heldout-001-ctl`, `stale_fact-heldout-001-hist`.
 
-### Mode: llm (qwen2.5:7b), run `m6c-dev`
+### Mode: llm (qwen2.5:7b), run `m6c-dev-v4`
 
-Run 2026-11-18 · memdiag 0.1.0 · commit 85a371f · data sha256 `d6f21ea9d60a…` · 360 cases (dev split only)
+Run 2026-11-19 · memdiag 0.1.0 · commit 8ac6dd8 · data sha256 `d6f21ea9d60a…` · 360 cases (dev split only)
 
 Background (rules mode, single sessions, checked when the suite was built): 1 of 456 base sessions had a finding before any injection and were excluded. Cross-session and LLM-only background is not screened; the paired controls absorb it (see Recall).
 
-**Held-out** (held-out templates and sessions; the headline numbers):
-
-| Type | Recall | Exact turn | False positives |
-|---|---|---|---|
-
-Cost: 401.3 model calls per 100 sessions, about 123 minutes per 100 sessions uncached on the machine that ran it (Darwin x86_64, 12 CPUs) (each role's calls charged at its mean uncached time). This run's main pass (reruns excluded): 680 sessions, 2729 calls (990 uncached), 315 minutes wall time.
+Cost: 401.3 model calls per 100 sessions; time not estimated, since no extractor, judge_reask, judge_stale call ran uncached. This run's main pass (reruns excluded): 680 sessions, 2729 calls (0 uncached), 0 minutes wall time.
 
 **Dev** (what detectors may be tuned on):
 
@@ -101,10 +96,57 @@ Cost: 401.3 model calls per 100 sessions, about 123 minutes per 100 sessions unc
 | USER_REPAIR | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/40, CI 0.00-0.09) |
 | ALL | 0.93 (148/160, CI 0.87-0.96) | 0.93 (148/160, CI 0.87-0.96) | 0.01 (2/200, CI 0.00-0.04) |
 
-By attribute or instruction kind (held-out):
+By attribute or instruction kind (dev):
 
 | Type | Group | Recall | Exact turn | False positives |
 |---|---|---|---|---|
+| CONSTRAINT_DROP | banned_word | 1.00 (10/10, CI 0.72-1.00) | 1.00 (10/10, CI 0.72-1.00) | 0.00 (0/10, CI 0.00-0.28) |
+| CONSTRAINT_DROP | max_words | 1.00 (10/10, CI 0.72-1.00) | 1.00 (10/10, CI 0.72-1.00) | 0.00 (0/10, CI 0.00-0.28) |
+| CONSTRAINT_DROP | no_bullets | 1.00 (10/10, CI 0.72-1.00) | 1.00 (10/10, CI 0.72-1.00) | 0.00 (0/10, CI 0.00-0.28) |
+| CONSTRAINT_DROP | no_emoji | 1.00 (10/10, CI 0.72-1.00) | 1.00 (10/10, CI 0.72-1.00) | 0.00 (0/10, CI 0.00-0.28) |
+| RECALL_MISS | child_age | 0.08 (1/13, CI 0.01-0.33) | 0.08 (1/13, CI 0.01-0.33) | 0.00 (0/13, CI 0.00-0.23) |
+| RECALL_MISS | city | 1.00 (14/14, CI 0.79-1.00) | 1.00 (14/14, CI 0.79-1.00) | 0.00 (0/14, CI 0.00-0.21) |
+| RECALL_MISS | employer | 1.00 (13/13, CI 0.77-1.00) | 1.00 (13/13, CI 0.77-1.00) | 0.00 (0/13, CI 0.00-0.23) |
+| STALE_FACT | city | 1.00 (20/20, CI 0.84-1.00) | 1.00 (20/20, CI 0.84-1.00) | 0.00 (0/40, CI 0.00-0.09) |
+| STALE_FACT | employer | 1.00 (20/20, CI 0.84-1.00) | 1.00 (20/20, CI 0.84-1.00) | 0.05 (2/40, CI 0.01-0.17) |
+| STALE_FACT | history_control | n/a | n/a | 0.03 (1/40, CI 0.00-0.13) |
+| USER_REPAIR | repair | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/40, CI 0.00-0.09) |
+
+Controls that fired: `stale_fact-dev-015-ctl`, `stale_fact-dev-015-hist`.
+
+### Mode: llm (qwen2.5:7b), run `m6c-dev`
+
+Run 2026-11-18 · memdiag 0.1.0 · commit 85a371f · data sha256 `d6f21ea9d60a…` · 360 cases (dev split only)
+
+Background (rules mode, single sessions, checked when the suite was built): 1 of 456 base sessions had a finding before any injection and were excluded. Cross-session and LLM-only background is not screened; the paired controls absorb it (see Recall).
+
+Cost: 401.3 model calls per 100 sessions, about 123 minutes per 100 sessions uncached on the machine that ran it (Darwin x86_64, 12 CPUs) (each role's calls charged at its mean uncached time). This run's main pass (reruns excluded): 680 sessions, 2729 calls (990 uncached), 315 minutes wall time. The time estimate was recomputed after the run from the recorded per-role usage (per-role means; the run's code wrote 7645 s per 100 sessions).
+
+**Dev** (what detectors may be tuned on):
+
+| Type | Recall | Exact turn | False positives |
+|---|---|---|---|
+| STALE_FACT | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.03 (2/80, CI 0.01-0.09) |
+| RECALL_MISS | 0.70 (28/40, CI 0.55-0.82) | 0.70 (28/40, CI 0.55-0.82) | 0.00 (0/40, CI 0.00-0.09) |
+| CONSTRAINT_DROP | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/40, CI 0.00-0.09) |
+| USER_REPAIR | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/40, CI 0.00-0.09) |
+| ALL | 0.93 (148/160, CI 0.87-0.96) | 0.93 (148/160, CI 0.87-0.96) | 0.01 (2/200, CI 0.00-0.04) |
+
+By attribute or instruction kind (dev):
+
+| Type | Group | Recall | Exact turn | False positives |
+|---|---|---|---|---|
+| CONSTRAINT_DROP | banned_word | 1.00 (10/10, CI 0.72-1.00) | 1.00 (10/10, CI 0.72-1.00) | 0.00 (0/10, CI 0.00-0.28) |
+| CONSTRAINT_DROP | max_words | 1.00 (10/10, CI 0.72-1.00) | 1.00 (10/10, CI 0.72-1.00) | 0.00 (0/10, CI 0.00-0.28) |
+| CONSTRAINT_DROP | no_bullets | 1.00 (10/10, CI 0.72-1.00) | 1.00 (10/10, CI 0.72-1.00) | 0.00 (0/10, CI 0.00-0.28) |
+| CONSTRAINT_DROP | no_emoji | 1.00 (10/10, CI 0.72-1.00) | 1.00 (10/10, CI 0.72-1.00) | 0.00 (0/10, CI 0.00-0.28) |
+| RECALL_MISS | child_age | 0.08 (1/13, CI 0.01-0.33) | 0.08 (1/13, CI 0.01-0.33) | 0.00 (0/13, CI 0.00-0.23) |
+| RECALL_MISS | city | 1.00 (14/14, CI 0.79-1.00) | 1.00 (14/14, CI 0.79-1.00) | 0.00 (0/14, CI 0.00-0.21) |
+| RECALL_MISS | employer | 1.00 (13/13, CI 0.77-1.00) | 1.00 (13/13, CI 0.77-1.00) | 0.00 (0/13, CI 0.00-0.23) |
+| STALE_FACT | city | 1.00 (20/20, CI 0.84-1.00) | 1.00 (20/20, CI 0.84-1.00) | 0.00 (0/40, CI 0.00-0.09) |
+| STALE_FACT | employer | 1.00 (20/20, CI 0.84-1.00) | 1.00 (20/20, CI 0.84-1.00) | 0.05 (2/40, CI 0.01-0.17) |
+| STALE_FACT | history_control | n/a | n/a | 0.03 (1/40, CI 0.00-0.13) |
+| USER_REPAIR | repair | 1.00 (40/40, CI 0.91-1.00) | 1.00 (40/40, CI 0.91-1.00) | 0.00 (0/40, CI 0.00-0.09) |
 
 Controls that fired: `stale_fact-dev-015-ctl`, `stale_fact-dev-015-hist`.
 
@@ -126,7 +168,7 @@ Background (rules mode, single sessions, checked when the suite was built): 1 of
 
 Flip rate over the first run and 3 uncached reruns (temperature 0, seed 0), counting any change in the turns with a finding of the case's type: 0/72 cases (0.00%) ✅ (target <= 5%).
 
-Cost: 383.8 model calls per 100 sessions; time not estimated, since no extractor call ran uncached. This run's main pass (reruns excluded): 425 sessions, 1631 calls (27 uncached), 11 minutes wall time.
+Cost: 383.8 model calls per 100 sessions; time not estimated, since no extractor call ran uncached. This run's main pass (reruns excluded): 425 sessions, 1631 calls (27 uncached), 11 minutes wall time. The cost fields were recomputed after the run from the recorded per-role usage; the run's code wrote 9299 s per 100 sessions, charging cached extractions at the judge's uncached time.
 
 By attribute or instruction kind (held-out):
 
