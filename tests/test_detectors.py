@@ -65,13 +65,30 @@ def test_judge_confirms_stale_candidates_but_never_vetoes():
     assert detected('{"uses_old": true, "quote": "Seattle weather is rainy"}') == ("ledger.stale_mention+llm", 0.9)
 
 
-def test_history_cue_in_the_old_values_sentence_drops_the_candidate():
+def test_history_cue_before_the_old_value_drops_the_candidate():
     for reply in ["Since you left Seattle, here is a tip.", "Back when you lived in Seattle, you liked rain.",
-                  "You used to love Seattle. Portland has good coffee too."]:
+                  "You used to love Seattle, and the coffee too.", "You don't live in Seattle anymore."]:
         assert _stale(run(_ev(MOVED + [["maya", "assistant", reply]]))) == [], reply
-    # a cue in another sentence doesn't excuse the stale one
-    reply = "You used to bike a lot. Near you in Seattle, there are good trails."
-    assert len(_stale(run(_ev(MOVED + [["maya", "assistant", reply]])))) == 1
+
+
+def test_a_cue_elsewhere_excuses_nothing():
+    # Review cases (M6c): each is a plain stale mention with a cue word that isn't about Seattle.
+    for reply in ["You used to bike a lot. Near you in Seattle, there are good trails.",
+                  "Seattle weather is rainy; you used to bike a lot.",
+                  "Spend some time in Seattle parks this weekend.", "Pack a coat for the rainy days in Seattle.",
+                  "Turn left on Pike St and you will find the best Seattle coffee.",
+                  "Before leaving for work in Seattle, grab a coffee.",
+                  "Since you were asking about food, here are three Seattle restaurants.",
+                  "As in my previous message, Seattle has great hikes.",
+                  "Is the commute in Seattle any more bearable?"]:
+        assert len(_stale(run(_ev(MOVED + [["maya", "assistant", reply]])))) == 1, reply
+
+
+def test_a_cue_on_one_old_value_doesnt_excuse_another():
+    rows = MOVED + [["maya", "user", "Now we just moved to Denver."],
+                    ["maya", "assistant", "Since you left Portland, things changed. Seattle weather is rainy."]]
+    (f,) = _stale(run(_ev(rows)))
+    assert (f["got"], f["expected"]) == ("Seattle", "Denver")
 
 
 def test_legacy_and_ledger_stale_findings_merge():
